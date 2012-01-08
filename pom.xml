@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>sola-main</artifactId>
+        <groupId>org.sola</groupId>
+        <version>alpha</version>
+    </parent>
+    <groupId>org.sola</groupId>
+    <artifactId>sola-services</artifactId>
+    <packaging>pom</packaging>
+    <version>alpha</version>
+    <name>Services POM</name>
+    <repositories>
+    </repositories>
+    <properties>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+    </properties>
+    <modules>
+        <!-- Common Projects -->
+        <module>../common/rules</module>
+        <module>../common/common</module>
+        <module>../common/messaging</module>
+        <!-- Service Utility Projects -->
+        <module>services-common</module>
+        <!-- EJB Projects -->
+        <module>ejbs</module>
+        <!-- EAR Projects -->
+        <module>services-ear</module>
+        <!-- Boundary Projects -->
+        <module>boundary</module>
+        <!-- Test Projects -->
+        <module>unit-tests</module>
+        <module>test-common</module>
+  </modules>
+</project>

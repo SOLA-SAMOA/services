@@ -1,0 +1,84 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>sola-services</artifactId>
+        <groupId>org.sola</groupId>
+        <version>alpha</version>
+    </parent>
+
+    <groupId>org.sola.services</groupId>
+    <artifactId>sola-test-common</artifactId>
+    <version>alpha</version>
+    <packaging>jar</packaging>
+
+    <name>Services Test Common</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <glassfish.jdbc-connection-pool.server>solaserver</glassfish.jdbc-connection-pool.server>
+        <glassfish.jdbc-connection-pool.database>sola</glassfish.jdbc-connection-pool.database>
+        <glassfish.jdbc-connection-pool.port>5432</glassfish.jdbc-connection-pool.port>
+        <glassfish.jdbc-connection-pool.username>postgres</glassfish.jdbc-connection-pool.username>
+        <glassfish.jdbc-connection-pool.password>sola2011</glassfish.jdbc-connection-pool.password>
+        <!-- If any of the data values above are changed, or any of the configuration files are
+        updated, this value must be incremented to ensure the new values and configuration are
+        used when executing tests -->
+        <sola-test-common.configuration.version>v023</sola-test-common.configuration.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.extras</groupId>
+            <artifactId>glassfish-embedded-all</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.0-Final</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sola-services-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
+    <build>
+        <resources>
+            <!-- Only filter the glassfish domain.xml file. This will ensure the binary jar
+            files are not corrupted by the filtering process. -->
+            <resource>
+                <!-- sets filtering to true on these two files -->
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/domain.xml</include>
+                    <include>**/sola-test-common.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <!-- Sets filtering to false on all other files -->
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/domain.xml</exclude>
+                    <exclude>**/sola-test-common.properties</exclude>
+                </excludes>
+            </resource>
+        </resources>    
+    </build>
+</project>

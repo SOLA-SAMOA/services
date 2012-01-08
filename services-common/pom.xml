@@ -1,0 +1,100 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>sola-services</artifactId>
+        <groupId>org.sola</groupId>
+        <version>alpha</version>
+    </parent>
+
+    <groupId>org.sola.services</groupId>
+    <artifactId>sola-services-common</artifactId>
+    <version>alpha</version>
+    <packaging>jar</packaging>
+
+    <name>Services Common</name>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.5.0-Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sola.common</groupId>
+            <artifactId>sola-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sola.common</groupId>
+            <artifactId>sola-messaging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+            <version>5.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.0.5</version>
+        </dependency>
+    </dependencies>
+    <!--repositories>
+        <repository>
+            <id>java.net2</id>
+            <name>Java.Net Maven2 Repository, hosts the javaee-api dependency</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public</url>
+        </repository>
+        <repository>
+            <url>http://download.java.net/maven/2/</url>
+            <id>hibernate-persistence</id>
+            <layout>default</layout>
+            <name>Repository for library Library[hibernate-persistence]</name>
+        </repository>
+    </repositories-->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>    
+    </build>
+    <profiles>
+        <profile>
+            <id>Development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sharedConnection>true</sharedConnection>
+            </properties>
+        </profile>
+        <profile>
+            <id>Production</id>
+            <properties>
+                <sharedConnection>false</sharedConnection>
+            </properties>
+        </profile>
+
+    </profiles>
+</project>
