@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -38,7 +38,9 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.sola.common.RolesConstants;
+import org.sola.common.SOLAAccessException;
 import org.sola.services.common.ejbs.AbstractEJB;
+import org.sola.services.common.faults.SOLAAccessFault;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.address.businesslogic.AddressEJBLocal;
 import org.sola.services.ejb.address.repository.entities.Address;
@@ -61,68 +63,64 @@ public class PartyEJB extends AbstractEJB implements PartyEJBLocal {
     protected void postConstruct() {
         setEntityPackage(Party.class.getPackage().getName());
     }
-    
     @EJB
-    private AddressEJBLocal addressEJB; 
-    
+    private AddressEJBLocal addressEJB;
+
     @Override
     public Party getParty(String id) {
         return getRepository().getEntity(Party.class, id);
     }
-    
+
     @Override
     public List<Party> getParties(List<String> partyIds) {
         return getRepository().getEntityListByIds(Party.class, partyIds);
     }
-    
+
     @Override
-    @RolesAllowed(RolesConstants.PARTY_SAVE)
+    @RolesAllowed({RolesConstants.PARTY_SAVE, RolesConstants.PARTY_RIGHTHOLDERS_SAVE})
     public Party saveParty(Party party) {
+        if (party.isRightHolder() && !isInRole(RolesConstants.PARTY_RIGHTHOLDERS_SAVE)) {
+            throw new SOLAAccessException();
+        }
         return getRepository().saveEntity(party);
     }
-    
-    @Override
-    public Party createParty(Party party) {
-        return saveParty(party);
-    }
-    
+
     @Override
     public List<CommunicationType> getCommunicationTypes(String languageCode) {
         return getRepository().getCodeList(CommunicationType.class, languageCode);
     }
-    
+
     @Override
     public List<PartyType> getPartyTypes(String languageCode) {
         return getRepository().getCodeList(PartyType.class, languageCode);
     }
-    
+
     @Override
     public List<IdType> getIdTypes(String languageCode) {
         return getRepository().getCodeList(IdType.class, languageCode);
     }
-    
+
     @Override
     public List<GenderType> getGenderTypes(String languageCode) {
         return getRepository().getCodeList(GenderType.class, languageCode);
-    } 
-    
+    }
+
     @Override
     public List<Party> getAgents() {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, Party.QUERY_WHERE_BYTYPECODE);
         params.put("partyTypeCode", Party.TYPE_CODE_NON_NATURAL_PERSON);
-        
+
         // Don't load Address or PartyRole as these are not required for the agents list. 
         getRepository().setLoadInhibitors(new Class<?>[]{PartyRole.class, Address.class});
         List<Party> agents = getRepository().getEntityList(Party.class, params);
         getRepository().clearLoadInhibitors();
-        
-        return agents; 
+
+        return agents;
     }
-    
+
     @Override
     public List<PartyRoleType> getPartyRoles(String languageCode) {
         return getRepository().getCodeList(PartyRoleType.class, languageCode);
     }
 }
-    

@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -36,10 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
-import org.apache.ibatis.mapping.StatementType;
 import org.sola.services.common.repository.entities.AbstractEntity;
 
 /**
@@ -75,5 +73,5 @@ public interface CommonMapper {
     ArrayList<Object> getScalarList(Map params);
 
     @SelectProvider(type = CommonSqlProvider.class, method = "buildSql")
-    ArrayList<HashMap> executeFunction(Map params);
+    ArrayList<HashMap> executeSql(Map params);
 }

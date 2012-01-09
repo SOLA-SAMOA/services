@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,69 +25,24 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-package org.sola.services.ejb.search.repository;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import java.util.Date;
-import org.sola.services.common.entities.AbstractEntity;
+package org.sola.services.common.faults;
 
-public class ApplicationSearchParams extends AbstractEntity {
-    private String locale;
-    private String nr;
-    private String agent;
-    private Date fromDate;
-    private Date toDate;
-    private String contactPerson;
-    
-    public ApplicationSearchParams(){
-    }
-    
-    
-    public String getContactPerson() {
-        return contactPerson;
-    }
+import javax.xml.ws.WebFault;
 
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
-    }
-    
-    public String getAgent() {
-        return agent;
-    }
+/**
+ * Not in use.
+ * @author Elton Manoku
+ */
 
-    public void setAgent(String agent) {
-        this.agent = agent;
-    }
+@WebFault(name = "ConstraintViolationFault")
+public class ConstraintViolationFault extends AbstractFault {
 
-    public Date getFromDate() {
-        return fromDate;
+    public ConstraintViolationFault(String message, FaultInfoBean faultInfo) {
+        super(message, faultInfo);
     }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getNr() {
-        return nr;
-    }
-
-    public void setNr(String nr) {
-        this.nr = nr;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-    
 }

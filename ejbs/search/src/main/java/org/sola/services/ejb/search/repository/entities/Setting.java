@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,28 +25,43 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-package org.sola.services.ejb.search.repository;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.sola.services.ejb.search.repository.entities;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
-import org.sola.services.common.entities.AbstractResultEntity;
+import javax.persistence.Id;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
 /**
  *
- * @author Manoku
+ * @author soladev
  */
-@Entity
-@NamedNativeQueries({
-    @NamedNativeQuery(name = "Setting.getForMap", 
-        query = "SELECT name as id, vl from system.setting where active and name like 'map%'",
-    readOnly = true,
-    resultClass = Setting.class)
-        })
-public class Setting extends AbstractResultEntity {
+public class Setting extends AbstractReadOnlyEntity {
+
+    public static final String QUERY_SQL_FOR_MAP_SETTINGS =
+            "SELECT name as id, vl from system.setting where active and name like 'map%'"
+            + " union select 'wkt-of-crs' as id, srtext as vl from public.spatial_ref_sys  "
+            + " where cast(srid as varchar) in (select vl from system.setting where name = 'map-srid')";
+    @Id
+    @Column(name = "id")
+    private String id;
     @Column(name = "vl")
     private String vl;
+
+    public Setting() {
+        super();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getVl() {
         return vl;

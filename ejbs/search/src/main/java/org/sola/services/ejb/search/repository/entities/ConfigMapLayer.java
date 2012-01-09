@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,30 +29,29 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.sola.services.ejb.search.repository;
+package org.sola.services.ejb.search.repository.entities;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
-import org.sola.services.common.entities.AbstractResultEntity;
+import javax.persistence.Id;
+import org.sola.services.common.repository.CommonSqlProvider;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
 /**
  *
- * @author Manoku
+ * @author soladev
  */
-@Entity
-@NamedNativeQueries({
-    @NamedNativeQuery(name = "ConfigMapLayer.get", 
-        query = "SELECT name as id, type_code, wms_url, wms_layers, "
-        + " pojo_query_name, pojo_query_name_for_select, pojo_structure, shape_location, style, used_for "
-        + " FROM system.config_map_layer where active ORDER BY item_order ",
-    readOnly = true,
-    resultClass = ConfigMapLayer.class)
-        })
-public class ConfigMapLayer extends AbstractResultEntity {
+public class ConfigMapLayer extends AbstractReadOnlyEntity {
 
+    public static final String QUERY_SQL =
+            "SELECT name as id, "
+            + " get_translation(title, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) as title, "
+            + " type_code, wms_url, wms_layers, pojo_query_name, pojo_query_name_for_select, "
+            + " pojo_structure, shape_location, style "
+            + " FROM system.config_map_layer where active ORDER BY item_order";
+    
+    @Id
+    @Column(name = "id")
+    private String id;
     @Column(name = "type_code")
     private String typeCode;
     @Column(name = "wms_url")
@@ -69,31 +68,19 @@ public class ConfigMapLayer extends AbstractResultEntity {
     private String shapeLocation;
     @Column(name = "style")
     private String style;
-    @Column(name = "used_for")
-    private String usedFor;
+    @Column(name = "title")
+    private String title;
 
-    public String getShapeLocation() {
-        return shapeLocation;
+    public ConfigMapLayer() {
+        super();
     }
 
-    public void setShapeLocation(String shapeLocation) {
-        this.shapeLocation = shapeLocation;
+    public String getId() {
+        return id;
     }
 
-    public String getWmsUrl() {
-        return wmsUrl;
-    }
-
-    public void setWmsUrl(String wmsUrl) {
-        this.wmsUrl = wmsUrl;
-    }
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPojoQueryName() {
@@ -112,20 +99,20 @@ public class ConfigMapLayer extends AbstractResultEntity {
         this.pojoQueryNameForSelect = pojoQueryNameForSelect;
     }
 
-    public String getWmsLayers() {
-        return wmsLayers;
-    }
-
-    public void setWmsLayers(String wmsLayers) {
-        this.wmsLayers = wmsLayers;
-    }
-
     public String getPojoStructure() {
         return pojoStructure;
     }
 
     public void setPojoStructure(String pojoStructure) {
         this.pojoStructure = pojoStructure;
+    }
+
+    public String getShapeLocation() {
+        return shapeLocation;
+    }
+
+    public void setShapeLocation(String shapeLocation) {
+        this.shapeLocation = shapeLocation;
     }
 
     public String getStyle() {
@@ -135,12 +122,36 @@ public class ConfigMapLayer extends AbstractResultEntity {
     public void setStyle(String style) {
         this.style = style;
     }
-    
-    public String getUsedFor() {
-        return usedFor;
+
+    public String getTitle() {
+        return title;
     }
 
-    public void setUsedFor(String usedFor) {
-        this.usedFor = usedFor;
+    public void setTitle(String title) {
+        this.title = title;
     }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public String getWmsLayers() {
+        return wmsLayers;
+    }
+
+    public void setWmsLayers(String wmsLayers) {
+        this.wmsLayers = wmsLayers;
+    }
+
+    public String getWmsUrl() {
+        return wmsUrl;
+    }
+
+    public void setWmsUrl(String wmsUrl) {
+        this.wmsUrl = wmsUrl;
+    }  
 }

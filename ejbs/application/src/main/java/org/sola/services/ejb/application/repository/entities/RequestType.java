@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -46,9 +46,9 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  */
 @Table(name = "request_type", schema = "application")
 public class RequestType extends AbstractCodeEntity {
-
-    public static String CADASTRE_CHANGE = "cadastreChange";
     
+    public static String CADASTRE_CHANGE = "cadastreChange";
+
     @Column(name = "nr_days_to_complete")
     private int nrDaysToComplete;
     @Column(name = "request_category_code")

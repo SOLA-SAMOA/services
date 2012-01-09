@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,56 +25,69 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.sola.services.ejb.search.repository;
+package org.sola.services.ejb.search.repository.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+import org.sola.services.common.entities.AbstractEntity;
 
-/**
- *
- * @author Manoku
- */
-public class GenericResult {
-
-    private String[] fieldNames = new String[0];
-    private List<String[]> values = new ArrayList<String[]>();
-
-    public GenericResult() {
+public class ApplicationSearchParams extends AbstractEntity {
+    private String locale;
+    private String nr;
+    private String agent;
+    private Date fromDate;
+    private Date toDate;
+    private String contactPerson;
+    
+    public ApplicationSearchParams(){
+    }
+    
+    
+    public String getContactPerson() {
+        return contactPerson;
     }
 
-    public String[] getFieldNames() {
-        return fieldNames;
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+    
+    public String getAgent() {
+        return agent;
     }
 
-    public void setFieldNames(String[] fieldNames) {
-        this.fieldNames = fieldNames;
+    public void setAgent(String agent) {
+        this.agent = agent;
     }
 
-    public List<String[]> getValues() {
-        return values;
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setValues(List<String[]> values) {
-        this.values = values;
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public void addRow(Object[] values){    
-        String[] row = new String[fieldNames.length];
-        for (int fieldIndex = 0; fieldIndex < this.fieldNames.length; fieldIndex++) {
-            if (values[fieldIndex] == null){
-                row[fieldIndex] = "";
-            }else{
-                row[fieldIndex] = values[fieldIndex].toString();
-            }
-        }
-        if (this.values == null){
-            this.values = new ArrayList<String[]>();
-        }
-            
-        this.values.add(row);
+    public String getNr() {
+        return nr;
     }
+
+    public void setNr(String nr) {
+        this.nr = nr;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+    
 }

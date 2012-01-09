@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -54,8 +54,6 @@ public interface PartyEJBLocal extends AbstractEJBLocal{
 
     Party saveParty(Party party);
     
-    Party createParty(Party party);
-
     List<CommunicationType> getCommunicationTypes(String languageCode);
 
     List<PartyType> getPartyTypes(String languageCode);

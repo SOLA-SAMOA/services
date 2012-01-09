@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -134,9 +134,9 @@ public class RrrShare extends AbstractVersionedEntity {
 
     /**
      * Overrides the default {@linkplain AbstractVersionedEntity#equals} method to perform equals
-     * with the RowId rather than the id columns. This is because Dozer uses the equals method
-     * to match transfer objects (TO's) to entity objects during translation of collections and 
-     * lists and the Id for RrrShare is not exposed through the RrrShareTO object. 
+     * with the RowId rather than the id column. This is because the RrrShareTO class exposes the
+     * rowId field but not the id field. Dozer uses the equals method to match entities retrieved
+     * from the database with their TO equivalents.  
      * @param object The object to compare with this one
      * @return true if the RowIds match
      */

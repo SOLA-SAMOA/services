@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -62,6 +62,8 @@ public interface CommonRepository {
 
      <T extends AbstractReadOnlyEntity> T getEntity(Class<T> entityClass, String id);
 
+     <T extends AbstractReadOnlyEntity> T getEntity(Class<T> entityClass, String id, String lang);
+
      <T extends AbstractReadOnlyEntity> T getEntity(Class<T> entityClass,
             String whereClause, Map params);
 
@@ -91,6 +93,8 @@ public interface CommonRepository {
     void clearLoadInhibitors();
 
     void setLoadInhibitors(Class<?>[] entityClasses);
-    
-    public ArrayList<HashMap> executeFunction(Map params);
+
+    ArrayList<HashMap> executeFunction(Map params);
+
+    ArrayList<HashMap> executeSql(Map params);
 }

@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -106,18 +106,18 @@ public class Development extends AbstractEJBTest {
         resultList = instance.getCadastreObjects(listIds);
         System.out.println("Result :" + resultList);
         
-        System.out.println("getCadastreChange");
-        CadastreChange cadastreChange = instance.getCadastreChange("f4d15b7d-8fa7-492a-a532-9a4d1c7d0aa2");
-        System.out.println("Result :" + cadastreChange.getFromServiceId());
+//        System.out.println("getCadastreChange");
+//        CadastreChange cadastreChange = instance.getCadastreChange("f4d15b7d-8fa7-492a-a532-9a4d1c7d0aa2");
+//        System.out.println("Result :" + cadastreChange.getFromServiceId());
         
-        CadastreObject co = new CadastreObject();
-        co.setTransactionId("ok");
-        cadastreChange = new CadastreChange();
-        cadastreChange.setFromServiceId("4000");
-        cadastreChange.setNewCadastreObjectList(new ArrayList<CadastreObject>());
-        cadastreChange.getNewCadastreObjectList().add(co);
-        System.out.println("savetCadastreChange");
-        instance.saveCadastreChange(cadastreChange, "en");
+//        CadastreObject co = new CadastreObject();
+//        co.setTransactionId("ok");
+//        cadastreChange = new CadastreChange();
+//        cadastreChange.setFromServiceId("4000");
+//        cadastreChange.setNewCadastreObjectList(new ArrayList<CadastreObject>());
+//        cadastreChange.getNewCadastreObjectList().add(co);
+//        System.out.println("savetCadastreChange");
+//        instance.saveCadastreChange(cadastreChange, "en");
         
         
         

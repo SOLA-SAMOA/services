@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -58,19 +58,6 @@ public class CommonSqlProvider {
     public static final String PARAM_FROM_PART = "sql_param_from";
     public static final String PARAM_QUERY = "sql_param_query";
 
-    //    private static void checkForSqlInjection(Map params) {
-//        for (Object param : params.values()) {
-//            if (param != null) {
-//                String s = param.toString(); 
-//                if (s.matches(";|--|/\*")) {
-//                    throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED,
-//                            // Capture the specific details so they are added to the log
-//                            new Object[]{"Attempted SQL Injection detected. Parameter=" + s});
-//
-//                }
-//            }
-//        }
-//    }
     /**
      * Uses the column information from the entityClass to generate the appropriate SELECT clause
      * for the entity. This includes aliasing columns that do not match the entity field name with 
@@ -205,8 +192,6 @@ public class CommonSqlProvider {
      */
     public static <T extends AbstractEntity> String buildGetEntitySql(Map params) {
 
-//        checkForSqlInjection(params);
-
         String sql = (String) params.get(PARAM_QUERY);
         if (sql == null || sql.isEmpty()) {
             Class<T> entityClass = (Class<T>) params.get(PARAM_ENTITY_CLASS);
@@ -215,6 +200,7 @@ public class CommonSqlProvider {
                 throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED,
                         new Object[]{"Entity class has not been provided for SQL SELECT generation."});
             }
+            String fromClause = (String) params.get(PARAM_FROM_PART);
             String whereClause = (String) params.get(PARAM_WHERE_PART);
             String orderByClause = (String) params.get(PARAM_ORDER_BY_PART);
             Boolean localized = false;
@@ -230,7 +216,11 @@ public class CommonSqlProvider {
 
             BEGIN();
             buildSelectClauseSql(entityClass, localized, excludeList);
-            FROM(RepositoryUtility.getTableName(entityClass));
+            if (fromClause != null && !fromClause.isEmpty()) {
+                FROM(fromClause);
+            } else {
+                FROM(RepositoryUtility.getTableName(entityClass));
+            }
             if (whereClause != null && !whereClause.isEmpty()) {
                 WHERE(whereClause);
             }
@@ -284,7 +274,7 @@ public class CommonSqlProvider {
 
         return sql;
     }
-    
+
     public static String buildSql(Map params) {
         String sql = (String) params.get(PARAM_QUERY);
         return sql;

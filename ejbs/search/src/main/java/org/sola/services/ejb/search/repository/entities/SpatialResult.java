@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,42 +25,56 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-package org.sola.services.ejb.search.repository;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.sola.services.ejb.search.repository.entities;
 
-import org.sola.services.common.entities.AbstractEntity;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
-public class PartySearchParams  extends AbstractEntity {
+/**
+ *
+ * @author soladev
+ */
+public class SpatialResult extends AbstractReadOnlyEntity {
 
-    private String name;
-    private String typeCode;
-    private String roleTypeCode;
-    
-    public PartySearchParams(){
-    
+    @Id
+    @Column(name = "id")
+    private String id; 
+    @Column(name = "label")
+    private String label;
+    @Column(name = "the_geom")
+    private byte[] theGeom;
+
+    public SpatialResult() {
+        super();
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRoleTypeCode() {
-        return roleTypeCode;
-    }
-
-    public void setRoleTypeCode(String roleTypeCode) {
-        this.roleTypeCode = roleTypeCode;
-    }
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
+    public void setId(String id) {
+        this.id = id;
     }
     
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public byte[] getTheGeom() {
+        return theGeom;
+    }
+
+    public void setTheGeom(byte[] theGeom) {
+        this.theGeom = theGeom;
+    }
+       
 }

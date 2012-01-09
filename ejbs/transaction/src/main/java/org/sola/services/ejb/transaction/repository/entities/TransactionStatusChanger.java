@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,51 +25,42 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-package org.sola.services.ejb.search.repository;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.sola.services.ejb.transaction.repository.entities;
 
-import org.sola.services.common.entities.AbstractResultEntity;
+import java.util.Date;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
+import javax.persistence.Table;
 
 /**
  *
- * It checks different parameters for property object.
- * 
+ * @author manoku
  */
-@Entity
-@NamedNativeQueries({
-    @NamedNativeQuery(name = "PropertyVerifier.verify",
-    query = "select id,  " +
-    "(select count(*)>0 from administrative.ba_unit_contains_spatial_unit bcs " +
-    " where ba.id = bcs.ba_unit_id ) as has_location," +
-    "(select coalesce(string_agg(nr, ','), '') from application.application a " +
-    " inner join application.application_property ap on a.id = ap.application_id " +
-    " where  ap.name_firstpart= ba.name_firstpart and ap.name_lastpart= ba.name_lastpart) " +
-    " as applications_where_found from administrative.ba_unit ba where type_code = 'basicPropertyUnit' " +
-    " and ba.name_firstpart = ?1 and ba.name_lastpart = ?2", 
-    readOnly= true,
-    resultClass = PropertyVerifier.class)})
-public class PropertyVerifier extends AbstractResultEntity {
+@Table(name = "transaction", schema = "transaction")
+public class TransactionStatusChanger extends TransactionBasic {
     
-    @Column(name="has_location")
-    private boolean hasLocation;
+    @Column(name = "approval_datetime")
+    private Date approvalDatetime;
+    @Column(name = "status_code")
+    private String statusCode;
     
-    @Column(name="applications_where_found")
-    private String applicationsWhereFound;
 
-    /**
-     * @return Returns true if property object has location on the map and false if not.
-     */
-    public boolean isHasLocation() {
-        return hasLocation;
+    public Date getApprovalDatetime() {
+        return approvalDatetime;
     }
 
-    /**
-     * @return Returns comma separated list of applications, which are currently in progress for a given property
-     */
-    public String getApplicationsWhereFound() {
-        return applicationsWhereFound;
+    public void setApprovalDatetime(Date approvalDatetime) {
+        this.approvalDatetime = approvalDatetime;
+    }
+    
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 }

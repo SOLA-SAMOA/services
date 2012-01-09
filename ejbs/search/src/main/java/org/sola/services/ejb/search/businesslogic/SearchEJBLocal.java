@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,21 +29,27 @@ package org.sola.services.ejb.search.businesslogic;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Local;
 import org.sola.services.common.ejbs.AbstractEJBLocal;
-import org.sola.services.common.entities.AbstractResultEntity;
-import org.sola.services.ejb.search.repository.ApplicationLogResult;
-import org.sola.services.ejb.search.repository.ApplicationSearchParams;
-import org.sola.services.ejb.search.repository.ApplicationSearchResult;
-import org.sola.services.ejb.search.repository.ConfigMapLayer;
-import org.sola.services.ejb.search.repository.GenericResult;
-import org.sola.services.ejb.search.repository.PartySearchParams;
-import org.sola.services.ejb.search.repository.PartySearchResult;
-import org.sola.services.ejb.search.repository.PropertyVerifier;
-import org.sola.services.ejb.search.repository.SourceSearchParams;
-import org.sola.services.ejb.search.repository.SourceSearchResult;
-import org.sola.services.ejb.search.repository.UserSearchParams;
-import org.sola.services.ejb.search.repository.UserSearchResult;
+import org.sola.services.ejb.search.repository.entities.ApplicationLogResult;
+import org.sola.services.ejb.search.repository.entities.ApplicationSearchParams;
+import org.sola.services.ejb.search.repository.entities.ApplicationSearchResult;
+import org.sola.services.ejb.search.repository.entities.BaUnitSearchParams;
+import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
+import org.sola.services.ejb.search.repository.entities.BrSearchParams;
+import org.sola.services.ejb.search.repository.entities.BrSearchResult;
+import org.sola.services.ejb.search.repository.entities.CadastreObjectSearchResult;
+import org.sola.services.ejb.search.repository.entities.ConfigMapLayer;
+import org.sola.services.ejb.search.repository.entities.DynamicQuery;
+import org.sola.services.ejb.search.repository.entities.GenericResult;
+import org.sola.services.ejb.search.repository.entities.PartySearchParams;
+import org.sola.services.ejb.search.repository.entities.PartySearchResult;
+import org.sola.services.ejb.search.repository.entities.PropertyVerifier;
+import org.sola.services.ejb.search.repository.entities.SourceSearchParams;
+import org.sola.services.ejb.search.repository.entities.SourceSearchResult;
+import org.sola.services.ejb.search.repository.entities.UserSearchParams;
+import org.sola.services.ejb.search.repository.entities.UserSearchResult;
 import org.sola.services.ejb.search.spatial.QueryForNavigation;
 import org.sola.services.ejb.search.spatial.QueryForSelect;
 import org.sola.services.ejb.search.spatial.ResultForNavigationInfo;
@@ -58,13 +64,7 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
 
     PropertyVerifier getPropertyVerifier(String firstPart, String lastPart) throws Exception;
 
-    Object getResultObject(String queryName, Object[] params) throws Exception;
-
-    GenericResult getGenericResultList(String queryName, Object[] params) throws Exception;
-
-     <T extends AbstractResultEntity> List<T> getResultList(String queryName, Object[] params) throws Exception;
-
-     <T extends AbstractResultEntity> T getResultEntity(String queryName, Object[] params) throws Exception;
+    GenericResult getGenericResultList(String queryName, Map params);
 
     List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params) throws Exception;
 
@@ -74,22 +74,30 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
 
     ResultForNavigationInfo getSpatialResult(QueryForNavigation spatialQuery) throws Exception;
 
-    List<ConfigMapLayer> getConfigMapLayerList() throws Exception;
-    
+    List<ConfigMapLayer> getConfigMapLayerList(String languageCode) throws Exception;
+
     List<ResultForSelectionInfo> getSpatialResultFromSelection(
             List<QueryForSelect> queriesForSelection) throws Exception;
 
-    HashMap<String, String> getSettingList(String queryName) throws Exception;
+    HashMap<String, String> getMapSettingList() throws Exception;
     
-    Object getResultObjectFromStatement(String sqlStatement, Object[] params) throws Exception;
+    HashMap getResultObjectFromStatement(String sqlStatement, Map params);
 
     List<PartySearchResult> searchParties(PartySearchParams searchParams) throws Exception;
-    
+
     List<SourceSearchResult> searchSources(SourceSearchParams searchParams) throws Exception;
-    
+
     List<UserSearchResult> getActiveUsers() throws Exception;
-    
+
     List<UserSearchResult> searchUsers(UserSearchParams searchParams) throws Exception;
+
+    List<ApplicationLogResult> getApplicationLog(String applicationId);    
     
-    List<ApplicationLogResult> getApplicationLog(String applicationId);
+    List<BrSearchResult> searchBr(BrSearchParams searchParams, String lang);
+    
+    List<BaUnitSearchResult> searchBaUnits(BaUnitSearchParams searchParams);
+    
+    List<DynamicQuery> getQueryListAll();
+    
+    List<CadastreObjectSearchResult> searchCadastreObjects(String searchBy, String searchString);
 }

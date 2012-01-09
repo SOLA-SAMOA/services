@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +44,7 @@ public class ApplicationStatusType extends AbstractCodeEntity {
     public static final String LODGED = "lodged";
     public static final String APPROVED = "approved";
     public static final String REJECTED = "rejected";
-    public static final String DEAD = "dead";
+    public static final String ANULLED = "anulled";
     
 
     public ApplicationStatusType() {

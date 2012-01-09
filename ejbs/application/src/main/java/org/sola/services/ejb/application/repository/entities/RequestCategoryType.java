@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -41,6 +41,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
 @Table(name = "request_category_type",  schema = "application")
 public class RequestCategoryType extends AbstractCodeEntity {
 
+    public static String INFORMATION_SERVICES = "informationServices";
     public RequestCategoryType() {
         super();
     }

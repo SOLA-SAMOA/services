@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -87,17 +87,19 @@ public class Development extends AbstractEJBTest{
      * Test of createApplication method, of class ApplicationEJB.
      */
     @Test
-    @Ignore
+    //@Ignore
     public void testDev() throws Exception {
         if (skipIntegrationTest()) {
             return;
         }
         System.out.println("testDev");
         ApplicationEJBLocal instance = (ApplicationEJBLocal) 
-                getEJBInstance(ApplicationEJB.class.getSimpleName());
-        Application app = instance.getApplication("3009");
-        List<ValidationResult> result = instance.applicationActionValidate(
-                app.getId(),"en", app.getRowVersion());
+                getEJBInstance(ApplicationEJB.class.getSimpleName());        
+        //Application app = instance.getApplication("3009");
+        //List<ValidationResult> result = instance.applicationActionValidate(
+        //        app.getId(),"en", app.getRowVersion());
+        List<ValidationResult> result = instance.serviceActionComplete(
+                "22895e4d-6bdc-403d-9282-34a661b2a986", "en", 1);
         System.out.println("Number of validation rules is:" + result.size());
         for(ValidationResult validationResult: result){
             System.out.println(String.format("Result \nname:%s \nfeedback:%s \nvalue:%s", 
@@ -112,7 +114,7 @@ public class Development extends AbstractEJBTest{
      * Test of createApplication method, of class ApplicationEJB.
      */
     @Test
-    //@Ignore
+    @Ignore
     public void testCreateApplication() throws Exception {
         
         System.out.println("createApplication");

@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -34,11 +34,16 @@ package org.sola.services.ejb.search.businesslogic;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
+import java.util.HashMap;
 import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.search.repository.SearchSqlProvider;
+import org.sola.services.ejb.search.repository.entities.DynamicQuery;
+import org.sola.services.ejb.search.repository.entities.GenericResult;
+import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 
 /**
  *
@@ -69,19 +74,61 @@ public class Development extends AbstractEJBTest {
                 new Object[]{"3068323"});
     }
 
-    private void testQueriesForResultList(
-            SearchEJBLocal instance, String queryName, Object[] params) throws Exception {
-        System.out.println("Testing query: " + queryName);
-        List result =
-                instance.getResultList(queryName, params);
-        if (result != null && result.size() > 0) {
-            System.out.println("Found " + result.size() + " elements.");
-        } else {
-            System.out.println("Can't find any element.");
+    @Test
+    public void test() throws Exception {
+        if (skipIntegrationTest()) {
+            return;
+        }
+        System.out.println("Test information tool queries");
+        SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
+        String[] queriesForGenericResult = {
+            "dynamic.informationtool.get_parcel",
+            "dynamic.informationtool.get_parcel_pending",
+            "dynamic.informationtool.get_place_name",
+            "dynamic.informationtool.get_road",
+            "dynamic.informationtool.get_application",
+            "dynamic.informationtool.get_survey_control"};
+        HashMap<String, String> mapSettings = instance.getMapSettingList();
+        int srid = Integer.parseInt(mapSettings.get("map-srid"));
+        double west = Double.parseDouble(mapSettings.get("map-west"));
+        double south = Double.parseDouble(mapSettings.get("map-south"));
+        double east = Double.parseDouble(mapSettings.get("map-east"));
+        double north = Double.parseDouble(mapSettings.get("map-north"));
+        double centerX = west + (east - west) / 2;
+        double centerY = south + (north - south) / 2;
+
+        byte[] filteringGeometry = this.getGeometry(String.format("POINT(%s %s)", centerX, centerY));
+        HashMap params = new HashMap();
+        params.put(ResultForSelectionInfo.PARAM_GEOMETRY, filteringGeometry);
+        params.put(ResultForSelectionInfo.PARAM_SRID, srid);
+        params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, "en");
+        for (String queryName : queriesForGenericResult) {
+            System.out.print("Testing query:" + queryName);
+            try {
+                GenericResult result = instance.getGenericResultList(queryName, params);
+                System.out.println("Success.");
+            } catch (Exception ex) {
+                System.out.println("Failed. Reason:");
+                ex.printStackTrace();
+            }
+
         }
     }
 
+    private void testQueriesForResultList(
+            SearchEJBLocal instance, String queryName, Object[] params) throws Exception {
+        System.out.println("Testing query: " + queryName);
+//        List result =
+//                instance.getResultList(queryName, params);
+//        if (result != null && result.size() > 0) {
+//            System.out.println("Found " + result.size() + " elements.");
+//        } else {
+//            System.out.println("Can't find any element.");
+//        }
+    }
+
     @Test
+    @Ignore
     public void testApplicationLogSql() throws Exception {
         System.out.println(SearchSqlProvider.buildApplicationLogSql());
     }

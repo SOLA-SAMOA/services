@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,7 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-
 package org.sola.services.common;
 
 /**
@@ -58,4 +57,5 @@ public class ServiceConstants {
     public final static String ADMINISTRATIVE_TO_NAMESPACE = "http://webservices.sola.org/transferobjects/administrative/";
     public final static String ADMINISTRATIVE_WS_NAMESPACE = "http://webservices.sola.org/administrative";
     public final static String ADMIN_WS_NAMESPACE = "http://webservices.sola.org/admin";
+    public final static String TRANSACTION_TO_NAMESPACE = "http://webservices.sola.org/transferobjects/transaction/";
 }

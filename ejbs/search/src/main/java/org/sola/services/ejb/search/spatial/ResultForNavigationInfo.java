@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -33,7 +33,7 @@ package org.sola.services.ejb.search.spatial;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.sola.services.ejb.search.repository.SpatialResult;
+import org.sola.services.ejb.search.repository.entities.SpatialResult;
 
 /**
  *

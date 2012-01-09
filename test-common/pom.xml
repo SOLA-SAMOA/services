@@ -5,27 +5,27 @@
     <parent>
         <artifactId>sola-services</artifactId>
         <groupId>org.sola</groupId>
-        <version>alpha</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.sola.services</groupId>
     <artifactId>sola-test-common</artifactId>
-    <version>alpha</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Services Test Common</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <glassfish.jdbc-connection-pool.server>solaserver</glassfish.jdbc-connection-pool.server>
+        <glassfish.jdbc-connection-pool.server>localhost</glassfish.jdbc-connection-pool.server>
         <glassfish.jdbc-connection-pool.database>sola</glassfish.jdbc-connection-pool.database>
         <glassfish.jdbc-connection-pool.port>5432</glassfish.jdbc-connection-pool.port>
         <glassfish.jdbc-connection-pool.username>postgres</glassfish.jdbc-connection-pool.username>
-        <glassfish.jdbc-connection-pool.password>sola2011</glassfish.jdbc-connection-pool.password>
+        <glassfish.jdbc-connection-pool.password>FLOSS2011</glassfish.jdbc-connection-pool.password>
         <!-- If any of the data values above are changed, or any of the configuration files are
         updated, this value must be incremented to ensure the new values and configuration are
         used when executing tests -->
-        <sola-test-common.configuration.version>v023</sola-test-common.configuration.version>
+        <sola-test-common.configuration.version>v022</sola-test-common.configuration.version>
     </properties>
 
     <dependencies>
@@ -43,6 +43,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.5.0-Final</version>
+        </dependency>
+                <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.0.6</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

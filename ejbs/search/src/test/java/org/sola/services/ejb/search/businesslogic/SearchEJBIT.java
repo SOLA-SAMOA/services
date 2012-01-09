@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,31 +27,38 @@
  */
 package org.sola.services.ejb.search.businesslogic;
 
+import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
+import org.sola.services.ejb.search.repository.entities.BrSearchResult;
 import org.junit.Ignore;
 import java.util.GregorianCalendar;
 import java.util.Date;
-import org.sola.services.ejb.search.repository.SourceSearchResult;
-import org.sola.services.ejb.search.repository.SourceSearchParams;
+import org.sola.services.ejb.search.repository.entities.SourceSearchResult;
+import org.sola.services.ejb.search.repository.entities.SourceSearchParams;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.bind.DatatypeConverter;
 import java.util.List;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
-import org.sola.services.ejb.search.repository.ConfigMapLayer;
-import org.sola.services.ejb.search.repository.GenericResult;
-import org.sola.services.ejb.search.repository.PartySearchParams;
-import org.sola.services.ejb.search.repository.PartySearchResult;
+import org.sola.services.ejb.search.repository.entities.BrSearchParams;
+import org.sola.services.ejb.search.repository.entities.ConfigMapLayer;
+import org.sola.services.ejb.search.repository.entities.GenericResult;
+import org.sola.services.ejb.search.repository.entities.PartySearchParams;
+import org.sola.services.ejb.search.repository.entities.PartySearchResult;
 import org.sola.services.ejb.search.repository.TestSpatial;
-import org.sola.services.ejb.search.repository.PropertyVerifier;
-import org.sola.services.ejb.search.repository.UserSearchParams;
-import org.sola.services.ejb.search.repository.UserSearchResult;
+import org.sola.services.ejb.search.repository.entities.BaUnitSearchParams;
+import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
+import org.sola.services.ejb.search.repository.entities.PropertyVerifier;
+import org.sola.services.ejb.search.repository.entities.UserSearchParams;
+import org.sola.services.ejb.search.repository.entities.UserSearchResult;
 import org.sola.services.ejb.search.spatial.QueryForNavigation;
 import org.sola.services.ejb.search.spatial.ResultForNavigationInfo;
+import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 import static org.junit.Assert.*;
 
 /**
@@ -59,11 +66,71 @@ import static org.junit.Assert.*;
  * @author manoku
  */
 public class SearchEJBIT extends AbstractEJBTest {
+    
+    private static final String LANG = "en";
+    private static final String LOGIN_USER = "test";
+    private static final String LOGIN_PASS = "test";
+    
+    @Before
+    public void setUp() throws Exception {
+        login(LOGIN_USER, LOGIN_PASS);
+    }
 
+    @After
+    public void tearDown() throws Exception {
+        logout();
+    }
+    
     public SearchEJBIT() {
         super();
     }
 
+    /** Test searching active users */
+    @Test
+    public void testBaUnitSearch() throws Exception {
+        if (skipIntegrationTest()) {
+            return;
+        }
+        try {
+            BaUnitSearchParams params = new BaUnitSearchParams();
+            SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
+            List<BaUnitSearchResult> result = instance.searchBaUnits(params);
+
+            assertNotNull(result);
+
+            if (result != null && result.size() > 0) {
+                System.out.println("Found " + result.size() + " BA units");
+            } else {
+                System.out.println("Can't find any BA unit.");
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+    
+    /** Test searching active users */
+    @Test
+    public void testBrSearch() throws Exception {
+        if (skipIntegrationTest()) {
+            return;
+        }
+        try {
+            BrSearchParams params = new BrSearchParams();
+            SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
+            List<BrSearchResult> result = instance.searchBr(params, LANG);
+
+            assertNotNull(result);
+
+            if (result != null && result.size() > 0) {
+                System.out.println("Found " + result.size() + " business rules");
+            } else {
+                System.out.println("Can't find any business rules.");
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+    
     /** Test searching active users */
     @Test
     public void testActiveUserSearch() throws Exception {
@@ -216,21 +283,21 @@ public class SearchEJBIT extends AbstractEJBTest {
         }
         System.out.println("getSpatialTest");
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
-        TestSpatial result = instance.getResultEntity("TestSpatial.get2", null);
-        if (result != null) {
-            System.out.println("spatial test found: " + result.toString());
-            System.out.println("geometry: " + DatatypeConverter.printHexBinary(result.getTheGeom()));
-            try {
-                WKBReader wkbReader = new WKBReader();
-                Geometry geom = wkbReader.read(result.getTheGeom());
-                System.out.println("geometry found:" + geom.toString());
-            } catch (Exception ex) {
-                System.out.println("Failed to transform geometry");
-                System.out.println("Error:" + ex.getMessage());
-            }
-        } else {
-            System.out.println("Result: nothing returned");
-        }
+//        TestSpatial result = instance.getResultEntity("TestSpatial.get2", null);
+//        if (result != null) {
+//            System.out.println("spatial test found: " + result.toString());
+//            System.out.println("geometry: " + DatatypeConverter.printHexBinary(result.getTheGeom()));
+//            try {
+//                WKBReader wkbReader = new WKBReader();
+//                Geometry geom = wkbReader.read(result.getTheGeom());
+//                System.out.println("geometry found:" + geom.toString());
+//            } catch (Exception ex) {
+//                System.out.println("Failed to transform geometry");
+//                System.out.println("Error:" + ex.getMessage());
+//            }
+//        } else {
+//            System.out.println("Result: nothing returned");
+//        }
     }
 
     /**
@@ -283,7 +350,7 @@ public class SearchEJBIT extends AbstractEJBTest {
         }
         System.out.println("getConfigMapLayer - getting configuration information");
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
-        List<ConfigMapLayer> result = instance.getConfigMapLayerList();
+        List<ConfigMapLayer> result = instance.getConfigMapLayerList("en");
         if (result != null) {
             System.out.println("Result has found: " + result.size());
             if (result.size() > 0) {
@@ -304,7 +371,7 @@ public class SearchEJBIT extends AbstractEJBTest {
         }
         System.out.println("getSettings - getting configuration information");
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
-        HashMap<String, String> result = instance.getSettingList("Setting.getForMap");
+        HashMap<String, String> result = instance.getMapSettingList();
         if (result != null) {
             System.out.println("Result has found: " + result.size());
             if (result.size() > 0) {
@@ -319,41 +386,23 @@ public class SearchEJBIT extends AbstractEJBTest {
      * Test of getting result from a dynamic query.
      */
     @Test
-    public void testGetDynamicQueryResult() throws Exception {
+    public void testGetResultForInformationTool() throws Exception {
         if (skipIntegrationTest()) {
             return;
         }
-        System.out.println("Testing dynamic query");
+        System.out.println("Testing GetResultForInformationTool");
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
-        System.out.println("Queryname: dynamic.test");
-        Object objValue = instance.getResultObject("dynamic.test", null);
-        System.out.println("Returned value:" + objValue);
-
-        String sqlStatement = "select 1=?1 as test_field";
-        System.out.println("Get result from statement: " + sqlStatement);
-        Object objValue2 = instance.getResultObjectFromStatement(sqlStatement, new Object[]{1});
-        System.out.println("Returned value:" + objValue2);
-
-        sqlStatement = "select count(*) from application.request_type where code in (?1)";
-        System.out.println("Get result from statement: " + sqlStatement);
-        List listParameter = new ArrayList();
-        listParameter.add("cadastreChange");
-        listParameter.add("documentCopy");
-
-        objValue2 = instance.getResultObjectFromStatement(
-                sqlStatement, new Object[]{listParameter});
-        System.out.println("Returned value:" + objValue2);
 
         System.out.println("Getting map definition...");
-        HashMap<String, String> settings = instance.getSettingList("Setting.getForMap");
-        Object[] params = new Object[2];
-        params[0] = this.getGeometry(
+        HashMap<String, String> settings = instance.getMapSettingList();
+        Map params = new HashMap();
+        params.put(ResultForSelectionInfo.PARAM_GEOMETRY, this.getGeometry(
                 String.format("POLYGON ((%s %s, %s %s, %s %s, %s %s))",
                 settings.get("map-west"), settings.get("map-south"),
                 settings.get("map-east"), settings.get("map-south"),
                 settings.get("map-east"), settings.get("map-north"),
-                settings.get("map-west"), settings.get("map-south")));
-        params[1] = Integer.parseInt(settings.get("map-srid"));
+                settings.get("map-west"), settings.get("map-south"))));
+        params.put(ResultForSelectionInfo.PARAM_SRID, Integer.parseInt(settings.get("map-srid")));
         this.testDynamicQuery(instance, "dynamic.informationtool.get_parcel", params);
         this.testDynamicQuery(instance, "dynamic.informationtool.get_place_name", params);
         this.testDynamicQuery(instance, "dynamic.informationtool.get_road", params);
@@ -362,7 +411,7 @@ public class SearchEJBIT extends AbstractEJBTest {
     }
 
     private void testDynamicQuery(SearchEJBLocal instance,
-            String queryName, Object[] params) throws Exception {
+            String queryName, Map params) throws Exception {
         System.out.println("Testing query: " + queryName);
         GenericResult result = instance.getGenericResultList(queryName, params);
         if (result != null) {
@@ -397,12 +446,12 @@ public class SearchEJBIT extends AbstractEJBTest {
     private void testQueriesForResultList(
             SearchEJBLocal instance, String queryName, Object[] params) throws Exception {
         System.out.println("Testing query: " + queryName);
-        List result =
-                instance.getResultList(queryName, params);
-        if (result != null && result.size() > 0) {
-            System.out.println("Found " + result.size() + " elements.");
-        } else {
-            System.out.println("Can't find any element.");
-        }
+//        List result =
+//                instance.getResultList(queryName, params);
+//        if (result != null && result.size() > 0) {
+//            System.out.println("Found " + result.size() + " elements.");
+//        } else {
+//            System.out.println("Can't find any element.");
+//        }
     }
 }

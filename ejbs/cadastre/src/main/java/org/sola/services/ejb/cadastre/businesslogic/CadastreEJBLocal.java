@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,11 @@ package org.sola.services.ejb.cadastre.businesslogic;
 import java.util.List;
 import javax.ejb.Local;
 import org.sola.services.common.br.ValidationResult;
+import org.sola.services.common.ejbs.AbstractEJBLocal;
 import org.sola.services.common.ejbs.AbstractSolaTransactionEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreChange;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectType;
 import org.sola.services.ejb.cadastre.repository.entities.SurveyPoint;
 
@@ -40,7 +42,8 @@ import org.sola.services.ejb.cadastre.repository.entities.SurveyPoint;
  * Local interface for handling cadastre schema operations.
  */
 @Local
-public interface CadastreEJBLocal extends AbstractSolaTransactionEJBLocal {
+//public interface CadastreEJBLocal extends AbstractSolaTransactionEJBLocal {
+public interface CadastreEJBLocal extends AbstractEJBLocal {
 
     List<CadastreObjectType> getCadastreObjectTypes(String languageCode);
 
@@ -51,19 +54,31 @@ public interface CadastreEJBLocal extends AbstractSolaTransactionEJBLocal {
     List<CadastreObject> getCadastreObjectByParts(String searchString);
 
     //CadastreObject createCadastreObject(CadastreObject cadastreObject);
+
     CadastreObject saveCadastreObject(CadastreObject cadastreObject);
 
 //    boolean removeCadastreObject(CadastreObject cadastreObject);
+    
     CadastreObject getCadastreObjectByPoint(double x, double y, int srid);
 
     List<CadastreObject> getCadastreObjectsByBaUnit(String baUnitId);
 
     List<CadastreObject> getCadastreObjectsByService(String serviceId);
 
-    List<ValidationResult> saveCadastreChange(CadastreChange cadastreChange, String languageCode);
+//    List<ValidationResult> saveCadastreChange(CadastreChange cadastreChange, String languageCode);
+//    
+//    CadastreChange getCadastreChange(String serviceId);
+//    
+//    List<ValidationResult> approveTransactionCadastreChange(
+//            String transactionId, boolean validateOnly, String languageCode);
+    
+    List<CadastreObjectTarget> getCadastreObjectTargetsByTransaction(String transactionId);
+    //CadastreObjectTarget saveCadastreObjectTarget(CadastreObjectTarget obj);
 
-    CadastreChange getCadastreChange(String serviceId);
+    List<SurveyPoint> getSurveyPointsByTransaction(String transactionId);
+    //SurveyPoint saveSurveyPoint(SurveyPoint obj);
 
-    List<ValidationResult> approveTransactionCadastreChange(String transactionId,
-            boolean validateOnly, String languageCode);
+    List<CadastreObject> getCadastreObjectsByTransaction(String transactionId);
+    
+    void ChangeStatusOfCadastreObjects(String transactionId, String filter, String statusCode);
 }

@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -36,7 +36,7 @@ import javax.transaction.UserTransaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sola.services.ejb.transaction.repository.entities.Transaction;
+import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 import static org.junit.Assert.*;
 import org.sola.services.common.test.AbstractEJBTest;
 
@@ -71,18 +71,18 @@ public class TransactionEJBIT extends AbstractEJBTest {
         try {
             tx.begin();
             System.out.println("Test getTransactionByServiceId");
-            Transaction result = instance.createTransaction(null);
+            TransactionBasic result = instance.createTransaction(null, TransactionBasic.class);
             assertNotNull(result);
             String transactionId = result.getId();
             System.out.println("Transaction created with service id null. Transaction id is:"
                     + transactionId);
             
             System.out.println("Test getTransactionById for id:" + transactionId);
-            result = instance.getTransactionById(transactionId);
+            result = instance.getTransactionById(transactionId, TransactionBasic.class);
             assertNotNull(result);
             System.out.println("Transaction found.");
             System.out.println("Test getTransactionById for non existing id");
-            result = instance.getTransactionById("supposed to return null");
+            result = instance.getTransactionById("supposed to return null", TransactionBasic.class);
             assertNull(result);
             System.out.println("Succeded");
             tx.commit();

@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -33,40 +33,20 @@ package org.sola.services.ejb.transaction.repository.entities;
 
 import java.util.Date;
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
- * Entity representing the transaction.transaction table.
- * @author soladev
+ *
+ * @author manoku
  */
 @Table(name = "transaction", schema = "transaction")
-public class Transaction extends AbstractVersionedEntity {
-
-    public static final String QUERY_WHERE_BYFROMSERVICEID = "from_service_id = #{serviceId}";
-    @Id
-    @Column(name = "id")
-    private String id;
-    @Column(name = "from_service_id")
-    private String fromServiceId;
-    @Column(name = "approval_datetime")
+public class Transaction extends TransactionBasic{
+    
+    @Column(name = "approval_datetime", updatable=false, insertable=false)
     private Date approvalDatetime;
-    @Column(name = "status_code")
+    @Column(name = "status_code", updatable=false, insertable=false)
     private String statusCode;
-
-    public Transaction() {
-        super();
-    }
-
-    public String getId() {
-        id = id == null ? generateId() : id;
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+    
 
     public Date getApprovalDatetime() {
         return approvalDatetime;
@@ -75,15 +55,7 @@ public class Transaction extends AbstractVersionedEntity {
     public void setApprovalDatetime(Date approvalDatetime) {
         this.approvalDatetime = approvalDatetime;
     }
-
-    public String getFromServiceId() {
-        return fromServiceId;
-    }
-
-    public void setFromServiceId(String fromServiceId) {
-        this.fromServiceId = fromServiceId;
-    }
-
+    
     public String getStatusCode() {
         return statusCode;
     }

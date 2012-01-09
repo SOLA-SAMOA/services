@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,9 +29,11 @@ package org.sola.services.ejb.transaction.businesslogic;
 
 import java.util.List;
 import javax.ejb.Local;
+import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
-import org.sola.services.ejb.transaction.repository.entities.Transaction;
+import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
+import org.sola.services.ejb.transaction.repository.entities.TransactionCadastreChange;
 
 /**
  * Provides local interface for administrative ejbs.
@@ -39,18 +41,27 @@ import org.sola.services.ejb.transaction.repository.entities.Transaction;
 @Local
 public interface TransactionEJBLocal extends AbstractEJBLocal {
     
-    Transaction createTransaction(String serviceId);
+    <T extends TransactionBasic> T createTransaction(String serviceId, Class<T> transactionClass);
     /**
      * It searches for a transaction by serviceId. If not found,
      * it creates a transaction and returns it.
      * @param serviceId
-     * @createIfNotFound
+     * @param createIfNotFound
+     * @param transactionClass 
      * @return 
      */
-    Transaction getTransactionByServiceId(String serviceId, boolean createIfNotFound);
-    Transaction getTransactionById(String id);
+    <T extends TransactionBasic> T getTransactionByServiceId(
+            String serviceId,
+            boolean createIfNotFound,
+            Class<T> transactionClass);
+    
+     <T extends TransactionBasic> T getTransactionById(String id, Class<T> transactionClass);
     boolean changeTransactionStatusFromService(String serviceId, String statusCode);
-    boolean approveTransaction(String serviceId);
+    List<ValidationResult> approveTransaction(
+            String requestType, String serviceId, String languageCode, boolean validationOnly);
     boolean rejectTransaction(String serviceId);
     List<RegistrationStatusType> getRegistrationStatusTypes(String languageCode);
+    
+    <T extends TransactionBasic> List<ValidationResult> saveTransaction(
+            T transaction, String requestType, String languageCode);
 }

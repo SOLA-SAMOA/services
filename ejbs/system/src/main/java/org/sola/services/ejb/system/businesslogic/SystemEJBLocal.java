@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -39,7 +39,8 @@ import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJBLocal;
 import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.br.ResultFeedback;
-//import org.sola.services.ejb.system.br.ValidationResult;
+import org.sola.services.ejb.system.repository.entities.Br;
+import org.sola.services.ejb.system.repository.entities.BrReport;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 
 /**
@@ -50,25 +51,32 @@ import org.sola.services.ejb.system.repository.entities.BrValidation;
 public interface SystemEJBLocal extends AbstractEJBLocal {
 
     BigDecimal getTaxRate();
-
+    
+    Br getBr(String id, String lang);
+    
+    Br saveBr(Br br);
+    
+    List<BrReport> getBrs(List<String> ids);
+    
+    List<BrReport> getAllBrs();
+    
+    BrReport getBrReport(String id);
+    
     List<BrValidation> getBrForValidatingApplication(String momentCode);
 
     List<BrValidation> getBrForValidatingService(String momentCode, String requestTypeCode);
 
+    List<BrValidation> getBrForValidatingTransaction(
+            String targetCode, String momentCode, String requestTypeCode);
+
     List<BrValidation> getBrForValidatingRrr(String momentCode, String rrrType);
 
-    List<BrValidation> getBrForValidatingBaUnit(String momentCode);
-
-    List<BrValidation> getBrForValidatingSource(String momentCode);
-
-    List<BrValidation> getBrForValidatingCadastreObject(String momentCode);
-
-    ResultFeedback checkRuleGetFeedback(
-            String brName, String languageCode, HashMap<String, Serializable> parameters);
-
-    List<ResultFeedback> checkRulesGetFeedback(
-            List<String> brNameList, String languageCode,
-            HashMap<String, Serializable> parameters);
+//    ResultFeedback checkRuleGetFeedback(
+//            String brName, String languageCode, HashMap<String, Serializable> parameters);
+//
+//    List<ResultFeedback> checkRulesGetFeedback(
+//            List<String> brNameList, String languageCode,
+//            HashMap<String, Serializable> parameters);
 
     Result checkRuleGetResultSingle(
             String brName, HashMap<String, Serializable> parameters);

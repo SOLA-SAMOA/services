@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -40,7 +40,7 @@ import org.sola.services.boundary.transferobjects.search.PropertyVerifierTO;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.search.businesslogic.SearchEJB;
 import org.sola.services.ejb.search.businesslogic.SearchEJBLocal;
-import org.sola.services.ejb.search.repository.PropertyVerifier;
+import org.sola.services.ejb.search.repository.entities.PropertyVerifier;
 
 /**
  *

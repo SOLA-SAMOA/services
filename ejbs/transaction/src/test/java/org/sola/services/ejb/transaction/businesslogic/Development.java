@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -31,14 +31,19 @@
  */
 package org.sola.services.ejb.transaction.businesslogic;
 
+import java.util.ArrayList;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sola.services.ejb.transaction.repository.entities.Transaction;
+import org.sola.services.common.contracts.GenericTranslator;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
+import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
+import org.sola.services.ejb.transaction.repository.entities.TransactionCadastreChange;
 import static org.junit.Assert.*;
 import org.sola.services.common.test.AbstractEJBTest;
+import org.sola.services.ejb.transaction.repository.entities.TransactionSource;
 
 /**
  *
@@ -71,20 +76,32 @@ public class Development extends AbstractEJBTest {
         try {
             tx.begin();
             System.out.println("Test getTransactionByServiceId");
-            Transaction result = instance.createTransaction(null);
+            TransactionBasic result = instance.createTransaction(null, TransactionBasic.class);
             assertNotNull(result);
             String transactionId = result.getId();
             System.out.println("Transaction created with service id null. Transaction id is:"
                     + transactionId);
             
             System.out.println("Test getTransactionById for id:" + transactionId);
-            result = instance.getTransactionById(transactionId);
+            result = instance.getTransactionById(transactionId, TransactionBasic.class);
             assertNotNull(result);
             System.out.println("Transaction found.");
             System.out.println("Test getTransactionById for non existing id");
-            result = instance.getTransactionById("supposed to return null");
+            result = instance.getTransactionById("supposed to return null", TransactionBasic.class);
             assertNull(result);
             System.out.println("Succeded");
+            TransactionCadastreChange trns = new TransactionCadastreChange();
+            trns.setFromServiceId("4012");
+            CadastreObjectTarget newcoT = new CadastreObjectTarget();
+            newcoT.setCadastreObjectId("4694627");
+            trns.setCadastreObjectTargetList(new ArrayList<CadastreObjectTarget>());
+            trns.getCadastreObjectTargetList().add(newcoT);
+            
+            trns.setTransactionSourceList(new ArrayList<TransactionSource>());
+            TransactionSource trnsSource = new TransactionSource();
+            trnsSource.setSourceId("80348a41-ace6-41f7-8e20-9f631b5b6e62");
+            trns.getTransactionSourceList().add(trnsSource);
+            instance.saveTransaction(trns, "cadastreChange", "en");
             tx.commit();
         } catch (Exception ex) {
             System.out.println("Transaction operation failed: \nReason: " + ex.getMessage());

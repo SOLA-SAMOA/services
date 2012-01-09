@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,7 @@ package org.sola.services.ejb.system.br;
  */
 public class Result {
 
+    static public final String VALUE_FIELD_NAME = "vl";
     private String name;
     private Object value;
 

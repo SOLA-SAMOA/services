@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -71,7 +71,7 @@ import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
-import org.sola.services.ejb.transaction.repository.entities.Transaction;
+import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
  * Provides methods for managing application objects. <p> <p/>
@@ -92,6 +92,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     private AdministrativeEJBLocal administrativeEJB;
     @EJB
     private CadastreEJBLocal cadastreEJB;
+
+    @Override
+    protected void postConstruct() {
+        setEntityPackage(Application.class.getPackage().getName());
+    }
 
     private void treatApplicationSources(Application application) {
         if (application.getSourceList() != null) {
@@ -321,42 +326,6 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         return application;
     }
 
-//    @Override
-//    public int changeApplicationAssignment(String applicationId, String userId, int rowVersion) {
-//
-//        if (applicationId == null) {
-//            return rowVersion;
-//        }
-//
-//        Application app = this.getApplication(applicationId);
-//        int result = -1;
-//        if (app == null) {
-//            throw new SOLAException(ServiceMessage.EJB_APPLICATION_APPLICATION_NOT_FOUND);
-//        } 
-//            // TODO Call business rule to determine if its possible to change application
-//            // assignment. Allow Assignemnt by default
-//            boolean changeAssignment = true;
-//            if (changeAssignment) {
-//                app.setAssigneeId(userId);
-//                if (userId == null) {
-//                    app.setAssignedDatetime(null);
-//                } else {
-//                    app.setAssignedDatetime(Calendar.getInstance().getTime());
-//                }
-//                //TODO set the correct action once it is available
-//                //app.setChangeAction("");
-//                app.setRowVersion(rowVersion);
-//                result = saveApplication(app).getRowVersion();
-//            } else {
-//                // TODO Unable to change assignment - raise an exception and get the message number
-//                // from the business rule. 
-////                throw new SOLAException("Unable to Change Assignment.",  
-////                    "Unable to change application assignment. Application " 
-////                    + applicationId + " does not exist.");
-//            }
-//        
-//        return result;
-//    }
     @Override
     public List<ApplicationLog> getApplicationLog(String applicationId) {
         List<ApplicationLog> result = null;
@@ -533,43 +502,34 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * It is used to validate an existing application.
-     * @param applicationId the application id
-     * @return a list of Feedback results. Each of these feedbacks correspond to a business rule.
+     * It registers a service of category type informationServices. If it is of another kind of 
+     * not specified it throws an exception.
+     * If the service exists, it is only logged an action of type completed, otherwise it is 
+     * created.
+     * @param service The service to be saved
+     * @param languageCode current language code. Used if business rules are invoked.
+     * @return 
      */
-//    @Override
-//    public List<ValidationResult> validate(
-//            String applicationId, String languageCode, String momentCode) {
-//
-//        //Get the business rules to check the application as a whole
-//        List<BrValidation> brValidationList =
-//                this.systemEJB.getBrForValidatingApplication(momentCode);
-//
-//        HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-//        params.put("id", applicationId);
-//        //Run the validation
-//        List<ValidationResult> resultList = this.systemEJB.checkRulesGetValidation(
-//                brValidationList, languageCode, params);
-//
-//        List<ServiceBasic> applicationServices = getBasicServiceList(applicationId);
-//
-//        for (ServiceBasic applicationService : applicationServices) {
-//            resultList.addAll(this.validateService(
-//                    applicationService.getId(),
-//                    applicationService.getRequestTypeCode(),
-//                    languageCode,
-//                    momentCode));
-//        }
-//
-//        //Get the business rules for each 
-//        return resultList;
-//    }
-//    private List<ServiceBasic> getBasicServiceList(String applicationId) {
-//        Map params = new HashMap<String, Object>();
-//        params.put(CommonSqlProvider.PARAM_WHERE_PART, ServiceBasic.QUERY_WHERE_BYAPPLICATIONID);
-//        params.put(ServiceBasic.QUERY_PARAMETER_APPLICATIONID, applicationId);
-//        return getRepository().getEntityList(ServiceBasic.class, params);
-//    }
+    @Override
+    public Service saveInformationService(Service service, String languageCode) {
+        RequestType requestType = this.getCodeEntity(
+                RequestType.class, service.getRequestTypeCode());
+        if (requestType== null || !requestType.getRequestCategoryCode().equals(
+                RequestCategoryType.INFORMATION_SERVICES)){
+            throw new SOLAException(
+                    ServiceMessage.EJB_APPLICATION_SERVICE_REQUEST_TYPE_INFORMATION_REQUIRED);
+        }
+        Service existingService = this.getRepository().getEntity(Service.class, service.getId());
+        if (existingService == null){
+            service.setLodgingDatetime(DateUtility.now());
+            service.setExpectedCompletionDate(DateUtility.now());
+            existingService = this.saveEntity(service);
+        }
+        this.serviceActionComplete(
+                existingService.getId(), languageCode, existingService.getRowVersion());
+       return existingService;
+    }
+
     private List<ServiceActionTaker> getServiceActionTakerList(String applicationId) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, ServiceActionTaker.QUERY_WHERE_BYAPPLICATIONID);
@@ -580,129 +540,40 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * It validates a service. For the moment, it is called from the validate method. Perhaps in the 
      * future can be used directly to validate a single service.
-     * @param id the id of the service
-     * @param requestType the type of the service. This is passed as argument because it is already
-     * found in the calling method.
+     * @param service the service
      * @param languageCode the language code to translate the feedback
      * @return 
      */
     private List<ValidationResult> validateService(
-            String id, String requestType, String languageCode, String momentCode) {
+            ServiceActionTaker service, String languageCode, ServiceActionType serviceActionType) {
         List<BrValidation> brValidationList =
-                this.systemEJB.getBrForValidatingService(momentCode, requestType);
+                this.systemEJB.getBrForValidatingService(
+                serviceActionType.getCode(), service.getRequestTypeCode());
 
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put("id", id);
+        params.put("id", service.getId());
         //Run the validation
         List<ValidationResult> resultList = this.systemEJB.checkRulesGetValidation(
                 brValidationList, languageCode, params);
+        if (serviceActionType.getStatusToSet().equals(ServiceStatusType.STATUS_COMPLETED)) {
+            resultList.addAll(this.approveApplicationService(
+                    service.getId(), service.getStatusCode(),
+                    service.getRequestTypeCode(), languageCode, true));
+        }
 
         return resultList;
     }
 
-    /**
-     * It approves the application by approving each service on it.
-     * If in any stage of the approval there is broken a critical br,
-     * the validation fails.
-     * @param applicationId
-     * @param languageCode
-     * @return 
-     */
-//    @RolesAllowed(RolesConstants.APPROVER)
-//    @Override
-//    public List<ValidationResult> approveApplication(String applicationId, String languageCode) {
-//        Application app = this.getApplication(applicationId);
-//
-//        if (app == null) {
-//            throw new SOLAException(ServiceMessage.EJB_APPLICATION_APPLICATION_NOT_FOUND);
-//        }
-//
-//        List<ValidationResult> validationResultList = this.validate(
-//                applicationId, languageCode, BrValidation.MOMENT_APPROVE);
-//        //result.setReasonList(validationResultList);
-//        boolean validateOnly = !systemEJB.validationSucceeded(validationResultList);
-//        if (!validateOnly) {
-//            for (Service service : app.getServiceList()) {
-//                List<ValidationResult> serviceValidation =
-//                        this.approveApplicationService(service.getId(), service.getStatusCode(),
-//                        service.getRequestTypeCode(), languageCode, validateOnly);
-//                validateOnly = validateOnly || !systemEJB.validationSucceeded(serviceValidation);
-//                validationResultList.addAll(serviceValidation);
-//            }
-//            if (!validateOnly) {
-//                app.setStatusCode(ApplicationStatusType.STATUS_APPROVED);
-//                getRepository().saveEntity(app);
-//                //result.setChanged(true);
-//            }
-//        }
-//        if (validateOnly) {
-//            throw new SOLAValidationException(validationResultList);
-//        }
-//
-//
-//        return validationResultList;
-//    }
-    /**
-     * It rejects an application. The rejection removes all traces from the schemas
-     * where the transactions started from the services in the application made changes.
-     * @param applicationId
-     * @param languageCode
-     * @return 
-     */
-//    @Override
-//    public List<ValidationResult> rejectApplication(String applicationId, String languageCode) {
-//        // ChangeStatusResult result = new ChangeStatusResult();
-//        Application app = this.getApplication(applicationId);
-//        if (app == null) {
-//            throw new SOLAException(ServiceMessage.EJB_APPLICATION_APPLICATION_NOT_FOUND);
-//        }
-//        List<ValidationResult> validationResultList = this.validate(
-//                applicationId, languageCode, BrValidation.MOMENT_REJECT);
-//        //result.setReasonList(validationResultList);
-//        if (systemEJB.validationSucceeded(validationResultList)) {
-//            for (Service service : app.getServiceList()) {
-//                transactionEJB.rejectTransaction(service.getId());
-//            }
-//            app.setStatusCode(ApplicationStatusType.STATUS_REJECTED);
-//            getRepository().saveEntity(app);
-//            //result.setChanged(true);
-//        } else {
-//            throw new SOLAValidationException(validationResultList);
-//        }
-//
-//        return validationResultList;
-//    }
-//    @Override
-//    public List<ValidationResult> completeService(String serviceId, String languageCode) {
-//        return this.changeServiceStatus(serviceId, languageCode, ServiceStatusType.STATUS_COMPLETED);
-//    }
-//
-//    @Override
-//    public List<ValidationResult> cancelService(String serviceId, String languageCode) {
-//        return this.changeServiceStatus(serviceId, languageCode, ServiceStatusType.STATUS_CANCELLED);
-//    }
-//
-//    @Override
-//    public List<ValidationResult> revertService(String serviceId, String languageCode) {
-//        return this.changeServiceStatus(serviceId, languageCode, ServiceStatusType.STATUS_PENDING);
-//    }
     private List<ValidationResult> takeActionAgainstService(
             String serviceId, String actionCode, String languageCode, int rowVersion) {
         ServiceActionTaker service = getRepository().getEntity(ServiceActionTaker.class, serviceId);
         if (service == null) {
             throw new SOLAException(ServiceMessage.EJB_APPLICATION_SERVICE_NOT_FOUND);
         }
-        //Check br for a particular request type
-        //String momentCode = this.getMomentCodeFromStatusCode(statusCode);
-        List<ValidationResult> validationResultList = this.validateService(
-                serviceId, service.getRequestTypeCode(), languageCode, actionCode);
         ServiceActionType serviceActionType =
                 getRepository().getCode(ServiceActionType.class, actionCode, languageCode);
-        if (serviceActionType.getStatusToSet().equals(ServiceStatusType.STATUS_COMPLETED)) {
-            validationResultList.addAll(this.approveApplicationService(
-                    service.getId(), service.getStatusCode(),
-                    service.getRequestTypeCode(), languageCode, true));
-        }
+        List<ValidationResult> validationResultList = this.validateService(
+                service, languageCode, serviceActionType);
         if (systemEJB.validationSucceeded(validationResultList)) {
             transactionEJB.changeTransactionStatusFromService(
                     serviceId, serviceActionType.getStatusToSet());
@@ -730,12 +601,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
             ApplicationActionTaker application, String actionCode,
             String languageCode, int rowVersion) {
 
-        //Check the application for the given actionCode. If the actionCode
-        // is validate, then trigger the lodge business rules. 
-        String brActionCode = ApplicationActionType.VALIDATE.equals(actionCode)
-                ? ApplicationActionType.LODGE : actionCode;
         List<BrValidation> brValidationList =
-                this.systemEJB.getBrForValidatingApplication(brActionCode);
+                this.systemEJB.getBrForValidatingApplication(actionCode);
 
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", application.getId());
@@ -753,19 +620,27 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                 : applicationActionType.getStatusToSet();
 
         //For each specific action type, can be done extra validations
-        if (ApplicationStatusType.LODGED.equals(statusToSet)) {
+        if (ApplicationActionType.VALIDATE.equals(actionCode)) {
             //If action lodge or validate
             List<ServiceActionTaker> serviceList =
                     this.getServiceActionTakerList(application.getId());
+            ServiceActionType serviceActionType = getRepository().getCode(
+                    ServiceActionType.class, ServiceActionType.COMPLETE, languageCode);
             for (ServiceActionTaker service : serviceList) {
                 List<ValidationResult> serviceValidation =
-                        this.validateService(service.getId(), service.getRequestTypeCode(),
-                        languageCode, ServiceActionType.LODGE);
+                        this.validateService(service, languageCode, serviceActionType);
                 validationSucceeded = validationSucceeded
                         && systemEJB.validationSucceeded(serviceValidation);
                 resultList.addAll(serviceValidation);
             }
         } else if (ApplicationActionType.APPROVE.equals(actionCode)) {
+            brValidationList = this.systemEJB.getBrForValidatingApplication(
+                    ApplicationActionType.VALIDATE);
+            List<ValidationResult> resultValidationForAppList = 
+                    this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
+            validationSucceeded = validationSucceeded
+                        && systemEJB.validationSucceeded(resultValidationForAppList);
+            resultList.addAll(resultValidationForAppList);
             List<ServiceActionTaker> serviceList =
                     this.getServiceActionTakerList(application.getId());
             for (ServiceActionTaker service : serviceList) {
@@ -776,7 +651,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                         && systemEJB.validationSucceeded(serviceValidation);
                 resultList.addAll(serviceValidation);
             }
-        } else if (ApplicationStatusType.DEAD.equals(statusToSet)) {
+        } else if (ApplicationStatusType.ANULLED.equals(statusToSet)) {
             List<ServiceActionTaker> serviceList =
                     this.getServiceActionTakerList(application.getId());
             for (ServiceActionTaker service : serviceList) {
@@ -803,8 +678,6 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
     /**
      * It approves the transactions that are hanging to a service.
-     * The approval of the service affects changes to all EJBs that 
-     * have the approveTransaction method.
      * @param service
      * @param languageCode
      * @param validationOnly If true the approval is simulated only for the sake of validation
@@ -817,7 +690,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         if (!validationOnly && serviceStatusCode.equals(ServiceStatusType.STATUS_CANCELLED)) {
             transactionEJB.rejectTransaction(serviceId);
         } else {
-            Transaction transaction = transactionEJB.getTransactionByServiceId(serviceId, false);
+            TransactionBasic transaction =
+                    transactionEJB.getTransactionByServiceId(serviceId, false, TransactionBasic.class);
             if (transaction != null) {
                 String statusOnApproval = RegistrationStatusType.STATUS_CURRENT;
                 String actionOnRequestType = getRepository().getCode(RequestType.class,
@@ -828,30 +702,21 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                     statusOnApproval = RegistrationStatusType.STATUS_HISTORIC;
                 }
 
-                List<ValidationResult> approvalResult = administrativeEJB.approveTransaction(
+                List<ValidationResult> approvalResult = null;
+
+                approvalResult = administrativeEJB.approveTransaction(
                         transaction.getId(), statusOnApproval, validationOnly, languageCode);
                 validationResultList.addAll(approvalResult);
-
                 validationOnly = validationOnly || !systemEJB.validationSucceeded(approvalResult);
+
                 approvalResult = sourceEJB.approveTransaction(
                         transaction.getId(), statusOnApproval, validationOnly, languageCode);
                 validationResultList.addAll(approvalResult);
-
                 validationOnly = validationOnly || !systemEJB.validationSucceeded(approvalResult);
-                if (serviceRequestTypeCode.equals(RequestType.CADASTRE_CHANGE)) {
-                    approvalResult = cadastreEJB.approveTransactionCadastreChange(
-                            transaction.getId(), validationOnly, languageCode);
-                } else {
-                    approvalResult = cadastreEJB.approveTransaction(
-                            transaction.getId(), statusOnApproval, validationOnly, languageCode);
-                }
+
+                approvalResult = transactionEJB.approveTransaction(
+                        serviceRequestTypeCode, serviceId, languageCode, validationOnly);
                 validationResultList.addAll(approvalResult);
-
-                validationOnly = validationOnly || !systemEJB.validationSucceeded(approvalResult);
-
-                if (!validationOnly) {
-                    transactionEJB.approveTransaction(serviceId);
-                }
             }
         }
         return validationResultList;
@@ -861,47 +726,4 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     public List<RequestCategoryType> getRequestCategoryTypes(String languageCode) {
         return getRepository().getCodeList(RequestCategoryType.class, languageCode);
     }
-    /**
-     * It changes the status of the service. Before the change of status
-     * the validation is done.
-     * @param serviceId The target service id
-     * @param languageCode
-     * @param statusCode Status to be changed to
-     * @return 
-     */
-//    private List<ValidationResult> changeServiceStatus(
-//            String serviceId, String languageCode, String statusCode) {
-//        //ChangeStatusResult result = new ChangeStatusResult();
-//        Service service = getRepository().getEntity(Service.class, serviceId);
-//        if (service == null) {
-//            throw new SOLAException(ServiceMessage.EJB_APPLICATION_SERVICE_NOT_FOUND);
-//        }
-//        //Check br for a particular request type
-//        String momentCode = this.getMomentCodeFromStatusCode(statusCode);
-//        List<ValidationResult> validationResultList = this.validateService(
-//                serviceId, service.getRequestTypeCode(), languageCode, momentCode);
-//        if (statusCode.equals(ServiceStatusType.STATUS_COMPLETED)) {
-//            validationResultList.addAll(this.approveApplicationService(service, languageCode, true));
-//        }
-//        if (systemEJB.validationSucceeded(validationResultList)) {
-//            transactionEJB.changeTransactionStatusFromService(serviceId, statusCode);
-//            service.setStatusCode(statusCode);
-//            service.setActionCode(this.getActionFromStatusForService(statusCode));
-//            getRepository().saveEntity(service);
-//        } else {
-//            throw new SOLAValidationException(validationResultList);
-//        }
-//
-//
-//        return validationResultList;
-//    }
-//    private String getMomentCodeFromStatusCode(String statusCode) {
-//        String momentCode = BrValidation.MOMENT_COMPLETE;
-//        if (statusCode.equals(ServiceStatusType.STATUS_CANCELLED)) {
-//            momentCode = BrValidation.MOMENT_CANCEL;
-//        } else if (statusCode.equals(ServiceStatusType.STATUS_PENDING)) {
-//            momentCode = BrValidation.MOMENT_PENDING;
-//        }
-//        return momentCode;
-//    }
 }

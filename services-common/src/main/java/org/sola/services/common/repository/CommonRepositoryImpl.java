@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -570,8 +570,13 @@ public class CommonRepositoryImpl implements CommonRepository {
             T childEntity, ChildEntityInfo childInfo) {
         AbstractEJBLocal ejb = RepositoryUtility.getEJB(childInfo.getEJBLocalClass());
         try {
-            Method saveMethod = ejb.getClass().getMethod(childInfo.getSaveMethod(),
-                    childInfo.getEntityClass());
+            Method saveMethod = null;
+            if (childInfo.getSaveMethod().equals("saveEntity")) {
+                saveMethod = ejb.getClass().getMethod(childInfo.getSaveMethod(), AbstractEntity.class);
+            } else {
+                saveMethod = ejb.getClass().getMethod(childInfo.getSaveMethod(),
+                        childInfo.getEntityClass());
+            }
             childEntity = (T) saveMethod.invoke(ejb, childEntity);
         } catch (Exception ex) {
             throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED,
@@ -769,6 +774,19 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     @Override
+    public <T extends AbstractReadOnlyEntity> T getEntity(Class<T> entityClass, String id, String lang) {
+
+        ArrayList<ColumnInfo> ids = (ArrayList<ColumnInfo>) RepositoryUtility.getIdColumns(entityClass, RepositoryUtility.getColumns(entityClass));
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        String whereClause = ids.get(0).getColumnName() + " = #{idValue}";
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, whereClause);
+        params.put("idValue", id);
+        params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, lang);
+        return getEntity(entityClass, params);
+    }
+
+    @Override
     public <T extends AbstractReadOnlyEntity> T getEntity(Class<T> entityClass,
             String whereClause, Map params) {
 
@@ -796,14 +814,27 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     private <T extends AbstractReadOnlyEntity, U extends CommonMapper> T getEntity(Class<T> entityClass,
             Map params, U mapper) {
-
+        boolean removeLanguageCode = false;
         HashMap<String, Object> result = null;
         T entity = null;
         params.put(CommonSqlProvider.PARAM_ENTITY_CLASS, entityClass);
+        // Make sure the Language Code is passed to all children if it has been set
+        if (LocalInfo.get(CommonSqlProvider.PARAM_LANGUAGE_CODE) != null
+                && !params.containsKey(CommonSqlProvider.PARAM_LANGUAGE_CODE)) {
+            params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE,
+                    LocalInfo.get(CommonSqlProvider.PARAM_LANGUAGE_CODE));
+            removeLanguageCode = true;
+        } else if (params.containsKey(CommonSqlProvider.PARAM_LANGUAGE_CODE)) {
+            LocalInfo.set(CommonSqlProvider.PARAM_LANGUAGE_CODE,
+                    params.get(CommonSqlProvider.PARAM_LANGUAGE_CODE));
+        }
         result = mapper.getEntity(params);
         entity = mapToEntity(entityClass, result);
         if (entity != null) {
             loadChildren(entity, mapper);
+        }
+        if (removeLanguageCode) {
+            LocalInfo.set(CommonSqlProvider.PARAM_LANGUAGE_CODE, null, true);
         }
         return entity;
     }
@@ -867,15 +898,29 @@ public class CommonRepositoryImpl implements CommonRepository {
     private <T extends AbstractReadOnlyEntity, U extends CommonMapper> List<T> getEntityList(Class<T> entityClass,
             Map params, U mapper) {
 
+        boolean removeLanguageCode = false;
         List<T> entityList = null;
         ArrayList<HashMap> resultList = null;
         params.put(CommonSqlProvider.PARAM_ENTITY_CLASS, entityClass);
+        // Make sure the Language Code is passed to all children if it has been set
+        if (LocalInfo.get(CommonSqlProvider.PARAM_LANGUAGE_CODE) != null
+                && !params.containsKey(CommonSqlProvider.PARAM_LANGUAGE_CODE)) {
+            params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE,
+                    LocalInfo.get(CommonSqlProvider.PARAM_LANGUAGE_CODE));
+            removeLanguageCode = true;
+        } else if (params.containsKey(CommonSqlProvider.PARAM_LANGUAGE_CODE)) {
+            LocalInfo.set(CommonSqlProvider.PARAM_LANGUAGE_CODE,
+                    params.get(CommonSqlProvider.PARAM_LANGUAGE_CODE));
+        }
         resultList = mapper.getEntityList(params);
         entityList = mapToEntityList(entityClass, resultList);
         if (entityList != null && !entityList.isEmpty()) {
             for (T entity : entityList) {
                 loadChildren(entity, mapper);
             }
+        }
+        if (removeLanguageCode) {
+            LocalInfo.set(CommonSqlProvider.PARAM_LANGUAGE_CODE, null, true);
         }
         return entityList;
     }
@@ -1011,20 +1056,21 @@ public class CommonRepositoryImpl implements CommonRepository {
         Object argValue = null;
         AbstractEJBLocal ejb = RepositoryUtility.getEJB(childInfo.getEJBLocalClass());
 
-        if (childInfo.isListField()) {
+        if (childInfo.isListField() && childInfo.isManyToMany()) {
+            //Many to Many, so get the list of child ids from the many to many table in this
+            //EJB using the parent id and pass the list of child ids to the external EJB.  
             argValue = getChildIdList(childInfo, entity.getEntityId(), mapper);
             argType = List.class;
         } else {
+            // A One to One or One to Many list. If One to One, it may be necessray to pass th
+            // child id on the parent. If One to Many, pass the parent id to return the list 
+            // of children as the child must reference the parent. 
             if (childInfo.isInsertBeforeParent()) {
                 // Parent refrences the child entity, so get the child id value from the parent
                 argValue = (String) entity.getEntityFieldValue(
                         entity.getColumnInfo(childInfo.getChildIdField()));
             } else {
                 argValue = entity.getEntityId();
-
-
-
-
             }
             argType = String.class;
         }
@@ -1066,9 +1112,31 @@ public class CommonRepositoryImpl implements CommonRepository {
      */
     @Override
     public ArrayList<HashMap> executeFunction(Map params) {
+        return executeSql(params);
+    }
 
-        params = params == null ? new HashMap<String, Object>() : params;
+    /** 
+     * Executes dynamic SQL queries using the specified parameters.
+     * @param params Parameters list needed to form SQL statement. 
+     * {@link CommonSqlProvider#PARAM_QUERY} must be supplied as a select 
+     * statement to run the SQL.
+     */
+    @Override
+    public ArrayList<HashMap> executeSql(Map params) {
+
+        if (params == null || !params.containsKey(CommonSqlProvider.PARAM_QUERY)) {
+            throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED, new Object[]{
+                        "No dynamic SQL to execute!", "params=" + params
+                    });
+        }
+        
+        ArrayList<HashMap> result = null;
         SqlSession session = getSqlSession();
-        return getMapper(session).executeFunction(params);
+        try {
+            result = getMapper(session).executeSql(params);
+        } finally {
+            session.close();
+        }
+        return result;
     }
 }

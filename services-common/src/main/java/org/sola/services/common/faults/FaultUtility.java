@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -77,6 +77,7 @@ public final class FaultUtility {
         }
 
         try {
+            System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
             // Identify the type of exception and raise the appropriate Service Fault
             if (hasCause(t, SOLAValidationException.class)) {
                 
@@ -125,7 +126,22 @@ public final class FaultUtility {
                 fault = new OptimisticLockingFault(faultInfoBean.getMessageCode(),
                         faultInfoBean);
 
-            } else {
+            } 
+//            else if (isDatabaseConstraintViolation(t, stackTraceAsStr)){
+//                Throwable dbException = t;
+//                while(dbException!= null && dbException.getClass() 
+//                        != org.apache.ibatis.exceptions.PersistenceException.class){
+//                    dbException = dbException.getCause();
+//                }
+//                String constraintName = "NOT SET";
+//                if (dbException != null){
+//                    if (dbException.getCause() != null)
+//                    constraintName = dbException.getCause().getMessage();
+//                }
+//                faultInfoBean.setMessageCode(constraintName);
+//                fault = new ConstraintViolationFault(constraintName, faultInfoBean);
+//            } 
+            else {
                 // Unhandled Exception. Do not provide the details of the exception as this would
                 // violate the Exception Sheilding Pattern. The administrator can refer to the
                 // log file to obtain the details of the exception. 
@@ -149,6 +165,16 @@ public final class FaultUtility {
     private static boolean isOptimisticLocking(Throwable t, String traceInfo) {
         return traceInfo.contains("row_has_different_change_time") 
                 || hasCause(t, OptimisticLockException.class); 
+    }
+
+    /**
+     * Not in use.
+     * @param t
+     * @param traceInfo
+     * @return 
+     */
+    private static boolean isDatabaseConstraintViolation(Throwable t, String traceInfo) {
+        return traceInfo.contains("org.postgresql.util.PSQLException"); 
     }
 
     /**

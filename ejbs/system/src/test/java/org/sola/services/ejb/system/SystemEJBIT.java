@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,23 @@
  */
 package org.sola.services.ejb.system;
 
+import javax.transaction.Status;
+import javax.transaction.UserTransaction;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.br.ResultFeedback;
 import org.sola.services.ejb.system.businesslogic.SystemEJB;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
+import org.sola.services.ejb.system.repository.entities.Br;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -47,14 +54,60 @@ import org.sola.services.ejb.system.repository.entities.BrValidation;
  */
 public class SystemEJBIT extends AbstractEJBTest {
 
+    private static final String LOGIN_USER = "test";
+    private static final String LOGIN_PASS = "test";
+
     public SystemEJBIT() {
         super();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        login(LOGIN_USER, LOGIN_PASS);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        logout();
+    }
+
+    @Test
+    @Ignore
+    public void getBr() throws Exception {
+        SystemEJBLocal instance = (SystemEJBLocal) getEJBInstance(SystemEJB.class.getSimpleName());
+        Br br = instance.getBr("app-shares-total-check", null);
+        assertNotNull("Can't find Business Rule \"app-shares-total-check\"", br);
+        System.out.println(">>> Found business rule with feedback \"" + br.getFeedback() + "\"");
+    }
+
+    @Test
+    @Ignore
+    public void saveBr() throws Exception {
+        UserTransaction tx = getUserTransaction();
+        try {
+            tx.begin();
+            SystemEJBLocal instance = (SystemEJBLocal) getEJBInstance(SystemEJB.class.getSimpleName());
+            Br br = instance.getBr("app-shares-total-check", null);
+            assertNotNull("Can't find Business Rule \"app-shares-total-check\"", br);
+            System.out.println(">>> Found business rule with feedback \"" + br.getFeedback() + "\"");
+            
+            Br savedBr = instance.saveBr(br);
+            assertNotNull("Can't save Business Rule \"app-shares-total-check\"", savedBr);
+            System.out.println(">>> Business rule \"app-shares-total-check\" successfully saved");
+            tx.commit();
+        } finally {
+            if (tx.getStatus() != Status.STATUS_NO_TRANSACTION) {
+                tx.rollback();
+                System.out.println("Failed Transction!");
+            }
+        }
     }
 
     /**
      * Test of getBr.
      */
     @Test
+    @Ignore
     public void testGetBrMethods() throws Exception {
         if (skipIntegrationTest()) {
             return;
@@ -63,39 +116,45 @@ public class SystemEJBIT extends AbstractEJBTest {
         SystemEJBLocal instance = (SystemEJBLocal) getEJBInstance(SystemEJB.class.getSimpleName());
 
         System.out.println("getBrForValidatingApplication");
-        List<BrValidation> result2 = instance.getBrForValidatingApplication("start");
+        List<BrValidation> result2 = instance.getBrForValidatingApplication("lodge");
         printResult(result2);
 
         System.out.println("getBrForValidatingRrr");
         List<BrValidation> result4 = instance.getBrForValidatingRrr("approve", "ownership");
         printResult(result4);
-        
-        System.out.println("checkRuleGetFeedback");
-        HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put("var", 2);
-        ResultFeedback result5 = instance.checkRuleGetFeedback("check-test", "it", params);
-        System.out.println(String.format("BR: %s Feedback: %s",result5.getName(), result5.getValue()));
+
+//        System.out.println("checkRuleGetFeedback");
+//        HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+//        params.put("var", 2);
+//        ResultFeedback result5 = instance.checkRuleGetFeedback("check-test", "it", params);
+//        System.out.println(String.format("BR: %s Feedback: %s", result5.getName(), result5.getValue()));
 
         System.out.println("checkRuleGetResultSingle");
         String brName = "generate-application-nr";
         Result result6 = instance.checkRuleGetResultSingle(brName, null);
-        System.out.println(String.format("BR: %s Returned value: %s",brName, result6.getValue()));
+        System.out.println(String.format("BR: %s Returned value: %s", brName, result6.getValue()));
 
         brName = "generate-source-nr";
         result6 = instance.checkRuleGetResultSingle(brName, null);
-        System.out.println(String.format("BR: %s Returned value: %s",brName, result6.getValue()));
+        System.out.println(String.format("BR: %s Returned value: %s", brName, result6.getValue()));
 
         System.out.println("getBrForValidatingService");
         List<BrValidation> result7 = instance.getBrForValidatingService("complete", "newFreehold");
         printResult(result7);
 
         System.out.println("getBrForValidatingBaUnit");
-        List<BrValidation> result8 = instance.getBrForValidatingBaUnit("approve");
+        List<BrValidation> result8 = instance.getBrForValidatingTransaction("ba_unit", "current", null);
         printResult(result8);
 
         System.out.println("getBrForValidatingCadastreObject");
-        List<BrValidation> result9 = instance.getBrForValidatingCadastreObject("pending");
-        printResult(result9);
+        List<BrValidation> result9 = 
+                instance.getBrForValidatingTransaction("cadastre_object", "pending", "cadastreChange");
+
+        System.out.println("getBrForValidatingSource");
+        List<BrValidation> result10 = 
+                instance.getBrForValidatingTransaction("source", "pending", null);
+
+        printResult(result10);
     }
 
     private void printResult(List<BrValidation> result) {

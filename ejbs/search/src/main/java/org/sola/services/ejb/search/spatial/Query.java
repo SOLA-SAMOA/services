@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -43,6 +43,7 @@ public class Query implements Serializable{
     private String queryName = "";
     private int srid;
     private double pixelResolution;
+    private String locale; 
 
     public String getId() {
         return id;
@@ -75,4 +76,12 @@ public class Query implements Serializable{
     public void setPixelResolution(double pixelResolution) {
         this.pixelResolution = pixelResolution;
     }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }   
 }

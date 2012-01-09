@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -59,7 +59,7 @@ import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
-import org.sola.services.ejb.transaction.repository.entities.Transaction;
+import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
  *
@@ -141,7 +141,8 @@ public class AdministrativeEJB extends AbstractEJB
         if (baUnit == null) {
             return null;
         }
-        Transaction transaction = transactionEJB.getTransactionByServiceId(serviceId, true);
+        TransactionBasic transaction = 
+                transactionEJB.getTransactionByServiceId(serviceId, true, TransactionBasic.class);
         LocalInfo.setTransactionId(transaction.getId());
         return getRepository().saveEntity(baUnit);
     }
@@ -212,13 +213,12 @@ public class AdministrativeEJB extends AbstractEJB
      */
     private List<ValidationResult> validateBaUnit(
             BaUnitStatusChanger baUnit, String languageCode) {
-        List<BrValidation> brValidationList =
-                this.systemEJB.getBrForValidatingBaUnit(RegistrationStatusType.STATUS_CURRENT);
+        List<BrValidation> brValidationList = this.systemEJB.getBrForValidatingTransaction(
+                "ba_unit", RegistrationStatusType.STATUS_CURRENT, null);
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", baUnit.getId());
         //Run the validation
-        return this.systemEJB.checkRulesGetValidation(
-                brValidationList, languageCode, params);
+        return this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
     }
 
     /**
@@ -229,13 +229,11 @@ public class AdministrativeEJB extends AbstractEJB
      */
     private List<ValidationResult> validateRrr(
             RrrStatusChanger rrr, String languageCode) {
-        List<BrValidation> brValidationList =
-                this.systemEJB.getBrForValidatingRrr(RegistrationStatusType.STATUS_CURRENT, 
-                rrr.getTypeCode());
+        List<BrValidation> brValidationList = this.systemEJB.getBrForValidatingRrr(
+                RegistrationStatusType.STATUS_CURRENT, rrr.getTypeCode());
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", rrr.getId());
         //Run the validation
-        return this.systemEJB.checkRulesGetValidation(
-                brValidationList, languageCode, params);
+        return this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
     }
 }

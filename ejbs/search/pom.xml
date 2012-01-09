@@ -5,11 +5,11 @@
     <parent>
         <artifactId>sola-ejbs</artifactId>
         <groupId>org.sola.services</groupId>
-        <version>alpha</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-search</artifactId>
-    <version>alpha</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>ejb</packaging>
     <name>EJB Search</name>
     <properties>
@@ -39,6 +39,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.5.0-Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.0.6</version>
         </dependency>
     </dependencies>
 </project>

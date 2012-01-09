@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -34,20 +34,21 @@ package org.sola.services.ejb.system.repository.entities;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
+import org.sola.services.common.repository.entities.AbstractEntity;
 
 /**
  *
  * @author soladev
  */
 @Table(name = "br_validation", schema = "system")
-public class BrValidation extends AbstractReadOnlyEntity {
+public class BrValidation extends AbstractEntity {
 
     public static final String SEVERITY_CRITICAL = "critical";
     public static final String SEVERITY_WARNING = "warning";
     public static final String SEVERITY_MEDIUM = "medium";
     
     // Query Parameters
+    public static final String QUERY_PARAMETER_TARGETCODE = "targetCode";
     public static final String QUERY_PARAMETER_MOMENTCODE = "momentCode";
     public static final String QUERY_PARAMETER_REQUESTTYPE = "requestType";
     public static final String QUERY_PARAMETER_RRRTYPE = "rrrType";
@@ -66,12 +67,15 @@ public class BrValidation extends AbstractReadOnlyEntity {
             + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "} "
             + "AND (target_rrr_type_code=#{" + QUERY_PARAMETER_RRRTYPE + "} "
             + "OR target_rrr_type_code is null)";
-    public static final String QUERY_WHERE_FORBAUNIT = "target_code='ba_unit' "
-            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
-    public static final String QUERY_WHERE_FORSOURCE = "target_code='source' "
-            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
-        public static final String QUERY_WHERE_FORCADASTREOBJECT = "target_code='cadastre_object' "
-            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
+//    public static final String QUERY_WHERE_FORBAUNIT = "target_code='ba_unit' "
+//            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
+//    public static final String QUERY_WHERE_FORSOURCE = "target_code='source' "
+//            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
+    
+        public static final String QUERY_WHERE_FOR_TRANSACTION = "target_code=#{targetCode} "
+            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "} "
+                + "AND (target_request_type_code is null "
+                + " OR target_request_type_code= #{" + QUERY_PARAMETER_REQUESTTYPE +  "})";
     
     @Id
     @Column(name = "id")
@@ -80,6 +84,20 @@ public class BrValidation extends AbstractReadOnlyEntity {
     private String brId;
     @Column(name = "severity_code")
     private String severityCode;
+    @Column(name="target_code")
+    private String targetCode;
+    @Column(name="target_application_moment")
+    private String targetApplicationMoment;
+    @Column(name="target_service_moment")
+    private String targetServiceMoment;
+    @Column(name="target_reg_moment")
+    private String targetRegMoment;
+    @Column(name="target_request_type_code")
+    private String targetRequestTypeCode;
+    @Column(name="target_rrr_type_code")
+    private String targetRrrTypeCode;
+    @Column(name="order_of_execution")
+    private int orderOfExecution;
 
     public String getId() {
         return id;
@@ -104,4 +122,61 @@ public class BrValidation extends AbstractReadOnlyEntity {
     public void setSeverityCode(String severityCode) {
         this.severityCode = severityCode;
     }
+
+    public int getOrderOfExecution() {
+        return orderOfExecution;
+    }
+
+    public void setOrderOfExecution(int orderOfExecution) {
+        this.orderOfExecution = orderOfExecution;
+    }
+
+    public String getTargetApplicationMoment() {
+        return targetApplicationMoment;
+    }
+
+    public void setTargetApplicationMoment(String targetApplicationMoment) {
+        this.targetApplicationMoment = targetApplicationMoment;
+    }
+
+    public String getTargetCode() {
+        return targetCode;
+    }
+
+    public void setTargetCode(String targetCode) {
+        this.targetCode = targetCode;
+    }
+
+    public String getTargetRegMoment() {
+        return targetRegMoment;
+    }
+
+    public void setTargetRegMoment(String targetRegMoment) {
+        this.targetRegMoment = targetRegMoment;
+    }
+
+    public String getTargetRrrTypeCode() {
+        return targetRrrTypeCode;
+    }
+
+    public void setTargetRrrTypeCode(String targetRrrTypeCode) {
+        this.targetRrrTypeCode = targetRrrTypeCode;
+    }
+
+    public String getTargetServiceMoment() {
+        return targetServiceMoment;
+    }
+
+    public void setTargetServiceMoment(String targetServiceMoment) {
+        this.targetServiceMoment = targetServiceMoment;
+    }
+
+    public String getTargetRequestTypeCode() {
+        return targetRequestTypeCode;
+    }
+
+    public void setTargetRequestTypeCode(String targetRequestTypeCode) {
+        this.targetRequestTypeCode = targetRequestTypeCode;
+    }
+
 }

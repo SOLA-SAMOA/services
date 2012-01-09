@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,58 +25,14 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.sola.services.ejb.cadastre.repository.entities;
+package org.sola.services.ejb.system.repository.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.LocalInfo;
-import org.sola.services.common.repository.entities.AbstractVersionedEntity;
+import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
-/**
- *
- * @author manoku
- */
-@Table(name = "transaction_source", schema = "cadastre")
-public class TransactionSource extends AbstractVersionedEntity{
-
-     public static final String QUERY_WHERE_SEARCHBYTRANSACTION = 
-             "transaction_id = #{transaction_id}";
-    
-    @Id
-    @Column(name = "source_id")
-    private String sourceId;
-    @Id
-    @Column(name = "transaction_id")
-    private String transactionId;
-
-    public String getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
-    }
-
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-    
-    @Override
-    public void preSave() {
-        if (this.isNew()) {
-            setTransactionId(LocalInfo.getTransactionId());
-        }
-
-        super.preSave();
+@Table(name = "br_validation_target_type", schema = "system")
+public class BrValidationTargetType extends AbstractCodeEntity {
+    public BrValidationTargetType(){
+        super();
     }
 }

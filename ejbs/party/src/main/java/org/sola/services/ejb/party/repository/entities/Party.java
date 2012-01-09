@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -93,7 +93,9 @@ public class Party extends AbstractVersionedEntity {
     private Address address;
     @ChildEntityList(parentIdField = "partyId")
     private List<PartyRole> roleList;
-
+    @Column(name = "party.is_rightholder(id) AS is_rightholder", insertable=false, updatable=false)
+    private boolean rightHolder;
+    
     public Party() {
         super();
     }
@@ -253,5 +255,13 @@ public class Party extends AbstractVersionedEntity {
 
     public void setIdTypeCode(String idTypeCode) {
         this.idTypeCode = idTypeCode;
+    }
+
+    public boolean isRightHolder() {
+        return rightHolder;
+    }
+
+    public void setRightHolder(boolean rightHolder) {
+        this.rightHolder = rightHolder;
     }
 }

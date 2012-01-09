@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,50 +25,42 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-package org.sola.services.ejb.search.repository;
+package org.sola.services.ejb.search.repository.entities;
 
 import org.sola.services.common.entities.AbstractEntity;
 
-public class UserSearchParams  extends AbstractEntity {
-    private String groupId;
-    private String userName;
-    private String firstName;
-    private String lastName;
+public class PartySearchParams  extends AbstractEntity {
+
+    private String name;
+    private String typeCode;
+    private String roleTypeCode;
     
-    public UserSearchParams(){
-        super();
+    public PartySearchParams(){
+    
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public String getRoleTypeCode() {
+        return roleTypeCode;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
+    public void setRoleTypeCode(String roleTypeCode) {
+        this.roleTypeCode = roleTypeCode;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getTypeCode() {
+        return typeCode;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
     
 }

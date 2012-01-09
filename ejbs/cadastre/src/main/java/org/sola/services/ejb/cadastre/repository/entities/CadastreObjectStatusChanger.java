@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,13 +27,52 @@
  */
 package org.sola.services.ejb.cadastre.repository.entities;
 
+import java.util.Calendar;
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 
 @Table(schema = "cadastre", name = "cadastre_object")
 public class CadastreObjectStatusChanger extends AbstractStatusChangerEntity {
-    public static final String QUERY_WHERE_SEARCHBYTRANSACTION = 
+    public static final String QUERY_WHERE_SEARCHBYTRANSACTION_PENDING = 
             " transaction_id = #{transaction_id} or id in (select cadastre_object_id from "
             + " cadastre.cadastre_object_target where transaction_id= #{transaction_id})";
+    public static final String QUERY_WHERE_SEARCHBYTRANSACTION_TARGET = 
+            " id in (select cadastre_object_id from "
+            + " cadastre.cadastre_object_target where transaction_id= #{transaction_id})";
+    
+    @Column(name="approval_datetime")
+    private Date approvalDatetime;
 
+    @Column(name="historic_datetime")
+    private Date historicDatetime;
+
+    public Date getApprovalDatetime() {
+        return approvalDatetime;
+    }
+
+    public void setApprovalDatetime(Date approvalDatetime) {
+        this.approvalDatetime = approvalDatetime;
+    }
+
+    public Date getHistoricDatetime() {
+        return historicDatetime;
+    }
+
+    public void setHistoricDatetime(Date historicDatetime) {
+        this.historicDatetime = historicDatetime;
+    }
+
+    @Override
+    public void preSave() {
+        if (this.getStatusCode().equals(AbstractStatusChangerEntity.STATUS_CURRENT)
+                && this.getApprovalDatetime() == null){
+            this.setApprovalDatetime(Calendar.getInstance().getTime());
+        }else if (this.getStatusCode().equals(AbstractStatusChangerEntity.STATUS_HISTORIC)
+                && this.getHistoricDatetime() == null){
+            this.setHistoricDatetime(Calendar.getInstance().getTime());
+        }
+        super.preSave();
+    }
 }

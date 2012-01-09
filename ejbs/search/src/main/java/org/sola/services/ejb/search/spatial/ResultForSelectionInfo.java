@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -31,7 +31,7 @@
  */
 package org.sola.services.ejb.search.spatial;
 
-import org.sola.services.ejb.search.repository.GenericResult;
+import org.sola.services.ejb.search.repository.entities.GenericResult;
 
 /**
  *
@@ -39,6 +39,8 @@ import org.sola.services.ejb.search.repository.GenericResult;
  */
 public class ResultForSelectionInfo {
 
+    public static final String PARAM_GEOMETRY = "wkb_geom";
+    public static final String PARAM_SRID = "srid";
     private String id;
     private GenericResult result;
 

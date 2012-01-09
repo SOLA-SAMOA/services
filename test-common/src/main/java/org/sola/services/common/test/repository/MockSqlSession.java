@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -170,6 +171,11 @@ public class MockSqlSession implements SqlSession {
 
     @Override
     public Connection getConnection() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+   public List<BatchResult> flushStatements() {    
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

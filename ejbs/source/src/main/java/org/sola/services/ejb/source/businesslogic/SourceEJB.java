@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -56,7 +56,7 @@ import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
-import org.sola.services.ejb.transaction.repository.entities.Transaction;
+import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 @Stateless
 @EJB(name = "java:global/SOLA/SourceEJBLocal", beanInterface = SourceEJBLocal.class)
@@ -171,7 +171,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
 
 
         // Get the transaction. If transaction does not exist it will be created
-        Transaction transaction = transactionEJB.getTransactionByServiceId(serviceId, true);
+        TransactionBasic transaction = 
+                transactionEJB.getTransactionByServiceId(serviceId, true, TransactionBasic.class);
         source.setTransactionId(transaction.getId());
         source.setStatusCode(RegistrationStatusType.STATUS_PENDING);
         return saveSource(source);
@@ -199,7 +200,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     @Override
     public List<Source> getSourcesByServiceId(String serviceId) {
         List<Source> sourceList = new ArrayList<Source>();
-        Transaction transaction = transactionEJB.getTransactionByServiceId(serviceId, false);
+        TransactionBasic transaction = 
+                transactionEJB.getTransactionByServiceId(serviceId, false, TransactionBasic.class);
         if (transaction != null) {
             sourceList = getSourceByTransactionId(transaction.getId());
         }
@@ -215,7 +217,7 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     private List<ValidationResult> validateSource(
             String sourceId, String momentCode, String languageCode) {
         List<BrValidation> brValidationList =
-                this.systemEJB.getBrForValidatingSource(momentCode);
+                this.systemEJB.getBrForValidatingTransaction("source", momentCode, null);
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", sourceId);
         //Run the validation

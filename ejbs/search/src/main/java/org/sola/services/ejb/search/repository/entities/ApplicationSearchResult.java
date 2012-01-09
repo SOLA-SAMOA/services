@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,146 +25,116 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
- package org.sola.services.ejb.search.repository;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.sola.services.ejb.search.repository.entities;
 
 import java.util.Date;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
-import org.sola.services.common.entities.AbstractResultEntity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import org.sola.services.common.repository.AccessFunctions;
+import org.sola.services.common.repository.CommonSqlProvider;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
-@Entity
+/**
+ *
+ * @author soladev
+ */
+@Table(name = "application", schema = "application")
+public class ApplicationSearchResult extends AbstractReadOnlyEntity {
 
-@NamedNativeQueries({
-    @NamedNativeQuery(name = "ApplicationSummary.getAssigned",
-    query = ApplicationSearchResult.QUERY
-    + "WHERE u.username IS NOT NULL AND a.status_code != 'completed' "
-    + "ORDER BY a.lodging_datetime DESC "
-    + "LIMIT 100",
-    readOnly = true,
-    resultClass = ApplicationSearchResult.class),
-
-    @NamedNativeQuery(name = "ApplicationSummary.getUnassigned",
-    query = ApplicationSearchResult.QUERY 
-        + "WHERE u.username IS NULL AND a.status_code != 'completed' "
-        + "ORDER BY a.lodging_datetime DESC "
-        + "LIMIT 100",
-    readOnly = true,
-    resultClass = ApplicationSearchResult.class),
-    
-    @NamedNativeQuery(name = "ApplicationSummary.searchApplications",
-    query = ApplicationSearchResult.QUERY 
-        + "WHERE a.lodging_datetime BETWEEN ?2 AND ?3 "
-        + "AND lower(a.nr) LIKE lower(?4) "
-        + "AND lower(p2.name) LIKE lower(?5) "
-        + "AND ("
-        + "(lower (COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) LIKE lower(?6))"
-        + "OR (lower (COALESCE(p.name, '')) LIKE lower(?6))"
-        + "OR (lower (COALESCE(p.last_name, '')) LIKE lower(?6))"
-        + ") "
-        + "ORDER BY a.lodging_datetime DESC "
-        + "LIMIT 100",
-    readOnly = true,
-    resultClass = ApplicationSearchResult.class)
-})
-
-public class ApplicationSearchResult extends AbstractResultEntity {
-    
-    protected final static String QUERY = "SELECT a.id, a.nr, a.lodging_datetime, a.expected_completion_date, "
-            + "a.assigned_datetime, get_translation(ast.display_value,?1) AS status, "
-            + "(COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '')) AS assignee_name, "
-            + "a.assignee_id, (COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) AS contact_person, "
-            + "p.id AS contact_person_id, "
-            + "(COALESCE(p2.name, '') || ' ' || COALESCE(p2.last_name, '')) AS agent, "
-            + "p2.id AS agent_id, "
-            + "(SELECT string_agg(tmp.display_value, ',') FROM "
-            + "  (SELECT get_translation(display_value,?1) as display_value FROM application.service aps INNER JOIN application.request_type rt "
-            + "  ON aps.request_type_code = rt.code WHERE aps.application_id = a.id ORDER BY aps.service_order) tmp "
-            + "  ) AS service_list, a.fee_paid "
-            + "FROM (application.application a LEFT JOIN application.application_status_type ast on a.status_code = ast.code) "
+    public static final String QUERY_PARAM_USER_NAME = "userName";
+    public static final String QUERY_PARAM_FROM_LODGE_DATE = "fromDate";
+    public static final String QUERY_PARAM_TO_LODGE_DATE = "toDate";
+    public static final String QUERY_PARAM_APP_NR = "appNr";
+    public static final String QUERY_PARAM_AGENT_NAME = "agentName";
+    public static final String QUERY_PARAM_CONTACT_NAME = "contactName";
+    public static final String QUERY_FROM =
+            "(application.application a LEFT JOIN application.application_status_type ast on a.status_code = ast.code) "
             + "LEFT JOIN system.appuser u ON a.assignee_id = u.id "
             + "LEFT JOIN party.party p ON a.contact_person_id = p.id "
             + "LEFT JOIN party.party p2 ON a.agent_id = p2.id ";
+    public static final String QUERY_WHERE_GET_ASSIGNED = "u.username = #{" + QUERY_PARAM_USER_NAME + "} "
+            + " AND a.status_code != 'completed'";
+    public static final String QUERY_WHERE_GET_UNASSIGNED = "u.username IS NULL "
+            + " AND a.status_code != 'completed'";
+    public static final String QUERY_WHERE_SEARCH_APPLICATIONS =
+            "a.lodging_datetime BETWEEN #{" + QUERY_PARAM_FROM_LODGE_DATE + "} AND #{" + QUERY_PARAM_TO_LODGE_DATE + "} "
+            + "AND lower(a.nr) LIKE lower(#{" + QUERY_PARAM_APP_NR + "}) "
+            + "AND lower(p2.name) LIKE lower(#{" + QUERY_PARAM_AGENT_NAME + "}) "
+            + "AND ((lower (COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
+            + "    OR (lower (COALESCE(p.name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
+            + "    OR (lower (COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "}))) ";
+    public static final String QUERY_ORDER_BY = "a.lodging_datetime DESC";
     
+    @Id
+    @Column(name = "id")
+    @AccessFunctions(onSelect = "a.id")
+    private String id; 
     @Column(name = "nr")
     private String nr;
+    @AccessFunctions(onSelect = "get_translation(ast.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "})")
     @Column(name = "status")
     private String status;
     @Column(name = "lodging_datetime")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date lodgingDatetime;
     @Column(name = "expected_completion_date")
-    @Temporal(TemporalType.DATE)
     private Date expectedCompletionDate;
     @Column(name = "assigned_datetime")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date assignedDatetime;
+    @AccessFunctions(onSelect = "(COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, ''))")
     @Column(name = "assignee_name")
     private String assigneeName;
     @Column(name = "assignee_id")
     private String assigneeId;
+    @AccessFunctions(onSelect = "(COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, ''))")
     @Column(name = "contact_person")
     private String contactPerson;
+    @AccessFunctions(onSelect = "(COALESCE(p2.name, '') || ' ' || COALESCE(p2.last_name, ''))")
     @Column(name = "agent")
     private String agent;
     @Column(name = "agent_id")
     private String agentId;
     @Column(name = "contact_person_id")
     private String contactPersonId;
+    @AccessFunctions(onSelect = "(SELECT string_agg(tmp.display_value, ',') FROM "
+    + " (SELECT get_translation(display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) as display_value "
+    + "  FROM application.service aps INNER JOIN application.request_type rt ON aps.request_type_code = rt.code "
+    + "  WHERE aps.application_id = a.id ORDER BY aps.service_order) tmp) ")
     @Column(name = "service_list")
     private String serviceList;
     @Column(name = "fee_paid")
     private Boolean feePaid;
 
-    public Boolean getFeePaid() {
-        return feePaid;
+    public ApplicationSearchResult() {
+        super();
     }
 
-    public void setFeePaid(Boolean feePaid) {
-        this.feePaid = feePaid;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+  
+    public String getAgent() {
+        return agent;
+    }
+
+    public void setAgent(String agent) {
+        this.agent = agent;
     }
 
     public String getAgentId() {
         return agentId;
     }
 
-    public String getAssigneeId() {
-        return assigneeId;
-    }
-
-    public void setAssigneeId(String assigneeId) {
-        this.assigneeId = assigneeId;
-    }
-
     public void setAgentId(String agentId) {
         this.agentId = agentId;
-    }
-
-    public String getContactPersonId() {
-        return contactPersonId;
-    }
-
-    public void setContactPersonId(String contactPersonId) {
-        this.contactPersonId = contactPersonId;
-    }
-
-    public String getAgent() {
-        return agent;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setAgent(String agent) {
-        this.agent = agent;
     }
 
     public Date getAssignedDatetime() {
@@ -173,6 +143,14 @@ public class ApplicationSearchResult extends AbstractResultEntity {
 
     public void setAssignedDatetime(Date assignedDatetime) {
         this.assignedDatetime = assignedDatetime;
+    }
+
+    public String getAssigneeId() {
+        return assigneeId;
+    }
+
+    public void setAssigneeId(String assigneeId) {
+        this.assigneeId = assigneeId;
     }
 
     public String getAssigneeName() {
@@ -191,12 +169,28 @@ public class ApplicationSearchResult extends AbstractResultEntity {
         this.contactPerson = contactPerson;
     }
 
+    public String getContactPersonId() {
+        return contactPersonId;
+    }
+
+    public void setContactPersonId(String contactPersonId) {
+        this.contactPersonId = contactPersonId;
+    }
+
     public Date getExpectedCompletionDate() {
         return expectedCompletionDate;
     }
 
     public void setExpectedCompletionDate(Date expectedCompletionDate) {
         this.expectedCompletionDate = expectedCompletionDate;
+    }
+
+    public Boolean getFeePaid() {
+        return feePaid;
+    }
+
+    public void setFeePaid(Boolean feePaid) {
+        this.feePaid = feePaid;
     }
 
     public Date getLodgingDatetime() {
@@ -221,5 +215,13 @@ public class ApplicationSearchResult extends AbstractResultEntity {
 
     public void setServiceList(String serviceList) {
         this.serviceList = serviceList;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

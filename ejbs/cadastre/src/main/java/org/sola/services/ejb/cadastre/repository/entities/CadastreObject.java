@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -182,7 +182,7 @@ public class CadastreObject extends AbstractVersionedEntity {
 
     @Override
     public void preSave() {
-        if (this.isNew()) {
+        if (this.isNew() && this.getTransactionId() == null) {
             setTransactionId(LocalInfo.getTransactionId());
         }
 

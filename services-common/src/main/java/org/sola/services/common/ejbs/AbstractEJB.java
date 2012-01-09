@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,6 +27,7 @@
  */
 package org.sola.services.common.ejbs;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -43,6 +44,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
 import org.sola.services.common.repository.CommonRepository;
 import org.sola.services.common.repository.CommonRepositoryImpl;
 import org.sola.services.common.repository.DatabaseConnectionManager;
+import org.sola.services.common.repository.entities.AbstractEntity;
 
 @DeclareRoles({
     RolesConstants.DASHBOARD_VIEW_ASSIGNED_APPS,
@@ -82,6 +84,7 @@ import org.sola.services.common.repository.DatabaseConnectionManager;
     RolesConstants.GIS_PRINT,
     RolesConstants.CADASTRE_PARCEL_SAVE,
     RolesConstants.PARTY_SAVE,
+    RolesConstants.PARTY_RIGHTHOLDERS_SAVE,
     RolesConstants.REPORTS_VIEW,
     RolesConstants.ARCHIVE_ARCHIVE_APPS,
     RolesConstants.ADMIN_MANAGE_SECURITY,
@@ -238,10 +241,7 @@ public abstract class AbstractEJB implements AbstractEJBLocal {
      */
     @Override
     public <T extends AbstractCodeEntity> T getCodeEntity(Class<T> codeEntityClass, String code) {
-        if(!codeEntityClass.getPackage().getName().equals(getEntityPackage())){
-            throw new SOLAException(ServiceMessage.EXCEPTION_ENTITY_PACKAGE_VIOLATION);
-        }
-        return getRepository().getCode(codeEntityClass, code, null);
+        return getCodeEntity(codeEntityClass, code, null);
     }
     
     /** 
@@ -252,6 +252,37 @@ public abstract class AbstractEJB implements AbstractEJBLocal {
      */
     @Override
     public <T extends AbstractCodeEntity> T getCodeEntity(Class<T> codeEntityClass, String code, String lang) {
+        if(!codeEntityClass.getPackage().getName().equals(getEntityPackage())){
+            throw new SOLAException(ServiceMessage.EXCEPTION_ENTITY_PACKAGE_VIOLATION);
+        }
         return getRepository().getCode(codeEntityClass, code, lang);
     }
+    
+    /** 
+     * Returns list of {@link AbstractCodeEntity} object in a generic way. 
+     * @param codeEntityClass Entity class.
+     * @param lang Language code.
+     */
+    @Override
+    public <T extends AbstractCodeEntity> List<T> getCodeEntityList(Class<T> codeEntityClass, String lang) {
+        if(!codeEntityClass.getPackage().getName().equals(getEntityPackage())){
+            throw new SOLAException(ServiceMessage.EXCEPTION_ENTITY_PACKAGE_VIOLATION);
+        }
+        return getRepository().getCodeList(codeEntityClass, lang);
+    }
+    
+    /** 
+     * Returns list of {@link AbstractCodeEntity} object in a generic way. 
+     * @param codeEntityClass Entity class.
+     */
+    @Override
+    public <T extends AbstractCodeEntity> List<T> getCodeEntityList(Class<T> codeEntityClass) {
+        return getCodeEntityList(codeEntityClass, null);
+    }
+
+    @Override
+    public <T extends AbstractEntity> T saveEntity(T entityObject) {
+        return this.getRepository().saveEntity(entityObject);
+    }
+    
 }

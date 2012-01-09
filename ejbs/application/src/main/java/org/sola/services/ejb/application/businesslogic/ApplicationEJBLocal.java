@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -43,6 +43,7 @@ import org.sola.services.ejb.application.repository.entities.ApplicationStatusTy
 import org.sola.services.ejb.application.repository.entities.RequestCategoryType;
 import org.sola.services.ejb.application.repository.entities.RequestType;
 import org.sola.services.ejb.application.repository.entities.RrrTypeAction;
+import org.sola.services.ejb.application.repository.entities.Service;
 import org.sola.services.ejb.application.repository.entities.ServiceActionType;
 import org.sola.services.ejb.application.repository.entities.ServiceStatusType;
 
@@ -64,10 +65,6 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
     
     List<RequestCategoryType> getRequestCategoryTypes(String languageCode);
 
-//    int changeApplicationAssignment(String applicationId,
-//            String userId,
-//            int rowVersion);
-
     List<ApplicationLog> getApplicationLog(String id);
 
     List<ApplicationLog> getUserActions(String username, Date fromTime, Date toTime);
@@ -83,12 +80,6 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
     List<ServiceActionType> getServiceActionTypes(String languageCode);
 
     List<RrrTypeAction> getRrrTypeActions(String languageCode);
-
-//    List<ValidationResult> validate(String applicationId, String languageCode, String momentCode);
-//
-//    List<ValidationResult> approveApplication(String applicationId, String languageCode);
-//
-//    List<ValidationResult> rejectApplication(String applicationId, String languageCode);
 
     List<ValidationResult> serviceActionComplete(
             String serviceId, String languageCode, int rowVersion);
@@ -134,4 +125,7 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
 
     List<ValidationResult> applicationActionResubmit(
             String applicationId, String languageCode, int rowVersion);
+
+    Service saveInformationService(Service service, String languageCode);
+    
 }

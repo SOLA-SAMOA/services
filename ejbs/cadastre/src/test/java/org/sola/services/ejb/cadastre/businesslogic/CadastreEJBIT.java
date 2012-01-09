@@ -1,6 +1,6 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2011 - Food and Agriculture Organization of the United Nations (FAO).
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -107,8 +107,8 @@ public class CadastreEJBIT extends AbstractEJBTest {
         System.out.println("Result :" + resultList);
         
         System.out.println("getCadastreChange");
-        CadastreChange cadastreChange = instance.getCadastreChange("f4d15b7d-8fa7-492a-a532-9a4d1c7d0aa2");
-        System.out.println("Result :" + cadastreChange.getFromServiceId());
+//        CadastreChange cadastreChange = instance.getCadastreChange("f4d15b7d-8fa7-492a-a532-9a4d1c7d0aa2");
+//        System.out.println("Result :" + cadastreChange.getFromServiceId());
         
         //System.out.println("validateCadastreChange");
         //instance.validateCadastreChange("57b0f64b-4680-4074-8c86-b9d9140837cf", "en", "pending");
