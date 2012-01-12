@@ -25,56 +25,44 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.sola.services.common.entities;
+package org.sola.services.common.logging;
 
-import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
- * @author manoku
+ * Uses Java utility logging to configure a common logger for the SOLA Services called 
+ * org.sola.services. This logger will write messages to the Glassfish server log which can be 
+ * viewed from the Log Viewer in the  Glassfish Admin Console. 
+ * By default, the logger will capture all INFO, WARNING and SEVERE messages. To capture 
+ * messages for the levels below INFO, or to further limit the log level, you must add the 
+ * appropriate Log Level for the org.sola.services logger in the Module Log Levels tab of the 
+ * server-config > Logger Settings configuration node. 
+ * For details configuring the log level for the MyBatis database connection provider, refer to 
+ * {@linkplain org.sola.services.common.repository.DatabaseConnectionManager}
+ * 
+ * @author soladev
  */
+public final class LogUtility {
 
-public class AbstractMultiFieldId implements Serializable {
+    private final static Logger logger = Logger.getLogger("org.sola.services");
 
-    protected String[] identifierValues = new String[0];
-    
-    public AbstractMultiFieldId(int numberOfIdColumns) {
-        this.identifierValues = new String[numberOfIdColumns];
-        for(int i=0; i< this.identifierValues.length; i++){
-            this.identifierValues[i]= null;
-        }
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;        
-        for(int i=0; i< identifierValues.length; i++){
-            hash += (identifierValues[i] !=null?identifierValues[i].hashCode():0);
-        }
-        return hash;
+    /**
+     * Logs a message to the Glassfish Server log with the default log level of INFO.
+     * @param msg The message to log.
+     */
+    public static void log(String msg) {
+        log(msg, Level.INFO);
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object.getClass().getSimpleName().equalsIgnoreCase(
-                this.getClass().getSimpleName()))) {
-            return false;
-        }
-        return this.toString().equals(object.toString());
+    /**
+     * Logs a message to the Glassfish Server log with the specified log level. Note that
+     * unless the log level settings in Glassfish have been configured to allow logging of
+     * messages below the INFO level, those messages will not get logged. 
+     * @param msg The message to log.
+     * @param level The level to log the message at. 
+     */
+    public static void log(String msg, Level level) {
+        logger.log(level, msg);
     }
-
-    @Override
-    public String toString() {
-        String value = this.getClass().getSimpleName();
-        for(int i=0; i< identifierValues.length; i++){
-            value = value + " # column_" + i + ": " 
-                    + (identifierValues[i] !=null?identifierValues[i].toString():"empty");
-        }
-        return value;
-    }
-    
 }

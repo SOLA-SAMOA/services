@@ -27,9 +27,9 @@
  */
 package org.sola.services.ejb.search.repository.entities;
 
-import org.sola.services.common.entities.AbstractEntity;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
-public class UserSearchParams  extends AbstractEntity {
+public class UserSearchParams  extends AbstractReadOnlyEntity {
     private String groupId;
     private String userName;
     private String firstName;

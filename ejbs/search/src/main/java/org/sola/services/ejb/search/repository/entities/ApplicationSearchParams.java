@@ -28,9 +28,9 @@
 package org.sola.services.ejb.search.repository.entities;
 
 import java.util.Date;
-import org.sola.services.common.entities.AbstractEntity;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
-public class ApplicationSearchParams extends AbstractEntity {
+public class ApplicationSearchParams extends AbstractReadOnlyEntity {
     private String locale;
     private String nr;
     private String agent;
