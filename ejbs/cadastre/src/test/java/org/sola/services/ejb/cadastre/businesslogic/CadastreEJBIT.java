@@ -36,7 +36,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
-import org.sola.services.ejb.cadastre.repository.entities.CadastreChange;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
 
 /**

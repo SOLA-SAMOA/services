@@ -92,7 +92,7 @@ public class DatabaseConnectionManager {
     public DatabaseConnectionManager(String configFileUrl, Class<? extends CommonMapper> mapperClass) {
         // Configure Mybatis logging to output all query commands to standard out.
         // TODO Reconfigured to use Log4J. 
-        LogFactory.useStdOutLogging();
+        // LogFactory.useStdOutLogging();
         try {
             // Determine which data source to use - shared or specific
             String environment = SPECIFIC_ENV;

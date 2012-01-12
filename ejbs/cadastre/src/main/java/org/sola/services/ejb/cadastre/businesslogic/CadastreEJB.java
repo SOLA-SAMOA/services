@@ -35,6 +35,7 @@ import javax.ejb.Stateless;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNode;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectStatusChanger;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectType; // NOTE namespace change
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
@@ -151,6 +152,33 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
                 CadastreObject.QUERY_WHERE_SEARCHBYTRANSACTION);
         params.put("transaction_id", transactionId);
         return getRepository().getEntityList(CadastreObject.class, params);
+
+    }
+    
+    @Override
+    public CadastreObjectNode getCadastreObjectNode(
+            double xMin, double yMin, double xMax, double yMax, int srid){
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_FROM_PART, 
+                CadastreObjectNode.QUERY_GET_BY_RECTANGLE_FROM_PART);
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, 
+                CadastreObjectNode.QUERY_GET_BY_RECTANGLE_WHERE_PART);
+        params.put(CommonSqlProvider.PARAM_LIMIT_PART, 1);
+        params.put("minx", xMin);
+        params.put("miny", yMin);
+        params.put("maxx", xMax);
+        params.put("maxy", yMax);
+        params.put("srid", srid);
+        CadastreObjectNode cadastreObjectNode = getRepository().getEntity(
+                CadastreObjectNode.class, params);   
+        if (cadastreObjectNode != null){
+            params.clear();
+            params.put("geom", cadastreObjectNode.getGeom());
+            List<CadastreObject> cadastreObjectInvolvedList = getRepository().getEntityList(
+                    CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params);
+            cadastreObjectNode.setCadastreObjectList(cadastreObjectInvolvedList);
+        }
+        return cadastreObjectNode;
 
     }
 }
