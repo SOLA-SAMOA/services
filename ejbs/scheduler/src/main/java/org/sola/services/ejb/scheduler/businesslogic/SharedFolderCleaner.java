@@ -38,7 +38,7 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
-import org.sola.common.logging.LogUtility;
+import org.sola.services.common.logging.LogUtility;
 
 /**
  * 
