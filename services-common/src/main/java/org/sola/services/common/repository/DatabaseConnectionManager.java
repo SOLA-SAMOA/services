@@ -42,14 +42,14 @@ import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
 
 /**
- * Provides common functionality for configuring and managing the Mybatis database connection. 
- * Each EJB should have a singleton Connection Factory class that holds a DatabaseConnectionManager
- * instance. Using a connection factory for each EJB to ensures the Mybatis database configuration 
- * can be customized specifically for each EJB. 
+ * Provides common functionality for configuring and managing the Mybatis database connection.
+ * The CommonRepositoryImpl creates a DatabaseConnectionManager and configures it with the settings
+ * from the mybatisConnectionConfig.xml that is included with each EJB in the default resources
+ * package. 
  * <p>
  * The DatabaseConnectionManager supports two data sources, a sharedDataSource and a 
- * specificDataSource. The configuration for each data source is included in the Mybatis database 
- * configuration file in each EJB. The sharedDataSource is intended for development and testing
+ * specificDataSource. The configuration for each data source is included in the 
+ * mybatisConnectionConfig.xml. The sharedDataSource is intended for development and testing
  * where one JNDI data source is used by all EJB's to connect to the database. The specificDataSource
  * is intended for production environments where it may be desirable for each EJB to have its own
  * JDNI data source configured to connect to the database to avoid one database user with access
@@ -57,9 +57,18 @@ import org.sola.common.messaging.ServiceMessage;
  * </p>
  * <p> 
  * The databaseConnection property file can be configured to indicate whether the sharedDataSource
- * should be used or not. Note that this property file is configured using Maven filtering. Refer
- * to the POM file for the Services Common (sola-services-common) project for details. 
+ * should be used for all EJB's or not. Note that this property file is configured using Maven 
+ * filtering. Refer to the POM file for the Services Common (sola-services-common) project for 
+ * details. 
  *</p>
+ * <p>
+ * Mybatis provides detailed logging of all SQL commands it executes as well the ability to log the
+ * results of each SQL statement. To direct this logging output to the Glassfish Server Log use
+ * Log Levels tab of the Logger Settings node in the Glassfish Admin Console to set the java.sql
+ * and java.sql.Connection loggers to the FINE level. If you wish to log the results of each
+ * SQL query, set java.sql.ResultSet to FINE as well, but be aware that logging all results may
+ * negatively impact performance of the application. 
+ * </p>
  * @author soladev
  */
 public class DatabaseConnectionManager {
@@ -90,9 +99,9 @@ public class DatabaseConnectionManager {
      * @see PartyConnectionFactory
      */
     public DatabaseConnectionManager(String configFileUrl, Class<? extends CommonMapper> mapperClass) {
-        // Configure Mybatis logging to output all query commands to standard out.
-        // TODO Reconfigured to use Log4J. 
-        // LogFactory.useStdOutLogging();
+        // Ensure Mybatis uses the Glassfish JDK Logging provider in preference to any other 
+        // logging provider. 
+        LogFactory.useJdkLogging();
         try {
             // Determine which data source to use - shared or specific
             String environment = SPECIFIC_ENV;
