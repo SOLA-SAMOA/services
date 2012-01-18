@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNode;
 
 /**
  *
@@ -80,10 +81,10 @@ public class CadastreEJBIT extends AbstractEJBTest {
         int srid = 2193;
         System.out.println("getCadastreObjectByPoint");
         CadastreObject resultObject = instance.getCadastreObjectByPoint(x, y, srid);
-        if (resultObject != null){
-            System.out.println("Result :" + resultObject);        
-        }else{
-            System.out.println("Result : NOT FOUND");                    
+        if (resultObject != null) {
+            System.out.println("Result :" + resultObject);
+        } else {
+            System.out.println("Result : NOT FOUND");
         }
 
         System.out.println("getCadastreObjectTypes");
@@ -92,10 +93,10 @@ public class CadastreEJBIT extends AbstractEJBTest {
 
         System.out.println("getCadastreObject");
         resultObject = instance.getCadastreObject(id);
-        if (resultObject != null){
-            System.out.println("Result :" + resultObject);        
-        }else{
-            System.out.println("Result : NOT FOUND");                    
+        if (resultObject != null) {
+            System.out.println("Result :" + resultObject);
+        } else {
+            System.out.println("Result : NOT FOUND");
         }
 
         System.out.println("getCadastreObjects");
@@ -104,12 +105,13 @@ public class CadastreEJBIT extends AbstractEJBTest {
         listIds.add("id2");
         resultList = instance.getCadastreObjects(listIds);
         System.out.println("Result :" + resultList);
-        
-        System.out.println("getCadastreChange");
-//        CadastreChange cadastreChange = instance.getCadastreChange("f4d15b7d-8fa7-492a-a532-9a4d1c7d0aa2");
-//        System.out.println("Result :" + cadastreChange.getFromServiceId());
-        
-        //System.out.println("validateCadastreChange");
-        //instance.validateCadastreChange("57b0f64b-4680-4074-8c86-b9d9140837cf", "en", "pending");
-}
+
+        System.out.println("getCadastreObjectNode");
+        CadastreObjectNode nodeObj = instance.getCadastreObjectNode(1782700, 5926205, 1782726, 5926209, 2193);
+        System.out.println("Result :" + nodeObj.toString());
+
+        System.out.println("getCadastreObjectNodePotential");
+        nodeObj = instance.getCadastreObjectNodePotential(1784900, 5925445, 1784950, 5925512, 2193);
+        System.out.println("Result :" + nodeObj.toString());
+    }
 }

@@ -109,5 +109,9 @@ public class Development extends AbstractEJBTest {
         System.out.println("getCadastreObjectNode");
         CadastreObjectNode nodeObj = instance.getCadastreObjectNode(1782700, 5926205,1782726, 5926209, 2193);
         System.out.println("Result :" + nodeObj.toString());
+
+        System.out.println("getCadastreObjectNodePotential");
+        nodeObj = instance.getCadastreObjectNodePotential(1784900, 5925445,1784950, 5925512, 2193);
+        System.out.println("Result :" + nodeObj.toString());
 }
 }

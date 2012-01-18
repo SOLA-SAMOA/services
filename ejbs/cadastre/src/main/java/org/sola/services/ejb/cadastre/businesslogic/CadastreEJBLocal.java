@@ -68,4 +68,7 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
     
     CadastreObjectNode getCadastreObjectNode(
             double xMin, double yMin, double xMax, double yMax, int srid);
+
+    CadastreObjectNode getCadastreObjectNodePotential(
+            double xMin, double yMin, double xMax, double yMax, int srid);
 }

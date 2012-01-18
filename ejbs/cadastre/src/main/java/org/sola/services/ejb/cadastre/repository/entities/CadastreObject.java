@@ -61,7 +61,8 @@ public class CadastreObject extends AbstractVersionedEntity {
     public static final String QUERY_WHERE_SEARCHBYTRANSACTION =
             "transaction_id = #{transaction_id}";
     public static final String QUERY_WHERE_SEARCHBYGEOM = "status_code= 'current' and "
-            + "ST_Intersects(geom_polygon, get_geometry_with_srid(#{geom}))";
+            + "ST_DWithin(geom_polygon, get_geometry_with_srid(#{geom}), "
+            + "system.get_setting('map-tolerance')::double precision)";
 
     @Id
     @Column(name = "id")

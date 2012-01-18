@@ -174,11 +174,34 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         if (cadastreObjectNode != null){
             params.clear();
             params.put("geom", cadastreObjectNode.getGeom());
-            List<CadastreObject> cadastreObjectInvolvedList = getRepository().getEntityList(
-                    CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params);
-            cadastreObjectNode.setCadastreObjectList(cadastreObjectInvolvedList);
+            cadastreObjectNode.setCadastreObjectList(getRepository().getEntityList(
+                    CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params));
         }
         return cadastreObjectNode;
 
     }
+
+    @Override
+    public CadastreObjectNode getCadastreObjectNodePotential(
+            double xMin, double yMin, double xMax, double yMax, int srid){
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_FROM_PART, 
+                CadastreObjectNode.QUERY_GET_BY_RECTANGLE_POTENTIAL_FROM_PART);
+        params.put(CommonSqlProvider.PARAM_LIMIT_PART, 1);
+        params.put("minx", xMin);
+        params.put("miny", yMin);
+        params.put("maxx", xMax);
+        params.put("maxy", yMax);
+        params.put("srid", srid);
+        CadastreObjectNode cadastreObjectNode = getRepository().getEntity(
+                CadastreObjectNode.class, params);   
+        if (cadastreObjectNode != null){
+            params.clear();
+            params.put("geom", cadastreObjectNode.getGeom());
+            cadastreObjectNode.setCadastreObjectList(getRepository().getEntityList(
+                    CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params));
+        }
+        return cadastreObjectNode;
+
+    }    
 }
