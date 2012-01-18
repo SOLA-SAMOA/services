@@ -44,9 +44,10 @@ import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
 import org.sola.services.ejb.source.businesslogic.SourceEJBLocal;
 import org.sola.services.ejb.source.repository.entities.Source;
+import org.sola.services.ejb.system.br.Result;
+import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
-import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 import org.sola.services.ejb.transaction.repository.entities.TransactionStatusType;
 
 /**
@@ -216,10 +217,30 @@ public class BaUnit extends AbstractVersionedEntity {
         return locked;
     }
 
+    private String generateBaUnitNumber() {
+        String result = "";
+        SystemEJBLocal systemEJB = RepositoryUtility.tryGetEJB(SystemEJBLocal.class);
+        if (systemEJB != null) {
+            Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-baunit-nr", null);
+            if (newNumberResult != null && newNumberResult.getValue() != null) {
+                result = newNumberResult.getValue().toString();
+            }
+        }
+        return result;
+    }
+    
     @Override
     public void preSave() {
         if (this.isNew()) {
             setTransactionId(LocalInfo.getTransactionId());
+        }
+        if(nameFirstpart==null || nameFirstpart.length()<1 || nameLastpart == null || nameLastpart.length() < 1){
+            String baUnitNumber = generateBaUnitNumber();
+            if(baUnitNumber!=null && baUnitNumber.contains("/")){
+                String[] numberParts = baUnitNumber.split("/");
+                nameFirstpart = numberParts[0];
+                nameLastpart = numberParts[1];
+            }
         }
         super.preSave();
     }

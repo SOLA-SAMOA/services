@@ -467,18 +467,24 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     public List<CadastreObjectSearchResult> searchCadastreObjects(
             String searchBy, String searchString) {
         String wherePart = null;
+        Integer numberOfMaxRecordsReturned = 10;
+
         if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_NUMBER)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_NUMBER;
         } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_BAUNIT)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_BAUNIT;
         } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_OWNER_OF_BAUNIT)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT;
+        } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_BAUNIT_ID)) {
+            wherePart = CadastreObjectSearchResult.QUERY_WHERE_GET_NEW_PARCELS;
+            numberOfMaxRecordsReturned = 0;
         }
         List<CadastreObjectSearchResult> result = new ArrayList<CadastreObjectSearchResult>();
         if (wherePart != null) {
-            Integer numberOfMaxRecordsReturned = 10;
             Map params = new HashMap<String, Object>();
-            params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
+            if (numberOfMaxRecordsReturned > 0) {
+                params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
+            }
             params.put(CommonSqlProvider.PARAM_WHERE_PART, wherePart);
             params.put(CadastreObjectSearchResult.SEARCH_STRING_PARAM, searchString);
             result = this.getRepository().getEntityList(CadastreObjectSearchResult.class, params);

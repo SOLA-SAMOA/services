@@ -36,6 +36,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Table;
 import org.sola.services.common.repository.ChildEntityList;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -45,6 +46,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "request_type", schema = "application")
+@DefaultSorter(sortString="display_value")
 public class RequestType extends AbstractCodeEntity {
     
     public static String CADASTRE_CHANGE = "cadastreChange";

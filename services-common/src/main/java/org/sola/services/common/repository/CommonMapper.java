@@ -63,7 +63,7 @@ public interface CommonMapper {
     HashMap getEntity(Map params);
 
     /** Refer to {@linkplain CommonSqlProvider#buildGetEntitySql}. */
-    @SelectProvider(type = CommonSqlProvider.class, method = "buildGetEntitySql")
+    @SelectProvider(type = CommonSqlProvider.class, method = "buildGetEntityListSql")
     ArrayList<HashMap> getEntityList(Map params);
 
     @SelectProvider(type = CommonSqlProvider.class, method = "buildSelectSql")

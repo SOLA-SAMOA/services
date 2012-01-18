@@ -59,6 +59,7 @@ public class RepositoryUtility {
     private static Map<String, List<ColumnInfo>> entityColumns = new HashMap<String, List<ColumnInfo>>();
     private static Map<String, List<ColumnInfo>> entityIdColumns = new HashMap<String, List<ColumnInfo>>();
     private static Map<String, String> entityTableNames = new HashMap<String, String>();
+    private static Map<String, String> sorterExpressions = new HashMap<String, String>();
     private static Map<String, List<ChildEntityInfo>> childEntities = new HashMap<String, List<ChildEntityInfo>>();
 
     public static void getAllFields(Class<?> c, List<Field> fields) {
@@ -83,6 +84,20 @@ public class RepositoryUtility {
         return tableName;
     }
 
+    public static <T extends AbstractReadOnlyEntity> String getSorterExpression(Class<T> entityClass) {
+        String sorterExpression = null;
+        if (sorterExpressions.containsKey(entityClass.getName())) {
+            sorterExpression = sorterExpressions.get(entityClass.getName());
+        } else {
+            DefaultSorter sorterAnnotation = entityClass.getAnnotation(DefaultSorter.class);
+            if (sorterAnnotation != null) {
+                sorterExpression = sorterAnnotation.sortString();
+                sorterExpressions.put(entityClass.getName(), sorterExpression);
+            }
+        }
+        return sorterExpression;
+    }
+    
     public static <T extends AbstractReadOnlyEntity> List<ColumnInfo> getColumns(Class<T> entityClass) {
 
         List<ColumnInfo> columns = new ArrayList<ColumnInfo>();

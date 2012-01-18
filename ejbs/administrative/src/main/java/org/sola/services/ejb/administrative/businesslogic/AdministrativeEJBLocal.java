@@ -64,4 +64,5 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
     
     BaUnit saveBaUnit(String serviceId, BaUnit baUnit);
     
+    List<BaUnit> getBaUnitsByTransactionId(String transactionId);
 }

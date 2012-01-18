@@ -40,24 +40,25 @@ import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
  *
  * @author Elton Manoku
  */
-
 @Table(name = "cadastre_object", schema = "cadastre")
 public class CadastreObjectSearchResult extends AbstractReadOnlyEntity {
-    
+
     public static final String SEARCH_STRING_PARAM = "search_string";
-    
     public static final String SEARCH_BY_NUMBER = "NUMBER";
     public static final String SEARCH_BY_BAUNIT = "BAUNIT";
     public static final String SEARCH_BY_OWNER_OF_BAUNIT = "OWNER_OF_BAUNIT";
-
+    public static final String SEARCH_BY_BAUNIT_ID = "BAUNIT_ID";
+    
     public static final String QUERY_WHERE_SEARCHBY_NUMBER = "status_code= 'current' and "
             + "compare_strings(#{search_string}, name_firstpart || ' ' || name_lastpart)";
+    
     public static final String QUERY_WHERE_SEARCHBY_BAUNIT = "status_code= 'current' and "
             + "id in (select spatial_unit_id from administrative.ba_unit_contains_spatial_unit bas "
             + " inner join administrative.ba_unit on bas.ba_unit_id= ba_unit.id "
             + "where ba_unit.status_code= 'current' "
             + "and compare_strings(#{search_string}, "
             + "ba_unit.name_firstpart || ' ' || ba_unit.name_lastpart))";
+    
     public static final String QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT = "status_code= 'current' and "
             + " id in (select spatial_unit_id "
             + " from administrative.ba_unit_contains_spatial_unit bas "
@@ -69,7 +70,16 @@ public class CadastreObjectSearchResult extends AbstractReadOnlyEntity {
             + " inner join party.party on pfr.party_id= pfr.party_id "
             + " where compare_strings(#{search_string}, coalesce(party.name, '') "
             + " || ' ' || coalesce(party.last_name, '')))";
-
+    
+    public static final String QUERY_WHERE_GET_NEW_PARCELS = "transaction_id IN "
+            + "(SELECT cot.transaction_id "
+            + "FROM (administrative.ba_unit_contains_spatial_unit ba_su "
+            + "INNER JOIN cadastre.cadastre_object co ON ba_su.spatial_unit_id = co.id) "
+            + "INNER JOIN cadastre.cadastre_object_target cot ON co.id = cot.cadastre_object_id "
+            + "WHERE ba_su.ba_unit_id = #{search_string}) "
+            + "AND (SELECT COUNT(1) FROM administrative.ba_unit_contains_spatial_unit WHERE spatial_unit_id = cadastre_object.id) = 0 "
+            + "AND status_code = 'current'";
+    
     @Column(name = "id")
     private String id;
     @Column(name = "label")

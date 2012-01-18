@@ -36,12 +36,14 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
  * Entity representing the application.service table. 
  * @author soladev
  */
+@DefaultSorter(sortString="service_order")
 @Table(name = "service", schema = "application")
 public class Service extends AbstractVersionedEntity {
 

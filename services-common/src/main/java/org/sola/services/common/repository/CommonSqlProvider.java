@@ -238,6 +238,15 @@ public class CommonSqlProvider {
         return sql;
     }
 
+    public static <T extends AbstractEntity> String buildGetEntityListSql(Map params) {
+        Class<T> entityClass = (Class<T>) params.get(PARAM_ENTITY_CLASS);
+        if(entityClass!=null && !params.containsKey(PARAM_ORDER_BY_PART) && 
+                RepositoryUtility.getSorterExpression(entityClass) != null){
+            params.put(PARAM_ORDER_BY_PART, RepositoryUtility.getSorterExpression(entityClass));
+        }
+        return buildGetEntitySql(params);
+    }
+
     public static String buildSelectSql(Map params) {
 
         // Check if a full query has been provided

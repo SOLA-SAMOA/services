@@ -139,23 +139,16 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
             return application;
         }
 
-        //application.setActionCode(ApplicationActionType.LODGED);
-        //application.setStatusCode(ApplicationStatusType.STATUS_LODGED);
         if (application.getLodgingDatetime() == null) {
             application.setLodgingDatetime(DateUtility.now());
         }
         if (application.getServiceList() != null) {
             for (Service ser : application.getServiceList()) {
-                //      ser.setStatusCode(ServiceStatusType.STATUS_LODGED);
-                //      ser.setActionCode(ServiceActionType.LODGED);
                 ser.setLodgingDatetime(application.getLodgingDatetime());
             }
         }
 
         calculateFeesAndDates(application);
-        //if (application.getNr() == null) {
-        //    application.setNr(allocateNr());
-        //}
         treatApplicationSources(application);
         application.getContactPerson().setTypeCode("naturalPerson");
         application = getRepository().saveEntity(application);
