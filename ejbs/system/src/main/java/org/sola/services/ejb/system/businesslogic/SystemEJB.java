@@ -173,18 +173,6 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
                 //Here is supposed to come the code which runs the business rule using drools engine.
             } else if (br.getTechnicalTypeCode().equals("sql")) {
                 String sqlStatement = br.getBody();
-//                Object[] params = null;
-//                if (parameters != null) {
-//                    Integer paramIndex = 1;
-//                    params = new Object[parameters.keySet().size()];
-//                    for (String paramName : parameters.keySet()) {
-//                        sqlStatement = sqlStatement.replace(
-//                                String.format("{%s}", paramName), String.format("?%s", paramIndex));
-//                        params[paramIndex - 1] = parameters.get(paramName);
-//                        paramIndex++;
-//                    }
-//                }
-//                ruleResult = searchEJB.getResultObjectFromStatement(sqlStatement, params);
                 ruleResult = searchEJB.getResultObjectFromStatement(sqlStatement, parameters);
                 if (ruleResult == null) {
                     ruleResult = new HashMap();
@@ -210,30 +198,6 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
         return result;
     }
 
-//    @Override
-//    public ResultFeedback checkRuleGetFeedback(
-//            String brName, String languageCode, HashMap<String, Serializable> parameters) {
-//        BrCurrent br = this.getBrCurrent(brName, languageCode);
-//        ResultFeedback result = new ResultFeedback();
-//        result.setName(brName);
-//        Object rawResult = this.checkRuleBasic(br, parameters);
-//        result.setValue(rawResult);
-//        result.setFeedback(br.getFeedback());
-//        return result;
-//    }
-//
-//    @Override
-//    public List<ResultFeedback> checkRulesGetFeedback(
-//            List<String> brNameList, String languageCode,
-//            HashMap<String, Serializable> parameters) {
-//
-//        List<ResultFeedback> result = new ArrayList<ResultFeedback>();
-//        for (String brName : brNameList) {
-//            result.add(this.checkRuleGetFeedback(brName, languageCode, parameters));
-//
-//        }
-//        return result;
-//    }
     @Override
     public List<ValidationResult> checkRulesGetValidation(
             List<BrValidation> brListToValidate, String languageCode,

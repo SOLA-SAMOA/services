@@ -27,9 +27,9 @@
  */
 package org.sola.services.ejb.search.repository.entities;
 
-import org.sola.services.common.entities.AbstractEntity;
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
-public class PartySearchParams  extends AbstractEntity {
+public class PartySearchParams  extends AbstractReadOnlyEntity {
 
     private String name;
     private String typeCode;

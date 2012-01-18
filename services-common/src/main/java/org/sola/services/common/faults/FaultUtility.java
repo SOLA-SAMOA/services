@@ -32,13 +32,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.logging.Level;
-import javax.ejb.AccessLocalException;
 import javax.ejb.EJBAccessException;
 import javax.persistence.OptimisticLockException;
 import org.sola.common.DateUtility;
-import org.sola.common.logging.LogUtility;
 import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.LocalInfo;
+import org.sola.services.common.logging.LogUtility;
 
 /**
  *
@@ -61,8 +60,7 @@ public final class FaultUtility {
         String stackTraceAsStr = getStackTraceAsString(t);
 
         try {
-            String msg = System.getProperty("line.separator")
-                    + "FaultId = " + faultInfoBean.getFaultId()
+            String msg = "SOLA FaultId = " + faultInfoBean.getFaultId()
                     + System.getProperty("line.separator")
                     + stackTraceAsStr;
             LogUtility.log(msg, Level.SEVERE);
@@ -77,23 +75,22 @@ public final class FaultUtility {
         }
 
         try {
-            System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
             // Identify the type of exception and raise the appropriate Service Fault
             if (hasCause(t, SOLAValidationException.class)) {
-                
+
                 SOLAValidationException ex = getCause(t, SOLAValidationException.class);
                 faultInfoBean.setValidationResultList(ex.getValidationResultList());
                 faultInfoBean.setMessageCode(ex.getMessage());
                 fault = new SOLAValidationFault(ex.getMessage(), faultInfoBean);
-                
-            } else if(hasCause(t, EJBAccessException.class)){
-                
+
+            } else if (hasCause(t, EJBAccessException.class)) {
+
                 faultInfoBean.setMessageCode(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);
                 fault = new SOLAAccessFault(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS, faultInfoBean);
-                
+
             } else if (hasCause(t, SOLAException.class)) {
-                
-                SOLAException ex = getCause(t, SOLAException.class); 
+
+                SOLAException ex = getCause(t, SOLAException.class);
                 faultInfoBean.setMessageCode(ex.getMessage());
                 Object[] msgParms = ex.getMessageParameters();
                 if (msgParms != null) {
@@ -112,7 +109,7 @@ public final class FaultUtility {
             } else if (hasCause(t, SOLAFault.class)) {
                 // We need to create another SOLAFault to minimise any
                 // exception detail leakage (i.e. apply Exception Sheilding Pattern)
-                SOLAFault f = getCause(t, SOLAFault.class); 
+                SOLAFault f = getCause(t, SOLAFault.class);
                 FaultInfoBean tempBean = f.getFaultInfo();
                 if (tempBean != null) {
                     faultInfoBean.setMessageCode(tempBean.getMessageCode());
@@ -126,21 +123,20 @@ public final class FaultUtility {
                 fault = new OptimisticLockingFault(faultInfoBean.getMessageCode(),
                         faultInfoBean);
 
-            } 
-//            else if (isDatabaseConstraintViolation(t, stackTraceAsStr)){
-//                Throwable dbException = t;
-//                while(dbException!= null && dbException.getClass() 
-//                        != org.apache.ibatis.exceptions.PersistenceException.class){
-//                    dbException = dbException.getCause();
-//                }
-//                String constraintName = "NOT SET";
-//                if (dbException != null){
-//                    if (dbException.getCause() != null)
-//                    constraintName = dbException.getCause().getMessage();
-//                }
-//                faultInfoBean.setMessageCode(constraintName);
-//                fault = new ConstraintViolationFault(constraintName, faultInfoBean);
-//            } 
+            } //            else if (isDatabaseConstraintViolation(t, stackTraceAsStr)){
+            //                Throwable dbException = t;
+            //                while(dbException!= null && dbException.getClass() 
+            //                        != org.apache.ibatis.exceptions.PersistenceException.class){
+            //                    dbException = dbException.getCause();
+            //                }
+            //                String constraintName = "NOT SET";
+            //                if (dbException != null){
+            //                    if (dbException.getCause() != null)
+            //                    constraintName = dbException.getCause().getMessage();
+            //                }
+            //                faultInfoBean.setMessageCode(constraintName);
+            //                fault = new ConstraintViolationFault(constraintName, faultInfoBean);
+            //            } 
             else {
                 // Unhandled Exception. Do not provide the details of the exception as this would
                 // violate the Exception Sheilding Pattern. The administrator can refer to the
@@ -163,8 +159,8 @@ public final class FaultUtility {
     }
 
     private static boolean isOptimisticLocking(Throwable t, String traceInfo) {
-        return traceInfo.contains("row_has_different_change_time") 
-                || hasCause(t, OptimisticLockException.class); 
+        return traceInfo.contains("row_has_different_change_time")
+                || hasCause(t, OptimisticLockException.class);
     }
 
     /**
@@ -174,7 +170,7 @@ public final class FaultUtility {
      * @return 
      */
     private static boolean isDatabaseConstraintViolation(Throwable t, String traceInfo) {
-        return traceInfo.contains("org.postgresql.util.PSQLException"); 
+        return traceInfo.contains("org.postgresql.util.PSQLException");
     }
 
     /**

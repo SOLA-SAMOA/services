@@ -36,8 +36,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
-import org.sola.services.ejb.cadastre.repository.entities.CadastreChange;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNode;
 
 /**
  *
@@ -106,22 +106,12 @@ public class Development extends AbstractEJBTest {
         resultList = instance.getCadastreObjects(listIds);
         System.out.println("Result :" + resultList);
         
-//        System.out.println("getCadastreChange");
-//        CadastreChange cadastreChange = instance.getCadastreChange("f4d15b7d-8fa7-492a-a532-9a4d1c7d0aa2");
-//        System.out.println("Result :" + cadastreChange.getFromServiceId());
-        
-//        CadastreObject co = new CadastreObject();
-//        co.setTransactionId("ok");
-//        cadastreChange = new CadastreChange();
-//        cadastreChange.setFromServiceId("4000");
-//        cadastreChange.setNewCadastreObjectList(new ArrayList<CadastreObject>());
-//        cadastreChange.getNewCadastreObjectList().add(co);
-//        System.out.println("savetCadastreChange");
-//        instance.saveCadastreChange(cadastreChange, "en");
-        
-        
-        
-        //System.out.println("validateCadastreChange");
-        //instance.validateCadastreChange("57b0f64b-4680-4074-8c86-b9d9140837cf", "en", "pending");
+        System.out.println("getCadastreObjectNode");
+        CadastreObjectNode nodeObj = instance.getCadastreObjectNode(1782700, 5926205,1782726, 5926209, 2193);
+        System.out.println("Result :" + nodeObj.toString());
+
+        System.out.println("getCadastreObjectNodePotential");
+        nodeObj = instance.getCadastreObjectNodePotential(1784900, 5925445,1784950, 5925512, 2193);
+        System.out.println("Result :" + nodeObj.toString());
 }
 }
