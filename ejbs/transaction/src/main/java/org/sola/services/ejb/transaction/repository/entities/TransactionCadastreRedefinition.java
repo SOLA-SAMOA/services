@@ -36,62 +36,47 @@ import javax.persistence.Table;
 import org.sola.services.common.repository.ChildEntityList;
 import org.sola.services.common.repository.ExternalEJB;
 import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
-import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
-import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
-import org.sola.services.ejb.cadastre.repository.entities.SurveyPoint;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTargetRedefinition;
 
 /**
  *
  * @author Elton Manoku
  */
 @Table(name = "transaction", schema = "transaction")
-public class TransactionCadastreChange extends Transaction {
+public class TransactionCadastreRedefinition extends Transaction {
 
     @ChildEntityList(parentIdField = "transactionId")
     @ExternalEJB(
             ejbLocalClass = CadastreEJBLocal.class, 
-            loadMethod = "getCadastreObjectsByTransaction", 
-            saveMethod="saveCadastreObject")
-    List<CadastreObject> CadastreObjectList;
-
-    @ChildEntityList(parentIdField = "transactionId")
-    @ExternalEJB(
-            ejbLocalClass = CadastreEJBLocal.class, 
-            loadMethod = "getSurveyPointsByTransaction", 
+            loadMethod = "getCadastreObjectNodeTargetsByTransaction", 
             saveMethod="saveEntity")
-    List<SurveyPoint> surveyPointList;
+    private List<CadastreObjectNodeTarget> cadastreObjectNodeTargetList;
 
     @ChildEntityList(parentIdField = "transactionId")
     @ExternalEJB(
             ejbLocalClass = CadastreEJBLocal.class, 
             loadMethod = "getCadastreObjectTargetsByTransaction", 
             saveMethod="saveEntity")
-    private List<CadastreObjectTarget> cadastreObjectTargetList;
+    private List<CadastreObjectTargetRedefinition> cadastreObjectTargetList;
 
     @ChildEntityList(parentIdField = "transactionId")
     private List<TransactionSource> transactionSourceList;
 
-    public List<CadastreObject> getCadastreObjectList() {
-        return CadastreObjectList;
+    public List<CadastreObjectNodeTarget> getCadastreObjectNodeTargetList() {
+        return cadastreObjectNodeTargetList;
     }
 
-    public void setCadastreObjectList(List<CadastreObject> CadastreObjectList) {
-        this.CadastreObjectList = CadastreObjectList;
+    public void setCadastreObjectNodeTargetList(
+            List<CadastreObjectNodeTarget> cadastreObjectNodeTargetList) {
+        this.cadastreObjectNodeTargetList = cadastreObjectNodeTargetList;
     }
 
-    public List<SurveyPoint> getSurveyPointList() {
-        return surveyPointList;
-    }
-
-    public void setSurveyPointList(List<SurveyPoint> surveyPointList) {
-        this.surveyPointList = surveyPointList;
-    }
-
-    public List<CadastreObjectTarget> getCadastreObjectTargetList() {
+    public List<CadastreObjectTargetRedefinition> getCadastreObjectTargetList() {
         return cadastreObjectTargetList;
     }
 
-    public void setCadastreObjectTargetList(List<CadastreObjectTarget> cadastreObjectTargetList) {
+    public void setCadastreObjectTargetList(List<CadastreObjectTargetRedefinition> cadastreObjectTargetList) {
         this.cadastreObjectTargetList = cadastreObjectTargetList;
     }
 
@@ -101,15 +86,5 @@ public class TransactionCadastreChange extends Transaction {
 
     public void setTransactionSourceList(List<TransactionSource> transactionSourceList) {
         this.transactionSourceList = transactionSourceList;
-    }
-
-    @Override
-    public void preSave() {
-        if (this.isNew() && this.getCadastreObjectList() != null){
-            for(CadastreObject cadastreObject:this.getCadastreObjectList()){
-                cadastreObject.setId(null);
-            }
-        }
-        super.preSave();
     }
 }
