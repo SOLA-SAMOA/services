@@ -36,6 +36,7 @@ import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNode;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectStatusChanger;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectType; // NOTE namespace change
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
@@ -202,6 +203,16 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
                     CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params));
         }
         return cadastreObjectNode;
+    }
 
-    }    
+    @Override
+    public List<CadastreObjectNodeTarget> getCadastreObjectNodeTargetsByTransaction(
+            String transactionId) {
+        Map params = new HashMap<String, Object>();
+        params.put(
+                CommonSqlProvider.PARAM_WHERE_PART,
+                CadastreObjectNodeTarget.QUERY_WHERE_SEARCHBYTRANSACTION);
+        params.put("transaction_id", transactionId);
+        return getRepository().getEntityList(CadastreObjectNodeTarget.class, params);
+    }
 }

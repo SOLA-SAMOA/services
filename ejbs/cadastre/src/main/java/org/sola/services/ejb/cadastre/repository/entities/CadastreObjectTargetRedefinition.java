@@ -32,41 +32,39 @@
 package org.sola.services.ejb.cadastre.repository.entities;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.LocalInfo;
-import org.sola.services.common.repository.entities.AbstractVersionedEntity;
+import org.sola.services.common.repository.AccessFunctions;
 
 /**
  *
  * @author Elton Manoku
  */
 @Table(name = "cadastre_object_target", schema = "cadastre")
-public class CadastreObjectTarget extends AbstractVersionedEntity{
-
-     public static final String QUERY_WHERE_SEARCHBYTRANSACTION = 
-             "transaction_id = #{transaction_id}";
+public class CadastreObjectTargetRedefinition extends CadastreObjectTarget{
     
-    @Id
-    @Column(name = "cadastre_object_id")
-    private String cadastreObjectId;
-    @Id
-    @Column(name = "transaction_id")
-    private String transactionId;
+    @Column(name = "geom_polygon")
+    @AccessFunctions(onSelect = "st_asewkb(geom_polygon)",
+    onChange = "get_geometry_with_srid(#{geomPolygon})")
+    private byte[] geomPolygon;
 
-    public String getCadastreObjectId() {
-        return cadastreObjectId;
+    @Column(name = "geom_polygon_current", updatable=false, insertable=false)
+    @AccessFunctions(onSelect = "(select st_asewkb(geom_polygon) from cadastre.cadastre_object"
+            + " where id = cadastre_object_id)")
+    private byte[] geomPolygonCurrent;
+
+    public byte[] getGeomPolygon() {
+        return geomPolygon;
     }
 
-    public void setCadastreObjectId(String cadastreObjectId) {
-        this.cadastreObjectId = cadastreObjectId;
+    public void setGeomPolygon(byte[] geomPolygon) {
+        this.geomPolygon = geomPolygon;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public byte[] getGeomPolygonCurrent() {
+        return geomPolygonCurrent;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }    
+    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) {
+        this.geomPolygonCurrent = geomPolygonCurrent;
+    }
 }

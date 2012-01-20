@@ -32,6 +32,7 @@ import javax.ejb.Local;
 import org.sola.services.common.ejbs.AbstractEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNode;
+import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectType;
 import org.sola.services.ejb.cadastre.repository.entities.SurveyPoint;
@@ -71,4 +72,7 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
 
     CadastreObjectNode getCadastreObjectNodePotential(
             double xMin, double yMin, double xMax, double yMax, int srid);
+    
+    List<CadastreObjectNodeTarget> getCadastreObjectNodeTargetsByTransaction(String transactionId);
+    
 }
