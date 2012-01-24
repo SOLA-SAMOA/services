@@ -39,8 +39,8 @@ import org.sola.services.common.repository.entities.AbstractEntity;
 
 /**
  * Annotation required to identify child entities that have a One or Many or Many to Many 
- * relationship with the parent entity. This information is used to control the entity save process.
- * This annotation is not required if the child entities do not require update via the parent. 
+ * relationship with the parent entity. This information is used to control the entity load
+ * and save process. 
  * @author soladev
  */
 @Target(ElementType.FIELD)
@@ -82,7 +82,7 @@ public @interface ChildEntityList {
     /**
      * Flag to indicate the entity is read only and should not be updated via the parent entity. 
      * Optional for Many to Many relationships where it may be necessary to manage the many to many
-     * entity, but not update the child entity. Not applicable for One to Many relationships. 
+     * entity, but not update the child entity. Also optional for One to Many relationships. 
      * Default false.  
      */
     boolean readOnly() default false; 

@@ -34,6 +34,7 @@ package org.sola.services.common.repository.entities;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.repository.RepositoryUtility;
@@ -126,7 +127,7 @@ public abstract class AbstractReadOnlyEntity implements Serializable {
                     || char.class.isAssignableFrom(fieldType))) {
                 value = new Character(value.toString().charAt(0));
             }
-            
+
             // Mybatis also has problems with Short serving these up as Integer
             if (value != null && Integer.class.isAssignableFrom(value.getClass())
                     && (Short.class.isAssignableFrom(fieldType)
@@ -218,6 +219,25 @@ public abstract class AbstractReadOnlyEntity implements Serializable {
      */
     public String getTableName() {
         return RepositoryUtility.getTableName(this.getClass());
+    }
+
+    /**
+     * Allows the SQL parameters used to retrieve child entities to be set, overriding the default
+     * join criteria used by {@linkplain CommonRepository}. This override is available for 
+     * One to One, One to Many and Many to Many joins. 
+     * <p> Override this method in the parent entity and populate the parameter map with the 
+     * appropriate SQL parts (e.g. {@linkplain CommonSqlProvider#PARAM_WHERE_PART}) for the join. 
+     * </p>
+     * @param <T> The generic type of the child entity. Must be a descendent of 
+     *            {@linkplain AbstractReadOnlyEntity}.
+     * @param childEntityClass The class of the child entity to load. This can be used to 
+     * differentiate between multiple child entities if the parent overrides the join criteria for
+     * more than one child. 
+     * @return The SQL Parameter Map to use for retrieving the child entities.
+     */
+    public <T extends AbstractReadOnlyEntity> Map<String, Object> getChildJoinSqlParams(
+            Class<T> childEntityClass) {
+        return null;
     }
 
     /**
