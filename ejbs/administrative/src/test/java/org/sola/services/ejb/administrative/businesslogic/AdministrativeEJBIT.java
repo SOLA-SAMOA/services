@@ -78,6 +78,7 @@ public class AdministrativeEJBIT extends AbstractEJBTest {
     /**
      * Test of createBaUnit method, of class AdministrativeEJB.
      */
+    //@Ignore
     @Test
     public void testBaUnitOperations() throws Exception {
 
@@ -228,6 +229,7 @@ public class AdministrativeEJBIT extends AbstractEJBTest {
     /**
      * Test of getBaUnitByCode method, of class AdministrativeEJB.
      */
+    //@Ignore
     @Test
     public void testGetReferenceDataTypes() throws Exception {
 
@@ -286,21 +288,19 @@ public class AdministrativeEJBIT extends AbstractEJBTest {
     //@Ignore
     public void testGetBaUnitById() throws Exception {
         baUnitId = "1096f4cc-8ff4-4322-9730-683efd07c2fc";
+        //baUnitId = "3118304";
+        
         System.out.println("get baunit with id:" + baUnitId);
 
         if (baUnitId == null) {
             System.out.println("Test cannot run baUnitId is not set.");
             return;
-
-
         }
 
         AdministrativeEJBLocal instance = (AdministrativeEJBLocal) getEJBInstance(AdministrativeEJB.class.getSimpleName());
 
         // Manage the scope of the transction 
         UserTransaction tx = getUserTransaction();
-
-
 
         try {
             tx.begin();
@@ -311,7 +311,10 @@ public class AdministrativeEJBIT extends AbstractEJBTest {
                 return;
             }
 
+            System.out.println("Parent BaUnits:" + baUnit.getParentBaUnits().size());
+            System.out.println("Child BaUnits:" + baUnit.getChildBaUnits().size());
             System.out.println("nr of rrr:" + baUnit.getRrrList().size());
+            
             if (baUnit.getRrrList().size() > 0) {
                 Rrr rrr = baUnit.getRrrList().get(0);
                 System.out.println("Nr of parties in rrr:" + rrr.getRightHolderList().size());
@@ -335,7 +338,6 @@ public class AdministrativeEJBIT extends AbstractEJBTest {
                 rrr.setEntityAction(EntityAction.DELETE);
                 instance.saveBaUnit("4000", baUnit);
                 System.out.println("Succeded.");
-                
             }
 
             tx.commit();

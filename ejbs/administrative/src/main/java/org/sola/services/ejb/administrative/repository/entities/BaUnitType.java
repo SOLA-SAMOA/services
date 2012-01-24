@@ -25,10 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.ejb.administrative.repository.entities;
 
 import javax.persistence.Table;

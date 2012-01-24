@@ -43,6 +43,7 @@ import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.administrative.repository.entities.BaUnit;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitNotation;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitNotationStatusChanger;
+import org.sola.services.ejb.administrative.repository.entities.BaUnitRelType;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitStatusChanger;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitType;
 import org.sola.services.ejb.administrative.repository.entities.ChangeStatusType;
@@ -243,5 +244,10 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYTRANSACTIONID);
         params.put(BaUnit.QUERY_PARAMETER_TRANSACTIONID, transactionId);
         return getRepository().getEntityList(BaUnit.class, params);
+    }
+
+    @Override
+    public List<BaUnitRelType> getBaUnitRelTypes(String languageCode) {
+        return getRepository().getCodeList(BaUnitRelType.class, languageCode);
     }
 }

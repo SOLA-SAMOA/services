@@ -31,6 +31,7 @@ import java.util.List;
 import javax.ejb.Local;
 import org.sola.services.common.ejbs.AbstractSolaTransactionEJBLocal;
 import org.sola.services.ejb.administrative.repository.entities.BaUnit;
+import org.sola.services.ejb.administrative.repository.entities.BaUnitRelType;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitType;
 import org.sola.services.ejb.administrative.repository.entities.ChangeStatusType;
 import org.sola.services.ejb.administrative.repository.entities.MortgageType;
@@ -65,4 +66,6 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
     BaUnit saveBaUnit(String serviceId, BaUnit baUnit);
     
     List<BaUnit> getBaUnitsByTransactionId(String transactionId);
+    
+    List<BaUnitRelType> getBaUnitRelTypes(String languageCode);
 }

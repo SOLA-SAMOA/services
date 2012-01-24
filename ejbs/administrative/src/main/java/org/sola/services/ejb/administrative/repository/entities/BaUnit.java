@@ -25,10 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.ejb.administrative.repository.entities;
 
 import java.util.List;
@@ -65,6 +61,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public static final String QUERY_WHERE_BYPROPERTYCODE =
             "name_firstpart = #{" + QUERY_PARAMETER_FIRSTPART + "} AND "
             + "name_lastpart = #{" + QUERY_PARAMETER_LASTPART + "}";
+    
     @Id
     @Column(name = "id")
     private String id;
@@ -95,7 +92,11 @@ public class BaUnit extends AbstractVersionedEntity {
     manyToManyClass = BaUnitContainsSpatialUnit.class)
     private List<CadastreObject> cadastreObjectList;
     private Boolean locked;
-
+    @ChildEntityList(parentIdField = "baUnitId")
+    private List<ChildBaUnitInfo> childBaUnits;
+    @ChildEntityList(parentIdField = "baUnitId")
+    private List<ParentBaUnitInfo> parentBaUnits;
+    
     public BaUnit() {
         super();
     }
@@ -117,7 +118,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setId(String id) {
         this.id = id;
     }
-
+    
     public String getStatusCode() {
         return statusCode;
     }
@@ -172,7 +173,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
     }
-
+    
     public List<BaUnitNotation> getBaUnitNotationList() {
         return baUnitNotationList;
     }
@@ -205,6 +206,22 @@ public class BaUnit extends AbstractVersionedEntity {
         this.sourceList = sourceList;
     }
 
+    public List<ChildBaUnitInfo> getChildBaUnits() {
+        return childBaUnits;
+    }
+
+    public void setChildBaUnits(List<ChildBaUnitInfo> childBaUnits) {
+        this.childBaUnits = childBaUnits;
+    }
+
+    public List<ParentBaUnitInfo> getParentBaUnits() {
+        return parentBaUnits;
+    }
+
+    public void setParentBaUnits(List<ParentBaUnitInfo> parentBaUnits) {
+        this.parentBaUnits = parentBaUnits;
+    }
+    
     public Boolean isLocked() {
         if (locked == null) {
             locked = false;
@@ -234,12 +251,13 @@ public class BaUnit extends AbstractVersionedEntity {
         if (this.isNew()) {
             setTransactionId(LocalInfo.getTransactionId());
         }
-        if(nameFirstpart==null || nameFirstpart.length()<1 || nameLastpart == null || nameLastpart.length() < 1){
+        if(getNameFirstpart()==null || getNameFirstpart().length()<1 || 
+                getNameLastpart() == null || getNameLastpart().length() < 1){
             String baUnitNumber = generateBaUnitNumber();
             if(baUnitNumber!=null && baUnitNumber.contains("/")){
                 String[] numberParts = baUnitNumber.split("/");
-                nameFirstpart = numberParts[0];
-                nameLastpart = numberParts[1];
+                setNameFirstpart(numberParts[0]);
+                setNameLastpart(numberParts[1]);
             }
         }
         super.preSave();
