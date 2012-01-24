@@ -206,7 +206,7 @@ public class RepositoryUtility {
             getAllFields(entityClass, allFields);
 
             for (Field field : allFields) {
-                ChildEntity childAnnoation = field.getAnnotation(ChildEntity.class);
+                ChildEntity childAnnotation = field.getAnnotation(ChildEntity.class);
                 ChildEntityList childListAnnotation = field.getAnnotation(ChildEntityList.class);
                 ExternalEJB externalEJBAnnoation = field.getAnnotation(ExternalEJB.class);
                 ParameterizedType paramType = null;
@@ -214,11 +214,11 @@ public class RepositoryUtility {
                     paramType = (ParameterizedType) field.getGenericType();
                 }
                 ChildEntityInfo childInfo = null;
-                if (childAnnoation != null) {
-                    boolean insert = childAnnoation.insertBeforeParent();
+                if (childAnnotation != null) {
+                    boolean insert = childAnnotation.insertBeforeParent();
 
-                    if ((insert && childAnnoation.childIdField().isEmpty())
-                            || (!insert && childAnnoation.parentIdField().isEmpty())) {
+                    if ((insert && childAnnotation.childIdField().isEmpty())
+                            || (!insert && childAnnotation.parentIdField().isEmpty())) {
                         throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED,
                                 // The ChildEntity annoation is not configured correctly
                                 new Object[]{"ChildEntity annotation is not configured correclty on "
@@ -226,7 +226,8 @@ public class RepositoryUtility {
                     }
 
                     childInfo = new ChildEntityInfo(field.getName(), field.getType(), insert,
-                            childAnnoation.parentIdField(), childAnnoation.childIdField());
+                            childAnnotation.parentIdField(), childAnnotation.childIdField(),
+                            childAnnotation.readOnly());
                 }
                 if (childListAnnotation != null) {
                     childInfo = new ChildEntityInfo(field.getName(), field.getType(), paramType,
@@ -249,69 +250,6 @@ public class RepositoryUtility {
         return children;
     }
 
-//    /**
-//     * Determines whether a child entity from a different EJB context can be loaded. Used to 
-//     * provide lazy loading functionality for child entities from different EJB contexts.
-//     * <p>
-//     * canLoadChild will return false if:
-//     * 1. This entity is in the process of being saved
-//     * 2. The childId null
-//     * 3. The childEntity.getEntityId() equals the childId (i.e. the child is already loaded)
-//     * </p>
-//     * <p>
-//     * If the entity is saving, do not load the child entity to avoid unnecessary save
-//     * processing on the child entity.
-//     * </p>
-//     * @param childEntity The child entity from this entity that should be checked for loading
-//     * @param childId The id field from this entity used as the foreign key to the child entity
-//     * @return True if the child entity should be loaded otherwise false. 
-//     */
-//    public static boolean canLoadChild(AbstractEntity childEntity,
-//            String childId, boolean isSaving) {
-//        boolean canLoad = !isSaving && childId != null;
-//        if (canLoad) {
-//            canLoad = childEntity == null || !childId.equals(childEntity.getEntityId());
-//        }
-//        return canLoad;
-//    }
-//
-//    /** 
-//     * Can load if not saving and join list has data, but the child list is 
-//     * empty
-//     * @param childEntityList
-//     * @param joinList
-//     * @param isSaving
-//     * @return 
-//     */
-//    public static boolean canLoadChildList(List childEntityList,
-//            List joinList, boolean isSaving) {
-//
-//        boolean canLoad = !isSaving
-//                && (joinList != null && !joinList.isEmpty())
-//                && (childEntityList == null || childEntityList.isEmpty());
-//        return canLoad;
-//    }
-//
-//    public static boolean canLoadChildList(List childEntityList, boolean isSaving) {
-//
-//        boolean canLoad = !isSaving
-//                && (childEntityList == null || childEntityList.isEmpty());
-//        return canLoad;
-//    }
-//
-//    public static <T extends CommonRepository> T getRepository(Class<T> repositoryClass) {
-//        T result = LocalInfo.get(repositoryClass.getSimpleName(), repositoryClass);
-//        if (result == null) {
-//            throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED,
-//                    // Capture the specific details so they are added to the log
-//                    new Object[]{"Failed to get repository " + repositoryClass.getSimpleName()});
-//        }
-//        return result;
-//    }
-//
-//    public static <T extends CommonRepository> boolean hasRepository(Class<T> repositoryClass) {
-//        return (LocalInfo.get(repositoryClass.getSimpleName(), repositoryClass) != null);
-//    }
     public static <T extends AbstractEJBLocal> T getEJB(Class<T> ejbLocalClass) {
         T ejb = null;
 

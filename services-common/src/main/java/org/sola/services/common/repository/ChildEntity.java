@@ -25,10 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.common.repository;
 
 import java.lang.annotation.ElementType;
@@ -38,8 +34,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation required to identify a child entity that has a one to one relationship with 
- * the parent entity. This information is used to control the entity save process. This annotation
- * is not required if the child entity does not need to be updated via the parent. 
+ * the parent entity. This information is used to control the entity load and save process. If the
+ * child entity should not be updated via the parent entity, set the readOnly flag to true. 
  * @author soladev
  */
 @Target(ElementType.FIELD)
@@ -71,5 +67,11 @@ public @interface ChildEntity {
      * = true. Default is empty string.  
      */
     String childIdField() default "";
+    
+    /**
+     * Flag to indicate the entity is read only and should not be updated via the parent entity.  
+     * Default false.  
+     */
+    boolean readOnly() default false; 
         
 }

@@ -56,7 +56,7 @@ public class TransactionCadastreRedefinition extends Transaction {
     @ChildEntityList(parentIdField = "transactionId")
     @ExternalEJB(
             ejbLocalClass = CadastreEJBLocal.class, 
-            loadMethod = "getCadastreObjectTargetsByTransaction", 
+            loadMethod = "getCadastreObjectRedefinitionTargetsByTransaction", 
             saveMethod="saveEntity")
     private List<CadastreObjectTargetRedefinition> cadastreObjectTargetList;
 

@@ -70,14 +70,17 @@ public class ChildEntityInfo extends AbstractEntityInfo {
      *                      id value. Required if insertBeforeParent = false. 
      * @param childIdField The name of the field on the parent entity that contains the child id 
      *                     value. Required if insertBeforeParent = true. 
+     * @param readOnly Used to indicate the child entity should not be included in the save
+     *                 of the parent entity. 
      */
     public ChildEntityInfo(String fieldName, Class<?> fieldType, Boolean insertBeforeParent,
-            String parentIdField, String childIdField) {
+            String parentIdField, String childIdField, boolean readOnly) {
         setFieldName(fieldName);
         setFieldType(fieldType);
         this.insertBeforeParent = insertBeforeParent;
+        this.readOnly = readOnly;
         this.cascadeDelete = false;
-        this.readOnly = false;
+
 
         if (!parentIdField.isEmpty()) {
             this.parentIdField = parentIdField;
@@ -101,8 +104,8 @@ public class ChildEntityInfo extends AbstractEntityInfo {
      * @param manyToManyClass The class of the Many to Many entity. 
      * @param cascadeDelete Flag that indicates whether the child or Many to Many association should
      *                      be cascade deleted when the parent is deleted (or child) is deleted. 
-     * @param readOnly Used for Many to Many to indicate the child entity should not be included in 
-     *                 the save of the parent entity. 
+     * @param readOnly Used for Many to Many and One to Many to indicate the child entity should 
+     *                 not be included in the save of the parent entity. 
      */
     public ChildEntityInfo(String fieldName, Class<?> fieldType, ParameterizedType parameterTypes,
             String parentIdField, String childIdField, Class<? extends AbstractEntity> manyToManyClass,

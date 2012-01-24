@@ -75,8 +75,8 @@ public interface CommonRepository {
      <T extends AbstractReadOnlyEntity> List<T> getEntityList(Class<T> entityClass,
             String whereClause, Map params);
 
-     <T extends AbstractReadOnlyEntity> List<T> getChildEntityList(Class<T> childEntityClass,
-            ChildEntityInfo childInfo, String parentId);
+     <T extends AbstractReadOnlyEntity, V extends AbstractReadOnlyEntity> List<V> getChildEntityList(
+            T parentEntity, Class<V> childEntityClass, ChildEntityInfo childInfo);
 
      <T extends AbstractCodeEntity> List<T> getCodeList(Class<T> codeListClass,
             String languageCode);
