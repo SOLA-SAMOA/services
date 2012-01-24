@@ -75,7 +75,9 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
         T transaction = null;
         if (serviceId != null) {
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put(CommonSqlProvider.PARAM_WHERE_PART, TransactionBasic.QUERY_WHERE_BYFROMSERVICEID);
+            params.put(
+                    CommonSqlProvider.PARAM_WHERE_PART,
+                    TransactionBasic.QUERY_WHERE_BYFROMSERVICEID);
             params.put("serviceId", serviceId);
             transaction = getRepository().getEntity(transactionClass, params);
         }
@@ -86,7 +88,8 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
     }
 
     @Override
-    public <T extends TransactionBasic> T createTransaction(String serviceId, Class<T> transactionClass) {
+    public <T extends TransactionBasic> T createTransaction(
+            String serviceId, Class<T> transactionClass) {
         T transaction = null;
         try {
             transaction = transactionClass.newInstance();
@@ -152,15 +155,15 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
                 || requestType.equals(TransactionType.NEW_FREEHOLD)
                 || requestType.equals(TransactionType.NEW_STATE)) {
             cadastreEJB.ChangeStatusOfCadastreObjects(
-                    transactionId, 
+                    transactionId,
                     CadastreObjectStatusChanger.QUERY_WHERE_SEARCHBYTRANSACTION_PENDING,
                     RegistrationStatusType.STATUS_CURRENT);
         }
-        if(requestType.equals(TransactionType.CADASTRE_CHANGE)){
+        if (requestType.equals(TransactionType.CADASTRE_CHANGE)) {
             cadastreEJB.ChangeStatusOfCadastreObjects(
-                    transactionId, 
+                    transactionId,
                     CadastreObjectStatusChanger.QUERY_WHERE_SEARCHBYTRANSACTION_TARGET,
-                    RegistrationStatusType.STATUS_HISTORIC);   
+                    RegistrationStatusType.STATUS_HISTORIC);
         }
     }
 
@@ -214,11 +217,14 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
 
     private List<ValidationResult> validateTransaction(
             String transactionId, String requestType, String languageCode, String momentCode) {
+        
         List<BrValidation> brValidationList = null;
-        if (requestType.equals(TransactionType.CADASTRE_CHANGE)) {
+        if (requestType.equals(TransactionType.CADASTRE_CHANGE)
+                || requestType.equals(TransactionType.REDEFINE_CADASTRE)) {
             brValidationList = this.systemEJB.getBrForValidatingTransaction(
                     "cadastre_object", momentCode, requestType);
         }
+        
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
 
         //The business rules fired, are supposed to get only one parameter and that is

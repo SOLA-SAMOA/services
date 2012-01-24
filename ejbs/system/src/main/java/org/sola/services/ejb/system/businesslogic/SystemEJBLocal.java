@@ -71,13 +71,6 @@ public interface SystemEJBLocal extends AbstractEJBLocal {
 
     List<BrValidation> getBrForValidatingRrr(String momentCode, String rrrType);
 
-//    ResultFeedback checkRuleGetFeedback(
-//            String brName, String languageCode, HashMap<String, Serializable> parameters);
-//
-//    List<ResultFeedback> checkRulesGetFeedback(
-//            List<String> brNameList, String languageCode,
-//            HashMap<String, Serializable> parameters);
-
     Result checkRuleGetResultSingle(
             String brName, HashMap<String, Serializable> parameters);
 

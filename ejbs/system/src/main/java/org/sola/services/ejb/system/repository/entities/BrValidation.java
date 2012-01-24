@@ -67,10 +67,6 @@ public class BrValidation extends AbstractEntity {
             + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "} "
             + "AND (target_rrr_type_code=#{" + QUERY_PARAMETER_RRRTYPE + "} "
             + "OR target_rrr_type_code is null)";
-//    public static final String QUERY_WHERE_FORBAUNIT = "target_code='ba_unit' "
-//            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
-//    public static final String QUERY_WHERE_FORSOURCE = "target_code='source' "
-//            + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "}";
     
         public static final String QUERY_WHERE_FOR_TRANSACTION = "target_code=#{targetCode} "
             + "AND target_reg_moment=#{" + QUERY_PARAMETER_MOMENTCODE + "} "
