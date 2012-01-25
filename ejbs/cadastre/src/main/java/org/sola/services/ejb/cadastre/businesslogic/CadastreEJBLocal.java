@@ -77,4 +77,6 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
     List<CadastreObjectNodeTarget> getCadastreObjectNodeTargetsByTransaction(String transactionId);
     List<CadastreObjectTargetRedefinition> getCadastreObjectRedefinitionTargetsByTransaction(
             String transactionId);
+
+    void approveCadastreRedefinition(String transactionId);
 }

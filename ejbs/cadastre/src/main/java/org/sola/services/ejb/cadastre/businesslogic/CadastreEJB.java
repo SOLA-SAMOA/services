@@ -227,4 +227,21 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         params.put("transaction_id", transactionId);
         return getRepository().getEntityList(CadastreObjectTargetRedefinition.class, params);
     }
+
+    @Override
+    public void approveCadastreRedefinition(String transactionId) {
+        List<CadastreObjectTargetRedefinition> targetObjectList =
+                this.getCadastreObjectRedefinitionTargetsByTransaction(transactionId);
+        for(CadastreObjectTargetRedefinition targetObject: targetObjectList){
+            CadastreObjectStatusChanger cadastreObject = 
+                    this.getRepository().getEntity(CadastreObjectStatusChanger.class, 
+                    targetObject.getCadastreObjectId());
+            cadastreObject.setGeomPolygon(targetObject.getGeomPolygon());
+            cadastreObject.setTransactionId(transactionId);
+            cadastreObject.setApprovalDatetime(null);
+            this.saveEntity(cadastreObject);
+        }
+    }
+    
+    
 }

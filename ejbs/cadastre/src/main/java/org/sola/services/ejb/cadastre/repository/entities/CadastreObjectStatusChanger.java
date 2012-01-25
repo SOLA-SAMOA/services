@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Table;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 
 @Table(schema = "cadastre", name = "cadastre_object")
@@ -48,6 +49,11 @@ public class CadastreObjectStatusChanger extends AbstractStatusChangerEntity {
     @Column(name="historic_datetime")
     private Date historicDatetime;
 
+    @Column(name = "geom_polygon")
+    @AccessFunctions(onSelect = "st_asewkb(geom_polygon)",
+    onChange = "get_geometry_with_srid(#{geomPolygon})")
+    private byte[] geomPolygon;
+
     public Date getApprovalDatetime() {
         return approvalDatetime;
     }
@@ -64,6 +70,15 @@ public class CadastreObjectStatusChanger extends AbstractStatusChangerEntity {
         this.historicDatetime = historicDatetime;
     }
 
+    public byte[] getGeomPolygon() {
+        return geomPolygon;
+    }
+
+    public void setGeomPolygon(byte[] geomPolygon) {
+        this.geomPolygon = geomPolygon;
+    }
+
+    
     @Override
     public void preSave() {
         if (this.getStatusCode().equals(AbstractStatusChangerEntity.STATUS_CURRENT)

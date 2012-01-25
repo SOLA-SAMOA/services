@@ -135,7 +135,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
                 transaction.getId(), requestType,
                 languageCode, RegistrationStatusType.STATUS_CURRENT));
 
-        validationOnly = validationOnly && !systemEJB.validationSucceeded(validationResultList);
+        validationOnly = validationOnly || !systemEJB.validationSucceeded(validationResultList);
         if (!validationOnly) {
             this.changeStatusOfTransactionObjectsOnApproval(requestType, transaction.getId());
             transaction.setStatusCode(TransactionStatusType.APPROVED);
@@ -148,7 +148,6 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
     private void changeStatusOfTransactionObjectsOnApproval(
             String requestType, String transactionId) {
         if (requestType.equals(TransactionType.CADASTRE_CHANGE)
-                || requestType.equals(TransactionType.REDEFINE_CADASTRE)
                 || requestType.equals(TransactionType.NEW_APARTMENT)
                 || requestType.equals(TransactionType.NEW_DIGITAL_PROPERTY)
                 || requestType.equals(TransactionType.NEW_DIGITAL_TITLE)
@@ -164,6 +163,9 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
                     transactionId,
                     CadastreObjectStatusChanger.QUERY_WHERE_SEARCHBYTRANSACTION_TARGET,
                     RegistrationStatusType.STATUS_HISTORIC);
+        }
+        if (requestType.equals(TransactionType.REDEFINE_CADASTRE)) {
+            cadastreEJB.approveCadastreRedefinition(transactionId);
         }
     }
 
