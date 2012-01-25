@@ -16,7 +16,7 @@ public class ChildBaUnitInfo extends AbstractVersionedEntity {
     private String relatedBaUnitId;
     @Column(name = "relation_code")
     private String relationCode;
-    @ChildEntity(childIdField = "relatedBaUnitId")
+    @ChildEntity(childIdField = "relatedBaUnitId", readOnly=true)
     private BaUnitBasic relatedBaUnit;
     
     public ChildBaUnitInfo(){
