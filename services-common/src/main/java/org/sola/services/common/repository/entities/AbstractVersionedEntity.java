@@ -92,6 +92,7 @@ public abstract class AbstractVersionedEntity extends AbstractEntity {
      * Overrides the preSave method to set the rowVersion and changeUser details when the entity
      * is going to be saved to the database. Any descendent classes that override the preSave method
      * should ensure they call super.preSave() to execute this save functionality. 
+     * Note that isModified returns true when the entity is new. 
      */
     @Override
     public void preSave() {
