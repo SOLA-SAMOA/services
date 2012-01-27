@@ -215,7 +215,12 @@ public class CommonSqlProvider {
             }
 
             BEGIN();
-            buildSelectClauseSql(entityClass, localized, excludeList);
+            String selectPart = (String)params.get(PARAM_SELECT_PART);
+            if (selectPart == null){
+                buildSelectClauseSql(entityClass, localized, excludeList);
+            }else{
+                SELECT(selectPart);
+            }
             if (fromClause != null && !fromClause.isEmpty()) {
                 FROM(fromClause);
             } else {

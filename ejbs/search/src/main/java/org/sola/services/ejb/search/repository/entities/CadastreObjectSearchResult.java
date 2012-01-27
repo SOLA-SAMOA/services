@@ -52,13 +52,21 @@ public class CadastreObjectSearchResult extends AbstractReadOnlyEntity {
     public static final String QUERY_WHERE_SEARCHBY_NUMBER = "status_code= 'current' and "
             + "compare_strings(#{search_string}, name_firstpart || ' ' || name_lastpart)";
     
-    public static final String QUERY_WHERE_SEARCHBY_BAUNIT = "status_code= 'current' and "
-            + "id in (select spatial_unit_id from administrative.ba_unit_contains_spatial_unit bas "
-            + " inner join administrative.ba_unit on bas.ba_unit_id= ba_unit.id "
-            + "where ba_unit.status_code= 'current' "
+    public static final String QUERY_SELECT_SEARCHBY_BAUNIT = "co.id, "
+            + "ba_unit.name_firstpart || '/ ' || ba_unit.name_lastpart || "
+            + "' > ' || co.name_firstpart || '/ ' || co.name_lastpart as label, "
+            + "st_asewkb(geom_polygon) as the_geom";
+
+    public static final String QUERY_FROM_SEARCHBY_BAUNIT = "cadastre.cadastre_object  co "
+            + " inner join administrative.ba_unit_contains_spatial_unit bas "
+            + " on co.id = bas.spatial_unit_id "
+            + " inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id";
+
+    public static final String QUERY_WHERE_SEARCHBY_BAUNIT = "co.status_code= 'current' "
+            + "and ba_unit.status_code = 'current' "
             + "and compare_strings(#{search_string}, "
-            + "ba_unit.name_firstpart || ' ' || ba_unit.name_lastpart))";
-    
+            + "ba_unit.name_firstpart || ' ' || ba_unit.name_lastpart)";
+
     public static final String QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT = "status_code= 'current' and "
             + " id in (select spatial_unit_id "
             + " from administrative.ba_unit_contains_spatial_unit bas "

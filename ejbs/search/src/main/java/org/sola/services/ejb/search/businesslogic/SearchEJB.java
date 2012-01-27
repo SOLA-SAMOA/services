@@ -469,11 +469,15 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     public List<CadastreObjectSearchResult> searchCadastreObjects(
             String searchBy, String searchString) {
         String wherePart = null;
+        String selectPart = null;
+        String fromPart = null;
         Integer numberOfMaxRecordsReturned = 10;
 
         if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_NUMBER)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_NUMBER;
         } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_BAUNIT)) {
+            selectPart = CadastreObjectSearchResult.QUERY_SELECT_SEARCHBY_BAUNIT;
+            fromPart = CadastreObjectSearchResult.QUERY_FROM_SEARCHBY_BAUNIT;
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_BAUNIT;
         } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_OWNER_OF_BAUNIT)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT;
@@ -486,6 +490,12 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
             Map params = new HashMap<String, Object>();
             if (numberOfMaxRecordsReturned > 0) {
                 params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
+            }
+            if (fromPart != null){
+                params.put(CommonSqlProvider.PARAM_FROM_PART, fromPart);
+            }
+            if (selectPart != null){
+                params.put(CommonSqlProvider.PARAM_SELECT_PART, selectPart);
             }
             params.put(CommonSqlProvider.PARAM_WHERE_PART, wherePart);
             params.put(CadastreObjectSearchResult.SEARCH_STRING_PARAM, searchString);
