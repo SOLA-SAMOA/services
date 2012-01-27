@@ -42,7 +42,7 @@ import org.sola.services.ejb.application.repository.entities.ApplicationLog;
 import org.sola.services.ejb.application.repository.entities.ApplicationStatusType;
 import org.sola.services.ejb.application.repository.entities.RequestCategoryType;
 import org.sola.services.ejb.application.repository.entities.RequestType;
-import org.sola.services.ejb.application.repository.entities.RrrTypeAction;
+import org.sola.services.ejb.application.repository.entities.TypeAction;
 import org.sola.services.ejb.application.repository.entities.Service;
 import org.sola.services.ejb.application.repository.entities.ServiceActionType;
 import org.sola.services.ejb.application.repository.entities.ServiceStatusType;
@@ -79,7 +79,7 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
 
     List<ServiceActionType> getServiceActionTypes(String languageCode);
 
-    List<RrrTypeAction> getRrrTypeActions(String languageCode);
+    List<TypeAction> getTypeActions(String languageCode);
 
     List<ValidationResult> serviceActionComplete(
             String serviceId, String languageCode, int rowVersion);

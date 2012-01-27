@@ -58,7 +58,7 @@ import org.sola.common.RolesConstants;
 import org.sola.services.common.faults.SOLAValidationException;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.application.repository.entities.RequestTypeRequiresSourceType;
-import org.sola.services.ejb.application.repository.entities.RrrTypeAction;
+import org.sola.services.ejb.application.repository.entities.TypeAction;
 import org.sola.services.ejb.application.repository.entities.ServiceActionTaker;
 import org.sola.services.ejb.application.repository.entities.ServiceActionType;
 import org.sola.services.ejb.application.repository.entities.ServiceBasic;
@@ -361,8 +361,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
-    public List<RrrTypeAction> getRrrTypeActions(String languageCode) {
-        return getRepository().getCodeList(RrrTypeAction.class, languageCode);
+    public List<TypeAction> getTypeActions(String languageCode) {
+        return getRepository().getCodeList(TypeAction.class, languageCode);
     }
 
     @Override
@@ -691,7 +691,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                         serviceRequestTypeCode, null).getTypeActionCode();
 
                 if (actionOnRequestType != null
-                        && actionOnRequestType.equals(RrrTypeAction.CANCEL)) {
+                        && actionOnRequestType.equals(TypeAction.CANCEL)) {
                     statusOnApproval = RegistrationStatusType.STATUS_HISTORIC;
                 }
 

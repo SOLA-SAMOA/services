@@ -35,14 +35,13 @@ import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
- * Entity representing the application.rrr_type_action code table
- * @author soladev
+ * Entity representing the application.type_action code table
  */
-@Table(name = "rrr_type_action", schema = "application")
-public class RrrTypeAction extends AbstractCodeEntity {
+@Table(name = "type_action", schema = "application")
+public class TypeAction extends AbstractCodeEntity {
     public static final String CANCEL = "cancel";
 
-    public RrrTypeAction() {
+    public TypeAction() {
         super();
     }
 }
