@@ -41,6 +41,7 @@ import org.junit.Test;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.search.repository.SearchSqlProvider;
+import org.sola.services.ejb.search.repository.entities.CadastreObjectSearchResult;
 import org.sola.services.ejb.search.repository.entities.DynamicQuery;
 import org.sola.services.ejb.search.repository.entities.GenericResult;
 import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
@@ -63,17 +64,19 @@ public class Development extends AbstractEJBTest {
     }
 
     @Test
-    @Ignore
     public void testSearchOthers() throws Exception {
         if (skipIntegrationTest()) {
             return;
         }
         System.out.println("Testing other queries that return lists of entities");
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
-        this.testQueriesForResultList(instance, "CadastreObjectWithGeometry.searchByBaUnitId",
-                new Object[]{"3068323"});
+        //this.testQueriesForResultList(instance, "CadastreObjectWithGeometry.searchByBaUnitId",
+        //        new Object[]{"3068323"});
+        List result =  instance.searchCadastreObjects(
+                CadastreObjectSearchResult.SEARCH_BY_BAUNIT, "na25");
     }
 
+    @Ignore
     @Test
     public void test() throws Exception {
         if (skipIntegrationTest()) {

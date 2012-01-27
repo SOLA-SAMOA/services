@@ -688,7 +688,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
             if (transaction != null) {
                 String statusOnApproval = RegistrationStatusType.STATUS_CURRENT;
                 String actionOnRequestType = getRepository().getCode(RequestType.class,
-                        serviceRequestTypeCode, null).getRrrTypeActionCode();
+                        serviceRequestTypeCode, null).getTypeActionCode();
 
                 if (actionOnRequestType != null
                         && actionOnRequestType.equals(RrrTypeAction.CANCEL)) {

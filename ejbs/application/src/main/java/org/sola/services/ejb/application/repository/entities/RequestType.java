@@ -65,8 +65,8 @@ public class RequestType extends AbstractCodeEntity {
     private int nrPropertiesRequired;
     @Column(name = "notation_template")
     private String notationTemplate;
-    @Column(name = "rrr_type_action_code")
-    private String rrrTypeActionCode;
+    @Column(name = "type_action_code")
+    private String typeActionCode;
     @Column(name = "rrr_type_code")
     private String rrrTypeCode;
     @ChildEntityList(parentIdField = "requestTypeCode")
@@ -124,12 +124,12 @@ public class RequestType extends AbstractCodeEntity {
         this.requestCategoryCode = requestCategoryCode;
     }
 
-    public String getRrrTypeActionCode() {
-        return rrrTypeActionCode;
+    public String getTypeActionCode() {
+        return typeActionCode;
     }
 
-    public void setRrrTypeActionCode(String rrrTypeActionCode) {
-        this.rrrTypeActionCode = rrrTypeActionCode;
+    public void setTypeActionCode(String typeActionCode) {
+        this.typeActionCode = typeActionCode;
     }
 
     public String getRrrTypeCode() {
