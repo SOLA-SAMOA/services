@@ -241,7 +241,7 @@ public class AdministrativeEJB extends AbstractEJB
     @Override
     public List<BaUnit> getBaUnitsByTransactionId(String transactionId) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYTRANSACTIONID);
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BY_TRANSACTION_ID_EXTENDED);
         params.put(BaUnit.QUERY_PARAMETER_TRANSACTIONID, transactionId);
         return getRepository().getEntityList(BaUnit.class, params);
     }

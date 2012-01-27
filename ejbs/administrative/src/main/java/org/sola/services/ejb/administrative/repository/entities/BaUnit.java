@@ -58,10 +58,16 @@ public class BaUnit extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_LASTPART = "lastPart";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
+    public static final String QUERY_WHERE_BY_TRANSACTION_ID_EXTENDED =
+            "transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "} OR id IN "
+            + "(SELECT rrr.ba_unit_id FROM administrative.rrr rrr  "
+            + "WHERE rrr.transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "} "
+            + "UNION "
+            + "SELECT n.ba_unit_id FROM administrative.notation n "
+            + "WHERE n.ba_unit_id IS NOT NULL AND n.transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "})";
     public static final String QUERY_WHERE_BYPROPERTYCODE =
             "name_firstpart = #{" + QUERY_PARAMETER_FIRSTPART + "} AND "
             + "name_lastpart = #{" + QUERY_PARAMETER_LASTPART + "}";
-    
     @Id
     @Column(name = "id")
     private String id;
@@ -96,7 +102,7 @@ public class BaUnit extends AbstractVersionedEntity {
     private List<ChildBaUnitInfo> childBaUnits;
     @ChildEntityList(parentIdField = "baUnitId")
     private List<ParentBaUnitInfo> parentBaUnits;
-    
+
     public BaUnit() {
         super();
     }
@@ -118,7 +124,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getStatusCode() {
         return statusCode;
     }
@@ -173,7 +179,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
     }
-    
+
     public List<BaUnitNotation> getBaUnitNotationList() {
         return baUnitNotationList;
     }
@@ -221,7 +227,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setParentBaUnits(List<ParentBaUnitInfo> parentBaUnits) {
         this.parentBaUnits = parentBaUnits;
     }
-    
+
     public Boolean isLocked() {
         if (locked == null) {
             locked = false;
@@ -245,16 +251,16 @@ public class BaUnit extends AbstractVersionedEntity {
         }
         return result;
     }
-    
+
     @Override
     public void preSave() {
         if (this.isNew()) {
             setTransactionId(LocalInfo.getTransactionId());
         }
-        if(getNameFirstpart()==null || getNameFirstpart().length()<1 || 
-                getNameLastpart() == null || getNameLastpart().length() < 1){
+        if (getNameFirstpart() == null || getNameFirstpart().length() < 1
+                || getNameLastpart() == null || getNameLastpart().length() < 1) {
             String baUnitNumber = generateBaUnitNumber();
-            if(baUnitNumber!=null && baUnitNumber.contains("/")){
+            if (baUnitNumber != null && baUnitNumber.contains("/")) {
                 String[] numberParts = baUnitNumber.split("/");
                 setNameFirstpart(numberParts[0]);
                 setNameLastpart(numberParts[1]);
