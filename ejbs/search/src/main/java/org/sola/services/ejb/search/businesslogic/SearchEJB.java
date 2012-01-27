@@ -480,6 +480,8 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
             fromPart = CadastreObjectSearchResult.QUERY_FROM_SEARCHBY_BAUNIT;
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_BAUNIT;
         } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_OWNER_OF_BAUNIT)) {
+            selectPart = CadastreObjectSearchResult.QUERY_SELECT_SEARCHBY_OWNER_OF_BAUNIT;
+            fromPart = CadastreObjectSearchResult.QUERY_FROM_SEARCHBY_OWNER_OF_BAUNIT;
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT;
         } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_BAUNIT_ID)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_GET_NEW_PARCELS;

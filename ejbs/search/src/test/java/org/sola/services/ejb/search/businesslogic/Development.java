@@ -73,7 +73,8 @@ public class Development extends AbstractEJBTest {
         //this.testQueriesForResultList(instance, "CadastreObjectWithGeometry.searchByBaUnitId",
         //        new Object[]{"3068323"});
         List result =  instance.searchCadastreObjects(
-                CadastreObjectSearchResult.SEARCH_BY_BAUNIT, "na25");
+                CadastreObjectSearchResult.SEARCH_BY_OWNER_OF_BAUNIT, "fiku");
+        System.out.println("Found:" + result.size());
     }
 
     @Ignore
