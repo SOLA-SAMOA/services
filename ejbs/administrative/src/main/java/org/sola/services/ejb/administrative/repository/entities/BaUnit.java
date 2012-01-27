@@ -32,6 +32,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.ChildEntityList;
 import org.sola.services.common.repository.ExternalEJB;
 import org.sola.services.common.repository.RepositoryUtility;
@@ -102,7 +103,10 @@ public class BaUnit extends AbstractVersionedEntity {
     private List<ChildBaUnitInfo> childBaUnits;
     @ChildEntityList(parentIdField = "baUnitId")
     private List<ParentBaUnitInfo> parentBaUnits;
-
+    @Column(insertable=false, updatable=false, name = "pending_action_code")
+    @AccessFunctions(onSelect = "administrative.get_ba_unit_pending_action(id)")
+    private String pendingActionCode;
+    
     public BaUnit() {
         super();
     }
@@ -228,6 +232,14 @@ public class BaUnit extends AbstractVersionedEntity {
         this.parentBaUnits = parentBaUnits;
     }
 
+    public String getPendingActionCode() {
+        return pendingActionCode;
+    }
+
+    public void setPendingActionCode(String pendingActionCode) {
+        this.pendingActionCode = pendingActionCode;
+    }
+    
     public Boolean isLocked() {
         if (locked == null) {
             locked = false;
