@@ -40,7 +40,7 @@ public class BaUnitSearchResult extends AbstractReadOnlyEntity {
             + "INNER JOIN party.party p ON pr.party_id = p.id) ON rrr.id = pr.rrr_id "
             + "WHERE rrr.status_code = 'current' AND "
             + "(POSITION(LOWER(#{ownerName}) IN LOWER(COALESCE(p.name, ''))) > 0 OR "
-            + "POSITION(LOWER(#{ownerName}) IN LOWER(COALESCE(p.last_name, ''))) > 0)) AS rightholders "
+            + "POSITION(LOWER(#{ownerName}) IN LOWER(COALESCE(p.last_name, ''))) > 0) AND rrr.ba_unit_id = b.id) AS rightholders "
             + "FROM administrative.ba_unit b "
             + "WHERE POSITION(LOWER(#{nameFirstPart}) IN LOWER(COALESCE(b.name_firstpart, ''))) > 0 "
             + "AND POSITION(LOWER(#{nameLastPart}) IN LOWER(COALESCE(b.name_lastpart, ''))) > 0 "

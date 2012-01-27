@@ -619,8 +619,15 @@ public class CommonRepositoryImpl implements CommonRepository {
                     // association (many to many) entity. 
                     AbstractEntity manyToMany = createManyToManyEntity(childInfo, entity, child);
                     manyToMany = refreshEntity(manyToMany, mapper);
-                    manyToMany.markForDelete();
-                    saveEntity(manyToMany, mapper);
+                    if (manyToMany.isLoaded()) {
+                        // Check if the refresh actually loaded the many to many entity from the DB. 
+                        // If it does not exist, then do not try to delete it. This situation can
+                        // occur when the many to many is in a 3 way relationship and the many
+                        // to many is deleted by one of the other branches in the relationship
+                        // e.g. rrr and rrr_share both reference party_for_rrr. 
+                        manyToMany.markForDelete();
+                        saveEntity(manyToMany, mapper);
+                    }
                     it.remove();
 
                     if (!childInfo.isReadOnly()) {
@@ -810,7 +817,7 @@ public class CommonRepositoryImpl implements CommonRepository {
         return result;
     }
 
-/**
+    /**
      * Overloaded version of {@linkplain #getScalar(java.lang.Class, java.util.Map)} that also
      * specifies the mapper to use
      * @param <T> The generic Boxed type of the scalar value. 
