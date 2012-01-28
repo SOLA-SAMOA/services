@@ -68,4 +68,8 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
     List<BaUnit> getBaUnitsByTransactionId(String transactionId);
     
     List<BaUnitRelType> getBaUnitRelTypes(String languageCode);
+    
+    BaUnit terminateBaUnit(String baUnitId, String serviceId);
+    
+    BaUnit cancelBaUnitTermination(String baUnitId);
 }

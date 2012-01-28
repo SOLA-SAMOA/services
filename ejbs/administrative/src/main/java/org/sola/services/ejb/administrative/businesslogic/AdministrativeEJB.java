@@ -36,6 +36,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.sola.common.RolesConstants;
+import org.sola.services.common.EntityAction;
 import org.sola.services.common.LocalInfo;
 import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJB;
@@ -45,6 +46,7 @@ import org.sola.services.ejb.administrative.repository.entities.BaUnitNotation;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitNotationStatusChanger;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitRelType;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitStatusChanger;
+import org.sola.services.ejb.administrative.repository.entities.BaUnitTarget;
 import org.sola.services.ejb.administrative.repository.entities.BaUnitType;
 import org.sola.services.ejb.administrative.repository.entities.ChangeStatusType;
 import org.sola.services.ejb.administrative.repository.entities.MortgageType;
@@ -60,6 +62,7 @@ import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
+import org.sola.services.ejb.transaction.repository.entities.Transaction;
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
@@ -85,7 +88,7 @@ public class AdministrativeEJB extends AbstractEJB
     protected void postConstruct() {
         setEntityPackage(BaUnit.class.getPackage().getName());
     }
-    
+
     @Override
     public List<ChangeStatusType> getChangeStatusTypes(String languageCode) {
         return getRepository().getCodeList(ChangeStatusType.class, languageCode);
@@ -142,7 +145,7 @@ public class AdministrativeEJB extends AbstractEJB
         if (baUnit == null) {
             return null;
         }
-        TransactionBasic transaction = 
+        TransactionBasic transaction =
                 transactionEJB.getTransactionByServiceId(serviceId, true, TransactionBasic.class);
         LocalInfo.setTransactionId(transaction.getId());
         return getRepository().saveEntity(baUnit);
@@ -249,5 +252,60 @@ public class AdministrativeEJB extends AbstractEJB
     @Override
     public List<BaUnitRelType> getBaUnitRelTypes(String languageCode) {
         return getRepository().getCodeList(BaUnitRelType.class, languageCode);
+    }
+
+    @Override
+    @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
+    public BaUnit terminateBaUnit(String baUnitId, String serviceId) {
+        if (baUnitId == null || serviceId == null) {
+            return null;
+        }
+
+        // Check transaction to exist and have pending status
+        Transaction transaction = transactionEJB.getTransactionByServiceId(
+                serviceId, true, Transaction.class);
+        if (transaction == null || !transaction.getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)) {
+            return null;
+        }
+
+        //TODO: Put BR check to have only one pending transaction for the BaUnit and BaUnit to be with "current" status.
+        //TODO: Check BR for service to have cancel action and empty Rrr field.
+
+        BaUnitTarget baUnitTarget = new BaUnitTarget();
+        baUnitTarget.setBaUnitId(baUnitId);
+        baUnitTarget.setTransactionId(transaction.getId());
+        getRepository().saveEntity(baUnitTarget);
+
+        return getBaUnitById(baUnitId);
+    }
+
+    @Override
+    @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
+    public BaUnit cancelBaUnitTermination(String baUnitId) {
+        if (baUnitId == null) {
+            return null;
+        }
+
+        //TODO: Put BR check to have only one pending transaction for the BaUnit and BaUnit to be with "current" status.
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitTarget.QUERY_WHERE_GET_BY_BAUNITID);
+        params.put(BaUnitTarget.PARAM_BAUNIT_ID, baUnitId);
+
+        List<BaUnitTarget> targets = getRepository().getEntityList(BaUnitTarget.class, params);
+
+        if (targets != null || targets.size() > 0) {
+            for (BaUnitTarget baUnitTarget : targets) {
+                Transaction transaction = transactionEJB.getTransactionById(
+                        baUnitTarget.getTransactionId(), Transaction.class);
+                if (transaction != null || transaction.getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)) {
+                    // DELETE peding 
+                    baUnitTarget.setEntityAction(EntityAction.DELETE);
+                    getRepository().saveEntity(baUnitTarget);
+                }
+            }
+        }
+        
+        return getBaUnitById(baUnitId);
     }
 }

@@ -10,17 +10,27 @@ import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 @Table(name = "ba_unit_target", schema = "administrative")
-public class BaUnitTarget extends AbstractVersionedEntity{
+public class BaUnitTarget extends AbstractVersionedEntity {
+    
+    public static final String PARAM_TRANSACTION_ID = "transactionId";
+    public static final String PARAM_BAUNIT_ID = "baUnitId";
+    
+    public static final String QUERY_WHERE_GET_BY_TRANSACTION =
+            "transaction_id = #{" + PARAM_TRANSACTION_ID + "}";
+    public static final String QUERY_WHERE_GET_BY_BAUNITID =
+            "ba_unit_id = #{" + PARAM_BAUNIT_ID + "}";
+    public static final String QUERY_WHERE_GET_BY_BAUNITID_AND_TRANSACTION =
+            "ba_unit_id = #{" + PARAM_BAUNIT_ID + "} AND transaction_id = #{" 
+            + PARAM_TRANSACTION_ID + "}";
+    
     @Id
     @Column(name = "ba_unit_id")
     private String baUnitId;
     @Id
     @Column(name = "transaction_id")
     private String transactionId;
-    public static final String QUERY_WHERE_GET_BY_TRANSACTION = 
-             "transaction_id = #{transaction_id}";
-    
-    public BaUnitTarget(){
+
+    public BaUnitTarget() {
         super();
     }
 
