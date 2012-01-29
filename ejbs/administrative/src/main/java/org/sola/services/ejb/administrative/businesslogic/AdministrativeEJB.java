@@ -167,6 +167,7 @@ public class AdministrativeEJB extends AbstractEJB
             boolean validateOnly, String languageCode) {
         List<ValidationResult> validationResult = new ArrayList<ValidationResult>();
 
+        //Change the status of BA Units that are involved in a transaction directly
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYTRANSACTIONID);
         params.put(BaUnit.QUERY_PARAMETER_TRANSACTIONID, transactionId);
@@ -177,10 +178,11 @@ public class AdministrativeEJB extends AbstractEJB
             validationResult.addAll(this.validateBaUnit(baUnit, languageCode));
             if (systemEJB.validationSucceeded(validationResult) && !validateOnly) {
                 baUnit.setStatusCode(approvedStatus);
+                baUnit.setTransactionId(transactionId);
                 getRepository().saveEntity(baUnit);
             }
         }
-
+        
         params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, Rrr.QUERY_WHERE_BYTRANSACTIONID);
         params.put(Rrr.QUERY_PARAMETER_TRANSACTIONID, transactionId);
@@ -194,7 +196,6 @@ public class AdministrativeEJB extends AbstractEJB
             }
         }
         if (!validateOnly) {
-
             params = new HashMap<String, Object>();
             params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitNotation.QUERY_WHERE_BYTRANSACTIONID);
             params.put(BaUnitNotation.QUERY_PARAMETER_TRANSACTIONID, transactionId);
@@ -298,7 +299,8 @@ public class AdministrativeEJB extends AbstractEJB
             for (BaUnitTarget baUnitTarget : targets) {
                 Transaction transaction = transactionEJB.getTransactionById(
                         baUnitTarget.getTransactionId(), Transaction.class);
-                if (transaction != null || transaction.getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)) {
+                if (transaction != null 
+                        || transaction.getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)) {
                     // DELETE peding 
                     baUnitTarget.setEntityAction(EntityAction.DELETE);
                     getRepository().saveEntity(baUnitTarget);

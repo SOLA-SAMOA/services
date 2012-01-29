@@ -58,14 +58,17 @@ public class BaUnit extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_FIRSTPART = "firstPart";
     public static final String QUERY_PARAMETER_LASTPART = "lastPart";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
-            + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
+            + "#{" + QUERY_PARAMETER_TRANSACTIONID + "} or id in "
+            + "(select ba_unit_id from administrative.ba_unit_target where "
+            + "transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "})";
     public static final String QUERY_WHERE_BY_TRANSACTION_ID_EXTENDED =
             "transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "} OR id IN "
             + "(SELECT rrr.ba_unit_id FROM administrative.rrr rrr  "
             + "WHERE rrr.transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "} "
             + "UNION "
             + "SELECT n.ba_unit_id FROM administrative.notation n "
-            + "WHERE n.ba_unit_id IS NOT NULL AND n.transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "})";
+            + "WHERE n.ba_unit_id IS NOT NULL AND n.transaction_id = #{" 
+            + QUERY_PARAMETER_TRANSACTIONID + "})";
     public static final String QUERY_WHERE_BYPROPERTYCODE =
             "name_firstpart = #{" + QUERY_PARAMETER_FIRSTPART + "} AND "
             + "name_lastpart = #{" + QUERY_PARAMETER_LASTPART + "}";
