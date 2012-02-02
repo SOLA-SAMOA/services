@@ -39,8 +39,9 @@ public class BrSearchResult extends AbstractReadOnlyEntity {
             "SELECT DISTINCT b.id, b.display_name, b.technical_type_code, get_translation(b.feedback,#{lang}) AS feedback "
             + "FROM system.br b LEFT JOIN system.br_validation bv ON b.id = bv.br_id "
             + "WHERE POSITION(LOWER(COALESCE(#{displayName}, '')) IN LOWER(COALESCE(b.display_name, ''))) > 0 "
-            + "AND POSITION(LOWER(COALESCE(#{technicalTypeCode}, '')) IN LOWER(COALESCE(b.technical_type_code, ''))) > 0 "
-            + "AND POSITION(LOWER(COALESCE(#{targetCode}, '')) IN LOWER(COALESCE(bv.target_code, ''))) > 0 ORDER BY b.display_name";
+            + "AND (COALESCE(#{technicalTypeCode}, '') = '' OR LOWER(COALESCE(#{technicalTypeCode}, '')) = LOWER(COALESCE(b.technical_type_code, ''))) "
+            + "AND (COALESCE(#{targetCode}, '') = '' OR LOWER(COALESCE(#{targetCode}, '')) = LOWER(COALESCE(bv.target_code, ''))) "
+            + " ORDER BY b.display_name";
     @Id
     @Column
     private String id;
