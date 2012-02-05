@@ -139,7 +139,67 @@ public abstract class AbstractWebService {
             cleanUp();
         }
     }
+    
+    
+      protected void runBooleanMethod(WebServiceContext wsContext, 
+            Runnable booleanMethod) throws SOLAValidationFault, OptimisticLockingFault, 
+            SOLAFault, UnhandledFault {
+        try {
+            try {
+                LocalInfo.setUserName(wsContext.getUserPrincipal().getName());
+                beginTransaction();
+                booleanMethod.run();
+                commitTransaction();
+            } finally {
+                rollbackTransaction();
+            }
+        } catch (Throwable t) {
+            Throwable fault = FaultUtility.ProcessException(t);
+            
+            if (fault.getClass() == SOLAFault.class) {
+                throw (SOLAFault) fault;
+            }
 
+            if (fault.getClass() == OptimisticLockingFault.class) {
+                throw (OptimisticLockingFault) fault;
+            }
+
+            if (fault.getClass() == SOLAValidationFault.class) {
+                throw (SOLAValidationFault) fault;
+            }
+            throw (UnhandledFault) fault;
+        } finally {
+            cleanUp();
+        }
+    }
+    
+     protected void runDocumentMethod(WebServiceContext wsContext, 
+            Runnable documentMethod) throws  SOLAFault, UnhandledFault, OptimisticLockingFault        {
+      try {
+            try {
+                LocalInfo.setUserName(wsContext.getUserPrincipal().getName());
+                beginTransaction();
+                documentMethod.run();
+                commitTransaction();
+                
+            } finally {
+                rollbackTransaction();
+            }
+        } catch (Throwable t) {
+            Throwable fault = FaultUtility.ProcessException(t);
+            if (fault.getClass() == SOLAFault.class) {
+                throw (SOLAFault) fault;
+            }
+            if (fault.getClass() == OptimisticLockingFault.class) {
+                throw (OptimisticLockingFault) fault;
+            }
+            throw (UnhandledFault) fault;
+        } finally {
+            cleanUp();
+        }
+    }
+      
+    
     protected void cleanUp() {
         LocalInfo.remove();
     }

@@ -62,34 +62,34 @@ import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 @Local
 public interface SearchEJBLocal extends AbstractEJBLocal {
 
-    PropertyVerifier getPropertyVerifier(String firstPart, String lastPart) throws Exception;
+    PropertyVerifier getPropertyVerifier(String firstPart, String lastPart);
 
     GenericResult getGenericResultList(String queryName, Map params);
 
-    List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params) throws Exception;
+    List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params);
 
-    List<ApplicationSearchResult> getUnassignedApplications(String locale) throws Exception;
+    List<ApplicationSearchResult> getUnassignedApplications(String locale);
 
-    List<ApplicationSearchResult> getAssignedApplications(String locale) throws Exception;
+    List<ApplicationSearchResult> getAssignedApplications(String locale);
 
-    ResultForNavigationInfo getSpatialResult(QueryForNavigation spatialQuery) throws Exception;
+    ResultForNavigationInfo getSpatialResult(QueryForNavigation spatialQuery);
 
-    List<ConfigMapLayer> getConfigMapLayerList(String languageCode) throws Exception;
+    List<ConfigMapLayer> getConfigMapLayerList(String languageCode);
 
     List<ResultForSelectionInfo> getSpatialResultFromSelection(
-            List<QueryForSelect> queriesForSelection) throws Exception;
+            List<QueryForSelect> queriesForSelection);
 
-    HashMap<String, String> getMapSettingList() throws Exception;
+    HashMap<String, String> getMapSettingList();
     
     HashMap getResultObjectFromStatement(String sqlStatement, Map params);
 
-    List<PartySearchResult> searchParties(PartySearchParams searchParams) throws Exception;
+    List<PartySearchResult> searchParties(PartySearchParams searchParams);
 
-    List<SourceSearchResult> searchSources(SourceSearchParams searchParams) throws Exception;
+    List<SourceSearchResult> searchSources(SourceSearchParams searchParams);
 
-    List<UserSearchResult> getActiveUsers() throws Exception;
+    List<UserSearchResult> getActiveUsers();
 
-    List<UserSearchResult> searchUsers(UserSearchParams searchParams) throws Exception;
+    List<UserSearchResult> searchUsers(UserSearchParams searchParams);
 
     List<ApplicationLogResult> getApplicationLog(String applicationId);    
     
