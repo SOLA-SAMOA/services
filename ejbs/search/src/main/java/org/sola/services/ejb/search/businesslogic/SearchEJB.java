@@ -190,7 +190,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public PropertyVerifier getPropertyVerifier(String firstPart, String lastPart) throws Exception {
+    public PropertyVerifier getPropertyVerifier(String firstPart, String lastPart) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, PropertyVerifier.QUERY_VERIFY_SQL);
         params.put(PropertyVerifier.QUERY_PARAM_FIRST_PART, firstPart);
@@ -199,7 +199,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params) throws Exception {
+    public List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params) {
         // Process params
 
         Map queryParams = new HashMap<String, Object>();
@@ -225,7 +225,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public List<SourceSearchResult> searchSources(SourceSearchParams searchParams) throws Exception {
+    public List<SourceSearchResult> searchSources(SourceSearchParams searchParams) {
         Map params = new HashMap<String, Object>();
 
         params.put(SourceSearchResult.QUERY_PARAM_FROM_RECORDATION_DATE,
@@ -259,7 +259,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
     // TODO: Annotate only for admin usage
     @Override
-    public List<UserSearchResult> searchUsers(UserSearchParams searchParams) throws Exception {
+    public List<UserSearchResult> searchUsers(UserSearchParams searchParams) {
         if (searchParams.getGroupId() == null) {
             searchParams.setGroupId("");
         }
@@ -286,7 +286,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public List<ApplicationSearchResult> getUnassignedApplications(String locale) throws Exception {
+    public List<ApplicationSearchResult> getUnassignedApplications(String locale) {
 
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART, ApplicationSearchResult.QUERY_FROM);
@@ -299,7 +299,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public List<ApplicationSearchResult> getAssignedApplications(String locale) throws Exception {
+    public List<ApplicationSearchResult> getAssignedApplications(String locale) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART, ApplicationSearchResult.QUERY_FROM);
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, locale);
@@ -312,14 +312,14 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public List<UserSearchResult> getActiveUsers() throws Exception {
+    public List<UserSearchResult> getActiveUsers() {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, UserSearchResult.QUERY_ACTIVE_USERS);
         return getRepository().getEntityList(UserSearchResult.class, params);
     }
 
     @Override
-    public List<PartySearchResult> searchParties(PartySearchParams searchParams) throws Exception {
+    public List<PartySearchResult> searchParties(PartySearchParams searchParams) {
         if (searchParams.getName() == null) {
             searchParams.setName("");
         }
@@ -342,7 +342,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
     @Override
     public ResultForNavigationInfo getSpatialResult(
-            QueryForNavigation spatialQuery) throws Exception {
+            QueryForNavigation spatialQuery) {
         Map params = new HashMap<String, Object>();
         params.put("minx", spatialQuery.getWest());
         params.put("miny", spatialQuery.getSouth());
@@ -359,7 +359,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public List<ConfigMapLayer> getConfigMapLayerList(String languageCode) throws Exception {
+    public List<ConfigMapLayer> getConfigMapLayerList(String languageCode) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, languageCode);
         params.put(CommonSqlProvider.PARAM_QUERY, ConfigMapLayer.QUERY_SQL);
@@ -368,7 +368,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
     @Override
     public List<ResultForSelectionInfo> getSpatialResultFromSelection(
-            List<QueryForSelect> queriesForSelection) throws Exception {
+            List<QueryForSelect> queriesForSelection) {
         List<ResultForSelectionInfo> results = new ArrayList<ResultForSelectionInfo>();
         for (QueryForSelect queryInfo : queriesForSelection) {
             Map params = new HashMap<String, Object>();
@@ -388,11 +388,11 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public HashMap<String, String> getMapSettingList() throws Exception {
+    public HashMap<String, String> getMapSettingList() {
         return this.getSettingList(Setting.QUERY_SQL_FOR_MAP_SETTINGS);
     }
 
-    private HashMap<String, String> getSettingList(String queryBody) throws Exception {
+    private HashMap<String, String> getSettingList(String queryBody) {
         HashMap settingMap = new HashMap();
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, queryBody);
