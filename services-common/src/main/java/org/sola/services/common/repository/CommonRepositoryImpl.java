@@ -1349,6 +1349,18 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /** 
+     * Executes function with given parameters.
+     * @param params Parameters list needed to form SQL statement. 
+     * {@link CommonSqlProvider#PARAM_QUERY} should be supplied as a select 
+     * statement to run function.
+     * @param entityClass The class of the entity to cast results to. 
+     */
+    @Override
+    public <T extends AbstractReadOnlyEntity> List<T> executeFunction(Map params, Class<T> entityClass){
+        return mapToEntityList(entityClass, executeSql(params));
+    }
+    
+    /** 
      * Executes dynamic SQL queries using the specified parameters.
      * @param params Parameters list needed to form SQL statement. 
      * {@link CommonSqlProvider#PARAM_QUERY} must be supplied as a select 

@@ -95,6 +95,8 @@ public interface CommonRepository {
     void setLoadInhibitors(Class<?>[] entityClasses);
 
     ArrayList<HashMap> executeFunction(Map params);
+    
+    <T extends AbstractReadOnlyEntity> List<T> executeFunction(Map params, Class<T> entityClass);
 
     ArrayList<HashMap> executeSql(Map params);
 }
