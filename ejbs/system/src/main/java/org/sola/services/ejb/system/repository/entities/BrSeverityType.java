@@ -28,9 +28,11 @@
 package org.sola.services.ejb.system.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 @Table(name = "br_severity_type", schema = "system")
+@DefaultSorter(sortString="display_value")
 public class BrSeverityType extends AbstractCodeEntity {
     public BrSeverityType(){
         super();

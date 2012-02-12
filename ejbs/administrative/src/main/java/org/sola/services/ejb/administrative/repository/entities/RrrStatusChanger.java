@@ -33,6 +33,7 @@ package org.sola.services.ejb.administrative.repository.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 
 /**
@@ -40,6 +41,7 @@ import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
  * @author soladev
  */
 @Table(name = "rrr", schema = "administrative")
+@DefaultSorter(sortString="display_value")
 public class RrrStatusChanger extends AbstractStatusChangerEntity {
 
     @Column(name = "type_code", updatable = false, insertable = false)

@@ -33,6 +33,7 @@ package org.sola.services.ejb.source.repository.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -40,6 +41,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "administrative_source_type", schema = "source")
+@DefaultSorter(sortString="display_value")
 public class SourceType extends AbstractCodeEntity {
 
     @Column(name = "has_status")

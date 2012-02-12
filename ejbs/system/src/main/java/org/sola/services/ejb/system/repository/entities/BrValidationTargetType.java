@@ -28,9 +28,11 @@
 package org.sola.services.ejb.system.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 @Table(name = "br_validation_target_type", schema = "system")
+@DefaultSorter(sortString="display_value")
 public class BrValidationTargetType extends AbstractCodeEntity {
     public BrValidationTargetType(){
         super();

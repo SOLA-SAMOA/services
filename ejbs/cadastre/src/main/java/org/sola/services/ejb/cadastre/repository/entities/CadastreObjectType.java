@@ -32,6 +32,7 @@
 package org.sola.services.ejb.cadastre.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -39,6 +40,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "cadastre_object_type",  schema = "cadastre")
+@DefaultSorter(sortString="display_value")
 public class CadastreObjectType extends AbstractCodeEntity {
 
     public CadastreObjectType() {

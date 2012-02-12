@@ -32,9 +32,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.repository.ChildEntityList;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractEntity;
 
 @Table(name = "appgroup", schema = "system")
+@DefaultSorter(sortString="name")
 public class Group extends AbstractEntity {
     @Id
     @Column(name = "id")

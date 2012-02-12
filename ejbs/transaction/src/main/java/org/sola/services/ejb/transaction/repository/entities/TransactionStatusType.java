@@ -32,6 +32,7 @@
 package org.sola.services.ejb.transaction.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -39,6 +40,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "transaction_status_type", schema="transaction")
+@DefaultSorter(sortString="display_value")
 public class TransactionStatusType extends AbstractCodeEntity {
 
     public static final String PENDING = "pending";

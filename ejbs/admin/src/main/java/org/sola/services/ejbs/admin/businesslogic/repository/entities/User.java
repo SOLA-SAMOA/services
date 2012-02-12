@@ -32,9 +32,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.repository.ChildEntityList;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 @Table(name = "appuser", schema = "system")
+@DefaultSorter(sortString="username, last_name")
 public class User extends AbstractVersionedEntity {
     
     public static final String PARAM_USERNAME = "username";

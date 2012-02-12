@@ -38,6 +38,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.repository.ChildEntity;
 import org.sola.services.common.repository.ChildEntityList;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.ExternalEJB;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.address.businesslogic.AddressEJBLocal;
@@ -47,6 +48,7 @@ import org.sola.services.ejb.address.repository.entities.Address;
  * Entity representing the party.party table. 
  */
 @Table(name = "party", schema = "party")
+@DefaultSorter(sortString="name, last_name")
 public class Party extends AbstractVersionedEntity {
 
     public static final String TYPE_CODE_NON_NATURAL_PERSON = "nonNaturalPerson";

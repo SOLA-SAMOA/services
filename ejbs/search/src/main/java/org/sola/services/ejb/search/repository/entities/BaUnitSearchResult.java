@@ -44,6 +44,7 @@ public class BaUnitSearchResult extends AbstractReadOnlyEntity {
             + "FROM administrative.ba_unit b "
             + "WHERE POSITION(LOWER(#{nameFirstPart}) IN LOWER(COALESCE(b.name_firstpart, ''))) > 0 "
             + "AND POSITION(LOWER(#{nameLastPart}) IN LOWER(COALESCE(b.name_lastpart, ''))) > 0 "
+            + "ORDER BY b.name_firstpart, b.name_lastpart "
             + "LIMIT 101";
     @Id
     @Column

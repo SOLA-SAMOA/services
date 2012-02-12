@@ -32,6 +32,7 @@
 package org.sola.services.ejb.application.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -39,6 +40,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "request_category_type",  schema = "application")
+@DefaultSorter(sortString="display_value")
 public class RequestCategoryType extends AbstractCodeEntity {
 
     public static String INFORMATION_SERVICES = "informationServices";

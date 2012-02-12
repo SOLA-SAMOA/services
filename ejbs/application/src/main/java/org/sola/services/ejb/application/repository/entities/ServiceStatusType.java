@@ -32,6 +32,7 @@
 package org.sola.services.ejb.application.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -39,6 +40,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "service_status_type", schema="application")
+@DefaultSorter(sortString="display_value")
 public class ServiceStatusType extends AbstractCodeEntity {
 
     public static final String STATUS_LODGED = "lodged";

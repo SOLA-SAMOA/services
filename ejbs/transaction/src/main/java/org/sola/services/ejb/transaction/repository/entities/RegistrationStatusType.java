@@ -32,6 +32,7 @@
 package org.sola.services.ejb.transaction.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
@@ -39,6 +40,7 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
  * @author soladev
  */
 @Table(name = "reg_status_type", schema = "transaction")
+@DefaultSorter(sortString="display_value")
 public class RegistrationStatusType extends AbstractCodeEntity {
 
     public static String STATUS_CURRENT = "current";

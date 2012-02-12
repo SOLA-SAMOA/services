@@ -32,12 +32,14 @@
 package org.sola.services.ejb.application.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 /**
  * Entity representing the application.type_action code table
  */
 @Table(name = "type_action", schema = "application")
+@DefaultSorter(sortString="display_value")
 public class TypeAction extends AbstractCodeEntity {
     public static final String CANCEL = "cancel";
 

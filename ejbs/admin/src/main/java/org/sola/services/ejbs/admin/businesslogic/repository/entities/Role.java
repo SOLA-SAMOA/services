@@ -28,9 +28,11 @@
 package org.sola.services.ejbs.admin.businesslogic.repository.entities;
 
 import javax.persistence.Table;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractCodeEntity;
 
 @Table(name = "approle", schema = "system")
+@DefaultSorter(sortString="display_value")
 public class Role extends AbstractCodeEntity {
 
     public static final String QUERY_GET_ROLES_BY_USER_NAME =

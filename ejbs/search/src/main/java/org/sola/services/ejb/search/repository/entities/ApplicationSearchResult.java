@@ -68,7 +68,7 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + "AND ((lower (COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
             + "    OR (lower (COALESCE(p.name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
             + "    OR (lower (COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "}))) ";
-    public static final String QUERY_ORDER_BY = "a.lodging_datetime DESC";
+    public static final String QUERY_ORDER_BY = "a.lodging_datetime";
     
     @Id
     @Column(name = "id")
