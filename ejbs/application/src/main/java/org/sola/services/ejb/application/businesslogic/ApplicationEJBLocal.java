@@ -40,6 +40,9 @@ import org.sola.services.ejb.application.repository.entities.Application;
 import org.sola.services.ejb.application.repository.entities.ApplicationActionType;
 import org.sola.services.ejb.application.repository.entities.ApplicationLog;
 import org.sola.services.ejb.application.repository.entities.ApplicationStatusType;
+import org.sola.services.ejb.application.repository.entities.LodgementTiming;
+import org.sola.services.ejb.application.repository.entities.LodgementView;
+import org.sola.services.ejb.application.repository.entities.LodgementViewParams;
 import org.sola.services.ejb.application.repository.entities.RequestCategoryType;
 import org.sola.services.ejb.application.repository.entities.RequestType;
 import org.sola.services.ejb.application.repository.entities.TypeAction;
@@ -60,7 +63,11 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
     Application createApplication(Application application);
 
     Application saveApplication(Application application);
-
+    
+    List<LodgementView> getLodgementView(LodgementViewParams params);
+    
+    List<LodgementTiming> getLodgementTiming(LodgementViewParams params);
+    
     List<RequestType> getRequestTypes(String languageCode);
     
     List<RequestCategoryType> getRequestCategoryTypes(String languageCode);

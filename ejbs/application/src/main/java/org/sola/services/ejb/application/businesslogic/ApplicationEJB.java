@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,9 @@ import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.common.RolesConstants;
 import org.sola.services.common.faults.SOLAValidationException;
 import org.sola.services.common.repository.CommonSqlProvider;
+import org.sola.services.ejb.application.repository.entities.LodgementTiming;
+import org.sola.services.ejb.application.repository.entities.LodgementView;
+import org.sola.services.ejb.application.repository.entities.LodgementViewParams;
 import org.sola.services.ejb.application.repository.entities.RequestTypeRequiresSourceType;
 import org.sola.services.ejb.application.repository.entities.TypeAction;
 import org.sola.services.ejb.application.repository.entities.ServiceActionTaker;
@@ -318,7 +322,40 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
         return application;
     }
-
+    
+    
+    
+    @Override
+      public List<LodgementView> getLodgementView(LodgementViewParams params)  {
+        
+        List<LodgementView> result = null;
+        Map queryParams = new HashMap<String, Object>();
+        queryParams.put(CommonSqlProvider.PARAM_QUERY, LodgementView.QUERY_GETLODGEMENT);
+        
+        queryParams.put(LodgementView.PARAMETER_FROM,
+          params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
+        queryParams.put(LodgementView.PARAMETER_TO,
+          params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
+        
+        result = getRepository().executeFunction(queryParams, LodgementView.class);
+        return result;
+    }
+     
+     @Override
+      public List<LodgementTiming> getLodgementTiming(LodgementViewParams params)  {
+        
+        List<LodgementTiming> result = null;
+        Map queryParams = new HashMap<String, Object>();
+        queryParams.put(CommonSqlProvider.PARAM_QUERY, LodgementTiming.QUERY_GETLODGEMENT);
+        
+        queryParams.put(LodgementTiming.PARAMETER_FROM,
+          params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
+        queryParams.put(LodgementView.PARAMETER_TO,
+          params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
+        
+        result = getRepository().executeFunction(queryParams, LodgementTiming.class);
+        return result;
+    }
     @Override
     public List<ApplicationLog> getApplicationLog(String applicationId) {
         List<ApplicationLog> result = null;

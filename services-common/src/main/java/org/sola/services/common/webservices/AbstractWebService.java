@@ -81,7 +81,24 @@ public abstract class AbstractWebService {
             tx.rollback();
         }
     }
+    
+    
+    protected void runGeneralMethodNoUser(WebServiceContext wsContext,
+            Runnable generalMethod) throws UnhandledFault, SOLAFault {
+        try {
+            generalMethod.run();
+        } catch (Throwable t) {
+            Throwable fault = FaultUtility.ProcessException(t);
+            if (fault.getClass() == SOLAFault.class) {
+                throw (SOLAFault) fault;
+            }
+            throw (UnhandledFault) fault;
+        } finally {
+            cleanUp();
+        }
+    }
 
+    
     protected void runGeneralMethod(WebServiceContext wsContext,
             Runnable generalMethod) throws UnhandledFault, SOLAFault {
         try {
