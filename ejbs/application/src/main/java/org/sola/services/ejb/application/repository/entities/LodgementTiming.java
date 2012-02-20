@@ -39,31 +39,27 @@ public class LodgementTiming extends AbstractReadOnlyEntity {
     public static final String PARAMETER_TO = "toDate";
     public static final String QUERY_GETLODGEMENT = "select * from application.getlodgetiming(#{" + 
             PARAMETER_FROM + "}, #{" + PARAMETER_TO + "}) "
-            + "  as TimingReport(resultCode  varchar, resultTotal integer, "
-            + " resultDailyAvg  varchar) ";
+            + "  as TimingReport(resultCode varchar, resultTotal integer, resultDailyAvg float, ord integer) ";
 
     @Column(name="resultCode")
     private String  resultCode;
     @Column(name="resultTotal")
     private Integer resultTotal;
     @Column(name="resultDailyAvg")
-    private String resultDailyAvg;
+    private double resultDailyAvg;
     
     public LodgementTiming() {
         super();
     }
 
-    public String getResultDailyAvg() {
+    public double getResultDailyAvg() {
         return resultDailyAvg;
     }
 
-    public void setResultDailyAvg(String resultDailyAvg) {
+    public void setResultDailyAvg(double resultDailyAvg) {
         this.resultDailyAvg = resultDailyAvg;
     }
 
-   
-
-    
     public Integer getResultTotal() {
         return resultTotal;
     }
