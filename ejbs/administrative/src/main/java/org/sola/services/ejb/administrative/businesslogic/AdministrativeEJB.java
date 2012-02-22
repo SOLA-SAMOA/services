@@ -161,7 +161,6 @@ public class AdministrativeEJB extends AbstractEJB
     }
 
     @Override
-    //@RolesAllowed(RolesConstants.APPLICATION_APPROVE)
     public List<ValidationResult> approveTransaction(
             String transactionId, String approvedStatus,
             boolean validateOnly, String languageCode) {

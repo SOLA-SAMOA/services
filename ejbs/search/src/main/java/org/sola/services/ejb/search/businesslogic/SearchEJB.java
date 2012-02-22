@@ -199,6 +199,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_VIEW_APPS)
     public List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params) {
         // Process params
 
@@ -225,6 +226,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
     public List<SourceSearchResult> searchSources(SourceSearchParams searchParams) {
         Map params = new HashMap<String, Object>();
 
@@ -257,8 +259,8 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         return getRepository().getEntityList(SourceSearchResult.class, params);
     }
 
-    // TODO: Annotate only for admin usage
     @Override
+    @RolesAllowed(RolesConstants.ADMIN_MANAGE_SECURITY)
     public List<UserSearchResult> searchUsers(UserSearchParams searchParams) {
         if (searchParams.getGroupId() == null) {
             searchParams.setGroupId("");
@@ -286,6 +288,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_VIEW_APPS)
     public List<ApplicationSearchResult> getUnassignedApplications(String locale) {
 
         Map params = new HashMap<String, Object>();
@@ -299,6 +302,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_VIEW_APPS)
     public List<ApplicationSearchResult> getAssignedApplications(String locale) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART, ApplicationSearchResult.QUERY_FROM);
@@ -406,6 +410,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_VIEW_APPS)
     public List<ApplicationLogResult> getApplicationLog(String applicationId) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, SearchSqlProvider.buildApplicationLogSql());
@@ -445,6 +450,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SEARCH)
     public List<BaUnitSearchResult> searchBaUnits(BaUnitSearchParams searchParams) {
         Map params = new HashMap<String, Object>();
 

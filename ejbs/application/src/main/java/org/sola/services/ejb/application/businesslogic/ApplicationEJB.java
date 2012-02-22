@@ -1,28 +1,30 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
- * All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations
+ * (FAO). All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- *    1. Redistributions of source code must retain the above copyright notice,this list
- *       of conditions and the following disclaimer.
- *    2. Redistributions in binary form must reproduce the above copyright notice,this list
- *       of conditions and the following disclaimer in the documentation and/or other
- *       materials provided with the distribution.
- *    3. Neither the name of FAO nor the names of its contributors may be used to endorse or
- *       promote products derived from this software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this
+ * list of conditions and the following disclaimer. 2. Redistributions in binary
+ * form must reproduce the above copyright notice,this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.ejb.application.businesslogic;
@@ -78,7 +80,8 @@ import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusT
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
- * Provides methods for managing application objects. <p> <p/>
+ * Provides methods for managing application objects. <p>
+ * <p/>
  */
 @Stateless
 @EJB(name = "java:global/SOLA/ApplicationEJBLocal", beanInterface = ApplicationEJBLocal.class)
@@ -116,10 +119,12 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
     /**
      * Returns an application based on the id value
+     *
      * @param id The id of the application to retrieve
-     * @return The found application or null. 
+     * @return The found application or null.
      */
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_VIEW_APPS)
     public Application getApplication(String id) {
         Application result = null;
         if (id != null) {
@@ -129,15 +134,15 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Creates a new application record and any new child objects.
-     * <p>
-     * Sets the initial action for the application (e.g. lodged) using a business rule. Also
-     * sets the lodged date and expected completion date. 
-     * </p>
+     * Creates a new application record and any new child objects. <p> Sets the
+     * initial action for the application (e.g. lodged) using a business rule.
+     * Also sets the lodged date and expected completion date. </p>
+     *
      * @param application
-     * @return The application after the insert. 
+     * @return The application after the insert.
      */
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_CREATE_APPS)
     public Application createApplication(Application application) {
         if (application == null) {
             return application;
@@ -161,10 +166,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Calculates the lodgement fees as well as the expected completions dates for each
-     * service as well as the application. 
+     * Calculates the lodgement fees as well as the expected completions dates
+     * for each service as well as the application.
+     *
      * @param application
-     * @return 
+     * @return
      */
     @Override
     public Application calculateFeesAndDates(Application application) {
@@ -176,11 +182,12 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         return application;
     }
 
-    /** 
-     * Determines the completion dates for each service based on the number of dates to 
-     * complete for the service type. Also determines the application complete date as the 
-     * maximum of the service completion dates. 
-     * @param application 
+    /**
+     * Determines the completion dates for each service based on the number of
+     * dates to complete for the service type. Also determines the application
+     * complete date as the maximum of the service completion dates.
+     *
+     * @param application
      */
     private void calculateCompletionDates(Application application) {
 
@@ -217,9 +224,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Calculates the fees applicable for lodgement based on the services that have been 
-     * associated with the application. Values on the application are updated directly. 
-     * @param application 
+     * Calculates the fees applicable for lodgement based on the services that
+     * have been associated with the application. Values on the application are
+     * updated directly.
+     *
+     * @param application
      */
     private void calculateLodgementFees(Application application) {
 
@@ -285,18 +294,20 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Saves changes to the application and child objects. 
-     * <p>
-     * Note that this method should only be used after the application record has been created in the
-     * database. Merge by itself will insert a new Application record, but it will not flow
-     * the new app id to any new service_in_application objects and cause a db exception. 
-     * </p>
+     * Saves changes to the application and child objects. <p> Note that this
+     * method should only be used after the application record has been created
+     * in the database. Merge by itself will insert a new Application record,
+     * but it will not flow the new app id to any new service_in_application
+     * objects and cause a db exception. </p>
+     *
      * @param application
-     * @return The merged application. This is a different object from the application object 
-     * that was passed in as the Merge action applies the changes from the original application onto
-     * records retrieved from the database. 
+     * @return The merged application. This is a different object from the
+     * application object that was passed in as the Merge action applies the
+     * changes from the original application onto records retrieved from the
+     * database.
      */
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_CREATE_APPS)
     public Application saveApplication(Application application) {
         if (application == null) {
             return application;
@@ -322,41 +333,43 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
         return application;
     }
-    
-    
-    
+
     @Override
-      public List<LodgementView> getLodgementView(LodgementViewParams params)  {
-        
-        List<LodgementView> result = null;
+    @RolesAllowed(RolesConstants.REPORTS_VIEW)
+    public List<LodgementView> getLodgementView(LodgementViewParams params) {
+
+        List<LodgementView> result;
         Map queryParams = new HashMap<String, Object>();
         queryParams.put(CommonSqlProvider.PARAM_QUERY, LodgementView.QUERY_GETLODGEMENT);
-        
+
         queryParams.put(LodgementView.PARAMETER_FROM,
-          params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
+                params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
         queryParams.put(LodgementView.PARAMETER_TO,
-          params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
-        
+                params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
+
         result = getRepository().executeFunction(queryParams, LodgementView.class);
         return result;
     }
-     
-     @Override
-      public List<LodgementTiming> getLodgementTiming(LodgementViewParams params)  {
-        
+
+    @Override
+    @RolesAllowed(RolesConstants.REPORTS_VIEW)
+    public List<LodgementTiming> getLodgementTiming(LodgementViewParams params) {
+
         List<LodgementTiming> result = null;
         Map queryParams = new HashMap<String, Object>();
         queryParams.put(CommonSqlProvider.PARAM_QUERY, LodgementTiming.QUERY_GETLODGEMENT);
-        
+
         queryParams.put(LodgementTiming.PARAMETER_FROM,
-          params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
+                params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
         queryParams.put(LodgementView.PARAMETER_TO,
-          params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
-        
+                params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
+
         result = getRepository().executeFunction(queryParams, LodgementTiming.class);
         return result;
     }
+
     @Override
+    @RolesAllowed(RolesConstants.REPORTS_VIEW)
     public List<ApplicationLog> getApplicationLog(String applicationId) {
         List<ApplicationLog> result = null;
         if (applicationId == null) {
@@ -413,6 +426,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_SERVICE_COMPLETE)
     public List<ValidationResult> serviceActionComplete(
             String serviceId, String languageCode, int rowVersion) {
         return this.takeActionAgainstService(
@@ -420,6 +434,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_SERVICE_REVERT)
     public List<ValidationResult> serviceActionRevert(
             String serviceId, String languageCode, int rowVersion) {
         return this.takeActionAgainstService(
@@ -427,6 +442,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_SERVICE_START)
     public List<ValidationResult> serviceActionStart(
             String serviceId, String languageCode, int rowVersion) {
         return this.takeActionAgainstService(
@@ -434,6 +450,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_SERVICE_CANCEL)
     public List<ValidationResult> serviceActionCancel(
             String serviceId, String languageCode, int rowVersion) {
         return this.takeActionAgainstService(
@@ -441,6 +458,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_WITHDRAW)
     public List<ValidationResult> applicationActionWithdraw(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -448,6 +466,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_REJECT)
     public List<ValidationResult> applicationActionCancel(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -455,6 +474,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_REQUISITE)
     public List<ValidationResult> applicationActionRequisition(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -462,6 +482,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_VALIDATE)
     public List<ValidationResult> applicationActionValidate(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -469,6 +490,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_APPROVE)
     public List<ValidationResult> applicationActionApprove(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -476,6 +498,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_ARCHIVE)
     public List<ValidationResult> applicationActionArchive(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -483,6 +506,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_DESPATCH)
     public List<ValidationResult> applicationActionDespatch(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -490,6 +514,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_LAPSE)
     public List<ValidationResult> applicationActionLapse(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -497,6 +522,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed({RolesConstants.APPLICATION_ASSIGN_TO_OTHERS, RolesConstants.APPLICATION_ASSIGN_TO_YOURSELF})
     public List<ValidationResult> applicationActionAssign(
             String applicationId, String userId, String languageCode, int rowVersion) {
         ApplicationActionTaker application =
@@ -511,6 +537,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed({RolesConstants.APPLICATION_UNASSIGN_FROM_OTHERS, RolesConstants.APPLICATION_UNASSIGN_FROM_YOURSELF})
     public List<ValidationResult> applicationActionUnassign(
             String applicationId, String languageCode, int rowVersion) {
         ApplicationActionTaker application =
@@ -525,6 +552,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
+    @RolesAllowed(RolesConstants.APPLICATION_RESUBMIT)
     public List<ValidationResult> applicationActionResubmit(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
@@ -532,32 +560,37 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * It registers a service of category type informationServices. If it is of another kind of 
-     * not specified it throws an exception.
-     * If the service exists, it is only logged an action of type completed, otherwise it is 
+     * It registers a service of category type informationServices. If it is of
+     * another kind of not specified it throws an exception. If the service
+     * exists, it is only logged an action of type completed, otherwise it is
      * created.
+     *
      * @param service The service to be saved
-     * @param languageCode current language code. Used if business rules are invoked.
-     * @return 
+     * @param languageCode current language code. Used if business rules are
+     * invoked.
+     * @return
      */
     @Override
+    @RolesAllowed({RolesConstants.APPLICATION_PRINT_STATUS_REPORT,
+        RolesConstants.ADMINISTRATIVE_BA_UNIT_PRINT_CERT,
+        RolesConstants.GIS_PRINT, RolesConstants.SOURCE_PRINT})
     public Service saveInformationService(Service service, String languageCode) {
         RequestType requestType = this.getCodeEntity(
                 RequestType.class, service.getRequestTypeCode());
-        if (requestType== null || !requestType.getRequestCategoryCode().equals(
-                RequestCategoryType.INFORMATION_SERVICES)){
+        if (requestType == null || !requestType.getRequestCategoryCode().equals(
+                RequestCategoryType.INFORMATION_SERVICES)) {
             throw new SOLAException(
                     ServiceMessage.EJB_APPLICATION_SERVICE_REQUEST_TYPE_INFORMATION_REQUIRED);
         }
         Service existingService = this.getRepository().getEntity(Service.class, service.getId());
-        if (existingService == null){
+        if (existingService == null) {
             service.setLodgingDatetime(DateUtility.now());
             service.setExpectedCompletionDate(DateUtility.now());
             existingService = this.saveEntity(service);
         }
         this.serviceActionComplete(
                 existingService.getId(), languageCode, existingService.getRowVersion());
-       return existingService;
+        return existingService;
     }
 
     private List<ServiceActionTaker> getServiceActionTakerList(String applicationId) {
@@ -568,11 +601,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * It validates a service. For the moment, it is called from the validate method. Perhaps in the 
-     * future can be used directly to validate a single service.
+     * It validates a service. For the moment, it is called from the validate
+     * method. Perhaps in the future can be used directly to validate a single
+     * service.
+     *
      * @param service the service
      * @param languageCode the language code to translate the feedback
-     * @return 
+     * @return
      */
     private List<ValidationResult> validateService(
             ServiceActionTaker service, String languageCode, ServiceActionType serviceActionType) {
@@ -666,10 +701,10 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         } else if (ApplicationActionType.APPROVE.equals(actionCode)) {
             brValidationList = this.systemEJB.getBrForValidatingApplication(
                     ApplicationActionType.VALIDATE);
-            List<ValidationResult> resultValidationForAppList = 
+            List<ValidationResult> resultValidationForAppList =
                     this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
             validationSucceeded = validationSucceeded
-                        && systemEJB.validationSucceeded(resultValidationForAppList);
+                    && systemEJB.validationSucceeded(resultValidationForAppList);
             resultList.addAll(resultValidationForAppList);
             List<ServiceActionTaker> serviceList =
                     this.getServiceActionTakerList(application.getId());
@@ -708,10 +743,12 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
     /**
      * It approves the transactions that are hanging to a service.
+     *
      * @param service
      * @param languageCode
-     * @param validationOnly If true the approval is simulated only for the sake of validation
-     * @return 
+     * @param validationOnly If true the approval is simulated only for the sake
+     * of validation
+     * @return
      */
     private List<ValidationResult> approveApplicationService(
             String serviceId, String serviceStatusCode, String serviceRequestTypeCode,

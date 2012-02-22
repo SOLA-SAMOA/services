@@ -38,7 +38,6 @@ import javax.ejb.Local;
 import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJBLocal;
 import org.sola.services.ejb.system.br.Result;
-import org.sola.services.ejb.system.br.ResultFeedback;
 import org.sola.services.ejb.system.repository.entities.Br;
 import org.sola.services.ejb.system.repository.entities.BrReport;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
