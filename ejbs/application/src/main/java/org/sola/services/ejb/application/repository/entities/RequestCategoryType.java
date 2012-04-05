@@ -44,6 +44,9 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
 public class RequestCategoryType extends AbstractCodeEntity {
 
     public static String INFORMATION_SERVICES = "informationServices";
+    public static String REGISTRATION_SERVICES = "registrationServices";
+    public static String CADASTRAL_SERVICES = "cadastralServices";
+    public static String NON_REGISTRATION_SERVICES = "nonRegServices";
     public RequestCategoryType() {
         super();
     }
