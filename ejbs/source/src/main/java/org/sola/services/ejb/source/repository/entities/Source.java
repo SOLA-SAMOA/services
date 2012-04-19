@@ -31,7 +31,9 @@
  */
 package org.sola.services.ejb.source.repository.entities;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -93,6 +95,7 @@ public class Source extends AbstractVersionedEntity {
     @ChildEntity(childIdField = "archiveDocumentId")
     private Document archiveDocument;
     private Boolean locked = null;
+    private String laNrReferenceId = null; 
 
     public Source() {
         super();
@@ -102,7 +105,9 @@ public class Source extends AbstractVersionedEntity {
         String result = "";
         SystemEJBLocal systemEJB = RepositoryUtility.tryGetEJB(SystemEJBLocal.class);
         if (systemEJB != null) {
-            Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-source-nr", null);
+            HashMap<String, Serializable> params = new HashMap<String, Serializable>(); 
+            params.put("refId", getLaNrReferenceId()); 
+            Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-source-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {
                 result = newNumberResult.getValue().toString();
             }
@@ -249,6 +254,20 @@ public class Source extends AbstractVersionedEntity {
         }
     }
 
+    public String getLaNrReferenceId() {
+        return laNrReferenceId;
+    }
+
+    /**
+     * The id of an entity (Application, RRR, BAUnit, Transaction) that can
+     * be used to determine the appropriate laNr number for the source
+     * during number generation. 
+     * @param laNrReferenceId 
+     */
+    public void setLaNrReferenceId(String laNrReferenceId) {
+        this.laNrReferenceId = laNrReferenceId;
+    }
+       
     public Boolean isLocked() {
         if (locked == null) {
             locked = false;

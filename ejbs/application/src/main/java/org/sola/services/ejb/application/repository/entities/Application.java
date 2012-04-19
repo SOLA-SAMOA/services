@@ -53,6 +53,7 @@ import org.sola.services.ejb.party.businesslogic.PartyEJBLocal;
 import org.sola.services.ejb.party.repository.entities.Party;
 import org.sola.services.ejb.source.businesslogic.SourceEJBLocal;
 import org.sola.services.ejb.source.repository.entities.Source;
+import org.sola.services.ejb.source.repository.entities.SourceStatusChanger;
 import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 
@@ -130,8 +131,8 @@ public class Application extends AbstractVersionedEntity {
             if (getServiceList() != null && getServiceList().size() > 0) {
                 requestCategoryType = getServiceList().get(0).getRequestTypeCode();
             }
-            HashMap<String, Serializable> params = new HashMap<String, Serializable>(); 
-            params.put("requestCategoryType", requestCategoryType); 
+            HashMap<String, Serializable> params = new HashMap<String, Serializable>();
+            params.put("requestCategoryType", requestCategoryType);
             Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-application-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {
                 result = newNumberResult.getValue().toString();
@@ -331,6 +332,14 @@ public class Application extends AbstractVersionedEntity {
 
         if (isNew() && getNr() == null) {
             setNr(generateApplicationNumber());
+        }
+        
+        // Set the reference id on the source so that it is possible to 
+        // generate a number for the source that uses the Application number
+        if (getSourceList() != null && getSourceList().size() > 0) {
+            for (Source source : getSourceList()) {
+                source.setLaNrReferenceId(getId());
+            }
         }
 
         super.preSave();
