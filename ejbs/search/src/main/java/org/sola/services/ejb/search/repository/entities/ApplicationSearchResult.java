@@ -37,6 +37,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.CommonSqlProvider;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
 /**
@@ -59,6 +60,7 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + "LEFT JOIN party.party p2 ON a.agent_id = p2.id ";
     public static final String QUERY_WHERE_GET_ASSIGNED = "u.username = #{" + QUERY_PARAM_USER_NAME + "} "
             + " AND a.status_code != 'completed'";
+    public static final String QUERY_WHERE_GET_ASSIGNED_ALL = "u.username IS NOT NULL AND a.status_code != 'completed'";
     public static final String QUERY_WHERE_GET_UNASSIGNED = "u.username IS NULL "
             + " AND a.status_code != 'completed'";
     public static final String QUERY_WHERE_SEARCH_APPLICATIONS =
@@ -68,7 +70,7 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + "AND ((lower (COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
             + "    OR (lower (COALESCE(p.name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
             + "    OR (lower (COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "}))) ";
-    public static final String QUERY_ORDER_BY = "a.lodging_datetime";
+    public static final String QUERY_ORDER_BY = "a.lodging_datetime desc";
     
     @Id
     @Column(name = "id")
