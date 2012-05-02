@@ -108,8 +108,7 @@ public class PartyEJB extends AbstractEJB implements PartyEJBLocal {
     @Override
     public List<Party> getAgents() {
         Map params = new HashMap<String, Object>();
-        params.put(CommonSqlProvider.PARAM_WHERE_PART, Party.QUERY_WHERE_BYTYPECODE);
-        params.put("partyTypeCode", Party.TYPE_CODE_NON_NATURAL_PERSON);
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, Party.QUERY_WHERE_LODGING_AGENTS);
 
         // Don't load Address or PartyRole as these are not required for the agents list. 
         getRepository().setLoadInhibitors(new Class<?>[]{PartyRole.class, Address.class});

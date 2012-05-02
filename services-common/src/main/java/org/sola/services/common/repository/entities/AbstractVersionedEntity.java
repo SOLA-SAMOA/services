@@ -98,7 +98,7 @@ public abstract class AbstractVersionedEntity extends AbstractEntity {
     public void preSave() {
         super.preSave();
         if (isModified() || toDelete()) {
-            if (toDelete() && !changeUser.equals(LocalInfo.getUserName())) {
+            if (toDelete() && changeUser!=null && !changeUser.equals(LocalInfo.getUserName())) {
                 setUpdateBeforeDelete(true);
             }
             changeUser = LocalInfo.getUserName();
