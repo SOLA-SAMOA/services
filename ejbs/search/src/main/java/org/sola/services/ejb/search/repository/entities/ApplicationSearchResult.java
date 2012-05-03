@@ -66,7 +66,7 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
     public static final String QUERY_WHERE_SEARCH_APPLICATIONS =
             "a.lodging_datetime BETWEEN #{" + QUERY_PARAM_FROM_LODGE_DATE + "} AND #{" + QUERY_PARAM_TO_LODGE_DATE + "} "
             + "AND lower(a.nr) LIKE lower(#{" + QUERY_PARAM_APP_NR + "}) "
-            + "AND lower(p2.name) LIKE lower(#{" + QUERY_PARAM_AGENT_NAME + "}) "
+            + "AND lower(COALESCE(p2.name, '')) LIKE lower(#{" + QUERY_PARAM_AGENT_NAME + "}) "
             + "AND ((lower (COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
             + "    OR (lower (COALESCE(p.name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "})) "
             + "    OR (lower (COALESCE(p.last_name, '')) LIKE lower(#{" + QUERY_PARAM_CONTACT_NAME + "}))) ";

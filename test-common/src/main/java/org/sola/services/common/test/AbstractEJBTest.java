@@ -215,6 +215,7 @@ public abstract class AbstractEJBTest {
         String tempDir = System.getProperty("java.io.tmpdir") + "/TestUtilities/";
         String tempDirVersion = tempDir + configVersion + "/";
         String installRootDir = tempDirVersion + GLASSFISH_RESOURCE_NAME;
+        installRootDir = installRootDir.replace("%20", " ");
         File root = new File(installRootDir);
         File temp = new File(tempDir);
 
