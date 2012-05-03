@@ -62,8 +62,8 @@ public class CadastreObjectSearchResult extends AbstractReadOnlyEntity {
             + " on co.id = bas.spatial_unit_id "
             + " inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id";
 
-    public static final String QUERY_WHERE_SEARCHBY_BAUNIT = "co.status_code= 'current' "
-            + "and ba_unit.status_code = 'current' "
+    public static final String QUERY_WHERE_SEARCHBY_BAUNIT = 
+            "(co.status_code= 'current' or ba_unit.status_code= 'current')"
             + "and compare_strings(#{search_string}, "
             + "ba_unit.name_firstpart || ' ' || ba_unit.name_lastpart)";
 
@@ -76,28 +76,17 @@ public class CadastreObjectSearchResult extends AbstractReadOnlyEntity {
             + "inner join administrative.ba_unit_contains_spatial_unit bas "
             + "on co.id = bas.spatial_unit_id"
             + " inner join administrative.ba_unit "
-            + "on (bas.ba_unit_id= ba_unit.id and ba_unit.status_code= 'current') "
+            + "on bas.ba_unit_id= ba_unit.id "
             + "inner join administrative.rrr "
             + "on (ba_unit.id = rrr.ba_unit_id and rrr.status_code = 'current' "
             + "and rrr.type_code = 'ownership') "
             + "inner join administrative.party_for_rrr pfr on rrr.id = pfr.rrr_id "
             + "inner join party.party on pfr.party_id= pfr.party_id ";
     
-    public static final String QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT = "co.status_code= 'current' "
+    public static final String QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT = 
+            "(co.status_code= 'current' or ba_unit.status_code= 'current') "
             + "and compare_strings(#{search_string}, "
             + "coalesce(party.name, '') || ' ' || coalesce(party.last_name, ''))";
-
-//            public static final String QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT = "status_code= 'current' and "
-//            + " id in (select spatial_unit_id "
-//            + " from administrative.ba_unit_contains_spatial_unit bas "
-//            + " inner join administrative.ba_unit on "
-//            + " (bas.ba_unit_id= ba_unit.id and ba_unit.status_code= 'current') "
-//            + " inner join administrative.rrr on (ba_unit.id = rrr.ba_unit_id "
-//            + " and rrr.status_code = 'current' and rrr.type_code = 'ownership') "
-//            + " inner join administrative.party_for_rrr pfr on rrr.id = pfr.rrr_id "
-//            + " inner join party.party on pfr.party_id= pfr.party_id "
-//            + " where compare_strings(#{search_string}, coalesce(party.name, '') "
-//            + " || ' ' || coalesce(party.last_name, '')))";
     
     public static final String QUERY_WHERE_GET_NEW_PARCELS = "transaction_id IN "
             + "(SELECT cot.transaction_id "

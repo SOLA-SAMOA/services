@@ -487,7 +487,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         String wherePart = null;
         String selectPart = null;
         String fromPart = null;
-        Integer numberOfMaxRecordsReturned = 10;
+        Integer numberOfMaxRecordsReturned = 30;
 
         if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_NUMBER)) {
             wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_NUMBER;
