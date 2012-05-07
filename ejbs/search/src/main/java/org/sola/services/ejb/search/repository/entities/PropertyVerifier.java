@@ -43,16 +43,18 @@ public class PropertyVerifier extends AbstractReadOnlyEntity {
 
     public static final String QUERY_PARAM_FIRST_PART = "firstPart";
     public static final String QUERY_PARAM_LAST_PART = "lastPart";
+    public static final String QUERY_PARAM_APPLICATION_NUMBER = "applicationNumber";
     public static final String QUERY_VERIFY_SQL =
             "SELECT id,  "
             + "(select count(*)>0 from administrative.ba_unit_contains_spatial_unit bcs "
             + " where ba.id = bcs.ba_unit_id ) as has_location,"
             + "(select coalesce(string_agg(nr, ','), '') from application.application a "
             + " inner join application.application_property ap on a.id = ap.application_id "
-            + " where  ap.name_firstpart= ba.name_firstpart and ap.name_lastpart= ba.name_lastpart) "
+            + " where a.status_code = 'lodged' and a.nr!=#{" + QUERY_PARAM_APPLICATION_NUMBER + "}"
+            + " and ap.name_firstpart= ba.name_firstpart and ap.name_lastpart= ba.name_lastpart) "
             + " as applications_where_found "
-            + " FROM administrative.ba_unit ba where type_code = 'basicPropertyUnit' "
-            + " AND ba.name_firstpart = #{" + QUERY_PARAM_FIRST_PART + "} "
+            + " FROM administrative.ba_unit ba where "
+            + " ba.name_firstpart = #{" + QUERY_PARAM_FIRST_PART + "} "
             + " AND ba.name_lastpart = #{" + QUERY_PARAM_LAST_PART + "}";
     @Id
     @Column

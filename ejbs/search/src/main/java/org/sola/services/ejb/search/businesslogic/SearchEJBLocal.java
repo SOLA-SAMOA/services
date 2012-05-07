@@ -62,7 +62,7 @@ import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 @Local
 public interface SearchEJBLocal extends AbstractEJBLocal {
 
-    PropertyVerifier getPropertyVerifier(String firstPart, String lastPart);
+    PropertyVerifier getPropertyVerifier(String applicationNumber, String firstPart, String lastPart);
 
     GenericResult getGenericResultList(String queryName, Map params);
 
