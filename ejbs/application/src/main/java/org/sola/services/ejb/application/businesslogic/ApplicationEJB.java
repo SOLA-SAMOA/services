@@ -611,14 +611,20 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      */
     private List<ValidationResult> validateService(
             ServiceActionTaker service, String languageCode, ServiceActionType serviceActionType) {
-        List<BrValidation> brValidationList =
-                this.systemEJB.getBrForValidatingService(
+        List<ValidationResult> resultList = new ArrayList<ValidationResult>();
+
+        // Skip validation for cancelled service
+        if (service.getStatusCode() != null && service.getStatusCode().equalsIgnoreCase(ServiceStatusType.STATUS_CANCELLED)) {
+            return resultList;
+        }
+
+        List<BrValidation> brValidationList = this.systemEJB.getBrForValidatingService(
                 serviceActionType.getCode(), service.getRequestTypeCode());
 
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", service.getId());
         //Run the validation
-        List<ValidationResult> resultList = this.systemEJB.checkRulesGetValidation(
+        resultList = this.systemEJB.checkRulesGetValidation(
                 brValidationList, languageCode, params);
         if (serviceActionType.getStatusToSet().equals(ServiceStatusType.STATUS_COMPLETED)) {
             resultList.addAll(this.approveApplicationService(
@@ -635,6 +641,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         if (service == null) {
             throw new SOLAException(ServiceMessage.EJB_APPLICATION_SERVICE_NOT_FOUND);
         }
+
         ServiceActionType serviceActionType =
                 getRepository().getCode(ServiceActionType.class, actionCode, languageCode);
         List<ValidationResult> validationResultList = this.validateService(
@@ -754,9 +761,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
             String serviceId, String serviceStatusCode, String serviceRequestTypeCode,
             String languageCode, boolean validationOnly) {
         List<ValidationResult> validationResultList = new ArrayList<ValidationResult>();
+
         if (!validationOnly && serviceStatusCode.equals(ServiceStatusType.STATUS_CANCELLED)) {
             transactionEJB.rejectTransaction(serviceId);
-        } else {
+        } else if (serviceStatusCode == null || (serviceStatusCode != null && !serviceStatusCode.equalsIgnoreCase(ServiceStatusType.STATUS_CANCELLED))) {
+            // Skip validation for cancelled service
             TransactionBasic transaction =
                     transactionEJB.getTransactionByServiceId(serviceId, false, TransactionBasic.class);
             if (transaction != null) {
