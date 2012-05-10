@@ -1,30 +1,26 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations
- * (FAO). All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
+ * reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,this
- * list of conditions and the following disclaimer. 2. Redistributions in binary
- * form must reproduce the above copyright notice,this list of conditions and
- * the following disclaimer in the documentation and/or other materials provided
- * with the distribution. 3. Neither the name of FAO nor the names of its
- * contributors may be used to endorse or promote products derived from this
- * software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
+ * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
+ * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.ejb.search.businesslogic;
@@ -35,7 +31,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -43,7 +38,6 @@ import org.sola.common.RolesConstants;
 import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.ejbs.AbstractEJB;
-import org.sola.services.common.logging.LogUtility;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 import org.sola.services.ejb.search.repository.entities.ApplicationLogResult;
@@ -53,21 +47,13 @@ import org.sola.services.ejb.search.repository.entities.BaUnitSearchParams;
 import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
 import org.sola.services.ejb.search.repository.entities.BrSearchParams;
 import org.sola.services.ejb.search.repository.entities.BrSearchResult;
-import org.sola.services.ejb.search.repository.entities.CadastreObjectSearchResult;
 import org.sola.services.ejb.search.repository.entities.ConfigMapLayer;
 import org.sola.services.ejb.search.repository.entities.GenericResult;
 import org.sola.services.ejb.search.repository.entities.PartySearchParams;
 import org.sola.services.ejb.search.repository.entities.PartySearchResult;
 import org.sola.services.ejb.search.repository.entities.PropertyVerifier;
 import org.sola.services.ejb.search.repository.SearchSqlProvider;
-import org.sola.services.ejb.search.repository.entities.Setting;
-import org.sola.services.ejb.search.repository.entities.SourceSearchParams;
-import org.sola.services.ejb.search.repository.entities.SourceSearchResult;
-import org.sola.services.ejb.search.repository.entities.SpatialResult;
-import org.sola.services.ejb.search.repository.entities.UserSearchParams;
-import org.sola.services.ejb.search.repository.entities.UserSearchResult;
-import org.sola.services.ejb.search.repository.entities.DynamicQuery;
-import org.sola.services.ejb.search.repository.entities.DynamicQueryField;
+import org.sola.services.ejb.search.repository.entities.*;
 import org.sola.services.ejb.search.spatial.QueryForNavigation;
 import org.sola.services.ejb.search.spatial.QueryForSelect;
 import org.sola.services.ejb.search.spatial.ResultForNavigationInfo;
@@ -171,8 +157,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     /**
-     * It returns the first row of the result set. It is used especially from
-     * business rules.
+     * It returns the first row of the result set. It is used especially from business rules.
      *
      * @param sqlStatement
      * @param params
@@ -194,9 +179,13 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     @Override
-    public PropertyVerifier getPropertyVerifier(String firstPart, String lastPart) {
+    public PropertyVerifier getPropertyVerifier(String applicationNumber, String firstPart, String lastPart) {
+        if (applicationNumber == null) {
+            applicationNumber = "";
+        }
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, PropertyVerifier.QUERY_VERIFY_SQL);
+        params.put(PropertyVerifier.QUERY_PARAM_APPLICATION_NUMBER, applicationNumber);
         params.put(PropertyVerifier.QUERY_PARAM_FIRST_PART, firstPart);
         params.put(PropertyVerifier.QUERY_PARAM_LAST_PART, lastPart);
         return getRepository().getEntity(PropertyVerifier.class, params);
@@ -311,14 +300,14 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART, ApplicationSearchResult.QUERY_FROM);
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, locale);
-        
+
         if (isInRole(RolesConstants.APPLICATION_UNASSIGN_FROM_OTHERS)) {
             params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED_ALL);
         } else {
             params.put(ApplicationSearchResult.QUERY_PARAM_USER_NAME, getUserName());
             params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED);
         }
-        
+
         params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ApplicationSearchResult.QUERY_ORDER_BY);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, "100");
 
@@ -376,7 +365,8 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     public List<ConfigMapLayer> getConfigMapLayerList(String languageCode) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, languageCode);
-        params.put(CommonSqlProvider.PARAM_QUERY, ConfigMapLayer.QUERY_SQL);
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, ConfigMapLayer.QUERY_WHERE_ACTIVE);
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ConfigMapLayer.QUERY_ORDER_BY);
         return getRepository().getEntityList(ConfigMapLayer.class, params);
     }
 
@@ -481,44 +471,31 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         return getRepository().getEntityList(BaUnitSearchResult.class, params);
     }
 
+    /**
+     * Retrieves the list of active spatial search options
+     * @param languageCode the language code of the client application.
+     * @return List of spatial search options.
+     */
     @Override
-    public List<CadastreObjectSearchResult> searchCadastreObjects(
-            String searchBy, String searchString) {
-        String wherePart = null;
-        String selectPart = null;
-        String fromPart = null;
-        Integer numberOfMaxRecordsReturned = 30;
-
-        if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_NUMBER)) {
-            wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_NUMBER;
-        } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_BAUNIT)) {
-            selectPart = CadastreObjectSearchResult.QUERY_SELECT_SEARCHBY_BAUNIT;
-            fromPart = CadastreObjectSearchResult.QUERY_FROM_SEARCHBY_BAUNIT;
-            wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_BAUNIT;
-        } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_OWNER_OF_BAUNIT)) {
-            selectPart = CadastreObjectSearchResult.QUERY_SELECT_SEARCHBY_OWNER_OF_BAUNIT;
-            fromPart = CadastreObjectSearchResult.QUERY_FROM_SEARCHBY_OWNER_OF_BAUNIT;
-            wherePart = CadastreObjectSearchResult.QUERY_WHERE_SEARCHBY_OWNER_OF_BAUNIT;
-        } else if (searchBy.equals(CadastreObjectSearchResult.SEARCH_BY_BAUNIT_ID)) {
-            wherePart = CadastreObjectSearchResult.QUERY_WHERE_GET_NEW_PARCELS;
-            numberOfMaxRecordsReturned = 0;
-        }
-        List<CadastreObjectSearchResult> result = new ArrayList<CadastreObjectSearchResult>();
-        if (wherePart != null) {
-            Map params = new HashMap<String, Object>();
-            if (numberOfMaxRecordsReturned > 0) {
-                params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
-            }
-            if (fromPart != null) {
-                params.put(CommonSqlProvider.PARAM_FROM_PART, fromPart);
-            }
-            if (selectPart != null) {
-                params.put(CommonSqlProvider.PARAM_SELECT_PART, selectPart);
-            }
-            params.put(CommonSqlProvider.PARAM_WHERE_PART, wherePart);
-            params.put(CadastreObjectSearchResult.SEARCH_STRING_PARAM, searchString);
-            result = this.getRepository().getEntityList(CadastreObjectSearchResult.class, params);
-        }
-        return result;
+    public List<SpatialSearchOption> getSpatialSearchOptions(String languageCode) {
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, languageCode);
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, SpatialSearchOption.QUERY_WHERE_ACTIVE);
+        return getRepository().getEntityList(SpatialSearchOption.class, params);
     }
+
+    /**
+     * Executes a search for spatial objects using the specified dynamic query
+     * @param queryName The name of the dynamic query to use for the search
+     * @param searchString The search string to use
+     * @return List of results matching the search string. 
+     */
+    @Override
+    public List<SpatialSearchResult> searchSpatialObjects(String queryName,
+            String searchString) {
+        Map params = new HashMap<String, Object>();
+        params.put(SpatialSearchResult.PARAM_SEARCH_STRING, searchString);
+        return executeDynamicQuery(SpatialSearchResult.class, queryName, params);
+    }
+
 }

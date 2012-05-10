@@ -27,38 +27,21 @@
  */
 package org.sola.services.ejb.search.businesslogic;
 
-import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
-import org.sola.services.ejb.search.repository.entities.BrSearchResult;
-import org.junit.Ignore;
-import java.util.GregorianCalendar;
-import java.util.Date;
-import org.sola.services.ejb.search.repository.entities.SourceSearchResult;
-import org.sola.services.ejb.search.repository.entities.SourceSearchParams;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
-import java.util.HashMap;
-import javax.xml.bind.DatatypeConverter;
-import java.util.List;
+import java.util.*;
+import org.junit.After;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
-import org.sola.services.ejb.search.repository.entities.BrSearchParams;
-import org.sola.services.ejb.search.repository.entities.ConfigMapLayer;
-import org.sola.services.ejb.search.repository.entities.GenericResult;
-import org.sola.services.ejb.search.repository.entities.PartySearchParams;
-import org.sola.services.ejb.search.repository.entities.PartySearchResult;
-import org.sola.services.ejb.search.repository.entities.BaUnitSearchParams;
-import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
-import org.sola.services.ejb.search.repository.entities.PropertyVerifier;
-import org.sola.services.ejb.search.repository.entities.UserSearchParams;
-import org.sola.services.ejb.search.repository.entities.UserSearchResult;
+import org.sola.services.ejb.search.repository.entities.*;
 import org.sola.services.ejb.search.spatial.QueryForNavigation;
 import org.sola.services.ejb.search.spatial.ResultForNavigationInfo;
 import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -244,7 +227,7 @@ public class SearchEJBIT extends AbstractEJBTest {
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
         String firstPart = "602";
         String lastPart = "6629";
-        PropertyVerifier result = instance.getPropertyVerifier(firstPart, lastPart);
+        PropertyVerifier result = instance.getPropertyVerifier("", firstPart, lastPart);
         if (result != null) {
             System.out.println("ba unit found: " + result.toString());
         } else {
@@ -264,7 +247,7 @@ public class SearchEJBIT extends AbstractEJBTest {
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
         String firstPart = null;
         String lastPart = "6629";
-        PropertyVerifier result = instance.getPropertyVerifier(firstPart, lastPart);
+        PropertyVerifier result = instance.getPropertyVerifier("", firstPart, lastPart);
         if (result != null) {
             System.out.println("ba unit found: " + result.toString());
         } else {

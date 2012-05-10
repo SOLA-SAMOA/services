@@ -74,7 +74,7 @@ public class SearchEJBIT extends AbstractEJBTest {
                 SearchEJB.class.getSimpleName());
         String firstPart = "17"; // Samoan data
         String lastPart = "4841";
-        PropertyVerifier result = instance.getPropertyVerifier(firstPart, lastPart);
+        PropertyVerifier result = instance.getPropertyVerifier("", firstPart, lastPart);
         if (result != null) {
             System.out.println("Parcel Exists: " + result.toString());
             assertFalse(result.isHasLocation());
@@ -87,7 +87,7 @@ public class SearchEJBIT extends AbstractEJBTest {
         System.out.println("testGetVerifyProperty - Parcel Exists with Location");
         firstPart = "335"; // Samoan data
         lastPart = "2775";
-        result = instance.getPropertyVerifier(firstPart, lastPart);
+        result = instance.getPropertyVerifier("", firstPart, lastPart);
         if (result != null) {
             System.out.println("Parcel Exists with Location: " + result.toString());
             assertTrue(result.isHasLocation());
