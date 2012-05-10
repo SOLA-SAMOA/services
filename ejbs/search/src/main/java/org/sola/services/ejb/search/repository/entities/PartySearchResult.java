@@ -48,6 +48,7 @@ public class PartySearchResult extends AbstractReadOnlyEntity {
             + "AND POSITION(LOWER(#{roleTypeCode}) in LOWER(COALESCE(pr.type_code, ''))) > 0 "
             + "ORDER BY p.name, p.last_name "
             + "LIMIT 101";
+   
     @Id
     @Column
     private String id;
