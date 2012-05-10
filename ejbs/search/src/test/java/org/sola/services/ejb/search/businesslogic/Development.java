@@ -41,8 +41,6 @@ import org.junit.Test;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.search.repository.SearchSqlProvider;
-import org.sola.services.ejb.search.repository.entities.CadastreObjectSearchResult;
-import org.sola.services.ejb.search.repository.entities.DynamicQuery;
 import org.sola.services.ejb.search.repository.entities.GenericResult;
 import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 
@@ -72,8 +70,8 @@ public class Development extends AbstractEJBTest {
         SearchEJBLocal instance = (SearchEJBLocal) getEJBInstance(SearchEJB.class.getSimpleName());
         //this.testQueriesForResultList(instance, "CadastreObjectWithGeometry.searchByBaUnitId",
         //        new Object[]{"3068323"});
-        List result =  instance.searchCadastreObjects(
-                CadastreObjectSearchResult.SEARCH_BY_OWNER_OF_BAUNIT, "fiku");
+        List result =  instance.searchSpatialObjects(
+                "map_search.cadastre_object_by_baunit_owner", "fiku");
         System.out.println("Found:" + result.size());
     }
 
