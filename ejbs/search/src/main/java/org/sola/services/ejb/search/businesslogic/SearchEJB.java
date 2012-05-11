@@ -481,6 +481,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, languageCode);
         params.put(CommonSqlProvider.PARAM_WHERE_PART, SpatialSearchOption.QUERY_WHERE_ACTIVE);
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, SpatialSearchOption.QUERY_ORDER_BY);
         return getRepository().getEntityList(SpatialSearchOption.class, params);
     }
 
