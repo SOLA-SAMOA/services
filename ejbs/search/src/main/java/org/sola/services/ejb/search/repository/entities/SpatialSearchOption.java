@@ -52,18 +52,13 @@ public class SpatialSearchOption extends AbstractReadOnlyEntity {
     private String queryName;
     @Column(name = "description")
     private String description;
-    // @Column(name = "min_search_str_len")
+    @Column(name = "min_search_str_len")
     private int minSearchStrLen;
-    //@Column(name = "zoom_in_buffer")
+    @Column(name = "zoom_in_buffer")
     private BigDecimal zoomInBuffer;
 
     public SpatialSearchOption() {
         super();
-
-        // Temporary default values. To be removed once values can be
-        // obtained from the database. 
-        minSearchStrLen = 3;
-        zoomInBuffer = new BigDecimal("50");
     }
 
     public String getCode() {
