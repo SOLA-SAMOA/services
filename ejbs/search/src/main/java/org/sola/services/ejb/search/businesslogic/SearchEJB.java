@@ -64,7 +64,7 @@ import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
     private DynamicQuery getDynamicQuery(String queryName, Map params) {
-        DynamicQuery query = null;
+        DynamicQuery query;
         // Retrieve the dynamic query from the database. Use localization if it is provided
         // as a query parameter. 
         if (params != null && params.containsKey(CommonSqlProvider.PARAM_LANGUAGE_CODE)) {
@@ -112,9 +112,9 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         // Create the generic result from the query result. 
         if (queryResult != null && !queryResult.isEmpty()) {
 
-            String[] fieldNames = null;
-            List<String> queryFields = new ArrayList<String>();
-            List<String> displayNames = new ArrayList<String>();
+            String[] fieldNames;
+            List<String> queryFields;
+            List<String> displayNames;
 
             // Get any query fields and display names from the dynamic query configuration. 
             //if (query.getQueryFieldNames() != null) {
@@ -201,15 +201,19 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
         queryParams.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, params.getLocale());
         queryParams.put(ApplicationSearchResult.QUERY_PARAM_CONTACT_NAME,
-                params.getContactPerson() == null ? "%" : params.getContactPerson().trim() + "%");
+                params.getContactPerson() == null ? "" : params.getContactPerson().trim());
         queryParams.put(ApplicationSearchResult.QUERY_PARAM_AGENT_NAME,
-                params.getAgent() == null ? "%" : params.getAgent().trim() + "%");
+                params.getAgent() == null ? "" : params.getAgent().trim());
         queryParams.put(ApplicationSearchResult.QUERY_PARAM_APP_NR,
-                params.getNr() == null ? "%" : params.getNr().trim() + "%");
+                params.getNr() == null ? "" : params.getNr().trim());
         queryParams.put(ApplicationSearchResult.QUERY_PARAM_FROM_LODGE_DATE,
                 params.getFromDate() == null ? new GregorianCalendar(1, 1, 1).getTime() : params.getFromDate());
         queryParams.put(ApplicationSearchResult.QUERY_PARAM_TO_LODGE_DATE,
                 params.getToDate() == null ? new GregorianCalendar(2500, 1, 1).getTime() : params.getToDate());
+        queryParams.put(ApplicationSearchResult.QUERY_PARAM_DOCUMENT_NUMBER,
+                params.getDocumentNumber() == null ? "" : params.getDocumentNumber().trim());
+        queryParams.put(ApplicationSearchResult.QUERY_PARAM_DOCUMENT_REFERENCE,
+                params.getDocumentReference() == null ? "" : params.getDocumentReference().trim());	
 
         queryParams.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_SEARCH_APPLICATIONS);
         queryParams.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ApplicationSearchResult.QUERY_ORDER_BY);
