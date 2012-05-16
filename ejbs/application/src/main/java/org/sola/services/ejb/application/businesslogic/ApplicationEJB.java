@@ -335,7 +335,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
-    @RolesAllowed(RolesConstants.REPORTS_VIEW)
+//    @RolesAllowed(RolesConstants.REPORTS_VIEW)
     public List<LodgementView> getLodgementView(LodgementViewParams params) {
 
         List<LodgementView> result;
@@ -352,7 +352,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     @Override
-    @RolesAllowed(RolesConstants.REPORTS_VIEW)
+//    @RolesAllowed(RolesConstants.REPORTS_VIEW)
     public List<LodgementTiming> getLodgementTiming(LodgementViewParams params) {
 
         List<LodgementTiming> result = null;
