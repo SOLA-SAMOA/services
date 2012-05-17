@@ -65,14 +65,17 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + " AND a.status_code in ('lodged', 'approved')";
     /**
      * Uses CASE statements to skip execution of the compare_strings function if the parameter
-     * string is empty.
+     * string is empty. 
+     * Samoa Customization. Also include searching of the fathers name details on the agent record
+     * as part of the Contact Name due to the way agent contact details are managed in Samoa. 
      */
     public static final String QUERY_WHERE_SEARCH_APPLICATIONS =
             "a.lodging_datetime BETWEEN #{" + QUERY_PARAM_FROM_LODGE_DATE + "} AND #{" + QUERY_PARAM_TO_LODGE_DATE + "} "
             + "AND (CASE WHEN #{" + QUERY_PARAM_APP_NR + "} = '' THEN true ELSE "
             + "compare_strings(#{" + QUERY_PARAM_APP_NR + "}, a.nr) END) "
             + "AND (CASE WHEN #{" + QUERY_PARAM_CONTACT_NAME + "} = '' THEN true ELSE "
-            + "compare_strings(#{" + QUERY_PARAM_CONTACT_NAME + "}, COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '')) END) "
+            + "compare_strings(#{" + QUERY_PARAM_CONTACT_NAME + "}, COALESCE(p.name, p2.fathers_name, '') || ' ' || "
+            + "COALESCE(p.last_name, p2.fathers_last_name, '')) END) "
             + "AND (CASE WHEN #{" + QUERY_PARAM_AGENT_NAME + "} = '' THEN true ELSE "
             + "compare_strings(#{" + QUERY_PARAM_AGENT_NAME + "}, COALESCE(p2.name, '') || ' ' || COALESCE(p2.last_name, '')) END) "
             + "AND (CASE WHEN #{" + QUERY_PARAM_DOCUMENT_NUMBER + "} || #{" + QUERY_PARAM_DOCUMENT_REFERENCE + "} = '' THEN true ELSE EXISTS ( "
