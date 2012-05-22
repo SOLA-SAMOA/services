@@ -72,7 +72,7 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
     @Override
     public BigDecimal getTaxRate() {
         // Note that the String constructor is perferred for BigDecimal
-        return new BigDecimal("0.075");
+        return new BigDecimal("0.15");
     }
 
     @RolesAllowed(RolesConstants.ADMIN_MANAGE_SECURITY)

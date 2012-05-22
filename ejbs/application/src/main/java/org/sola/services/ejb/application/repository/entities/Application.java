@@ -92,6 +92,8 @@ public class Application extends AbstractVersionedEntity {
     onChange = "get_geometry_with_srid(#{location})")
     @Column(name = "location")
     private byte[] location;
+    @Column(name = "new_lots")
+    private int newLots;
     @Column(name = "services_fee")
     private BigDecimal servicesFee;
     @Column(name = "tax")
@@ -238,6 +240,14 @@ public class Application extends AbstractVersionedEntity {
         this.nr = nr;
     }
 
+    public int getNewLots() {
+        return newLots;
+    }
+
+    public void setNewLots(int newLots) {
+        this.newLots = newLots;
+    }
+    
     public BigDecimal getServicesFee() {
         return servicesFee;
     }
