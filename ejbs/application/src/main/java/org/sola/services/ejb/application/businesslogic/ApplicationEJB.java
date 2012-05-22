@@ -234,16 +234,16 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
         // Get the total area and the total value of the properties on the application
         BigDecimal totalArea = BigDecimal.ZERO;
-        Money totalValue = new Money(BigDecimal.ZERO);
+        Money totalValue = new Money(new BigDecimal(application.getNewLots()));
         if (application.getPropertyList() != null) {
             for (ApplicationProperty prop : application.getPropertyList()) {
                 if (prop.getArea() != null) {
                     totalArea = totalArea.add(prop.getArea().abs());
                 }
-                if (prop.getTotalValue() != null) {
-                    Money propertyValue = new Money(prop.getTotalValue().abs());
-                    totalValue = totalValue.plus(propertyValue);
-                }
+                //if (prop.getTotalValue() != null) {
+                //    Money propertyValue = new Money(prop.getTotalValue().abs());
+                //    totalValue = totalValue.plus(propertyValue);
+                //}
             }
         }
 
@@ -284,9 +284,10 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
         // Calculate the tax and the total fee for the application.
         application.setServicesFee(servicesFeeTotal.getAmount());
-        Money taxAmount = servicesFeeTotal.times(systemEJB.getTaxRate());
+        //Money taxAmount = servicesFeeTotal.times(systemEJB.getTaxRate());
+        Money taxAmount = servicesFeeTotal.minus(servicesFeeTotal.div(new BigDecimal(1).add(systemEJB.getTaxRate())));
         application.setTax(taxAmount.getAmount());
-        application.setTotalFee((servicesFeeTotal.plus(taxAmount)).getAmount());
+        application.setTotalFee(servicesFeeTotal.getAmount());
 
         if (application.getTotalAmountPaid() == null) {
             application.setTotalAmountPaid(BigDecimal.ZERO);
