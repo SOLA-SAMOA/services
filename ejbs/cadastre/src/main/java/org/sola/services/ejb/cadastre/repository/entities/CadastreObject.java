@@ -51,7 +51,7 @@ public class CadastreObject extends AbstractVersionedEntity {
     public static final String QUERY_WHERE_SEARCHBYPARTS = "status_code= 'current' and "
             + "compare_strings(#{search_string}, name_firstpart || ' ' || name_lastpart)";
     public static final String QUERY_WHERE_SEARCHBYPOINT = "status_code= 'current' and "
-            + "ST_Intersects(geom_polygon, SetSRID(ST_Point(#{x}, #{y}), #{srid}))";
+            + "ST_Intersects(geom_polygon, ST_SetSRID(ST_Point(#{x}, #{y}), #{srid}))";
     public static final String QUERY_WHERE_SEARCHBYBAUNIT = "status_code= 'current' and id in "
             + " (select spatial_unit_id from administrative.ba_unit_contains_spatial_unit "
             + "where ba_unit_id = #{ba_unit_id})";

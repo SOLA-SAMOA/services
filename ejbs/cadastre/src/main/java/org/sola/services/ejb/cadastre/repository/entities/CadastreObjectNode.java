@@ -44,7 +44,7 @@ import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
  */
 public class CadastreObjectNode extends AbstractReadOnlyEntity{
 
-    private final static String EXTENT_DEFINITION = "SetSRID("
+    private final static String EXTENT_DEFINITION = "ST_SetSRID("
             + "ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid})";
     
     public final static String QUERY_GET_BY_RECTANGLE_FROM_PART = 
