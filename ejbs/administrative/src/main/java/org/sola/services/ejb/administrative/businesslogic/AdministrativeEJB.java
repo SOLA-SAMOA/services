@@ -1,28 +1,26 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
- * All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
+ * reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
  *
- *    1. Redistributions of source code must retain the above copyright notice,this list
- *       of conditions and the following disclaimer.
- *    2. Redistributions in binary form must reproduce the above copyright notice,this list
- *       of conditions and the following disclaimer in the documentation and/or other
- *       materials provided with the distribution.
- *    3. Neither the name of FAO nor the names of its contributors may be used to endorse or
- *       promote products derived from this software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
+ * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
+ * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.ejb.administrative.businesslogic;
@@ -55,9 +53,6 @@ import org.sola.services.ejb.administrative.repository.entities.RrrGroupType;
 import org.sola.services.ejb.administrative.repository.entities.RrrStatusChanger;
 import org.sola.services.ejb.administrative.repository.entities.RrrType;
 import org.sola.services.ejb.administrative.repository.entities.SourceBaUnitRelationType;
-import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
-import org.sola.services.ejb.party.businesslogic.PartyEJBLocal;
-import org.sola.services.ejb.source.businesslogic.SourceEJBLocal;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
@@ -74,51 +69,89 @@ public class AdministrativeEJB extends AbstractEJB
         implements AdministrativeEJBLocal {
 
     @EJB
-    private PartyEJBLocal partyEJB;
-    @EJB
-    private SourceEJBLocal sourceEJB;
-    @EJB
     private SystemEJBLocal systemEJB;
     @EJB
     private TransactionEJBLocal transactionEJB;
-    @EJB
-    private CadastreEJBLocal cadastreEJB;
 
     @Override
     protected void postConstruct() {
         setEntityPackage(BaUnit.class.getPackage().getName());
     }
 
+    /**
+     * Retrieves all administrative.change_status_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<ChangeStatusType> getChangeStatusTypes(String languageCode) {
         return getRepository().getCodeList(ChangeStatusType.class, languageCode);
     }
 
+    /**
+     * Retrieves all administrative.ba_unit_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<BaUnitType> getBaUnitTypes(String languageCode) {
         return getRepository().getCodeList(BaUnitType.class, languageCode);
     }
 
+    /**
+     * Retrieves all administrative.mortgage_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<MortgageType> getMortgageTypes(String languageCode) {
         return getRepository().getCodeList(MortgageType.class, languageCode);
     }
 
+    /**
+     * Retrieves all administrative.rrr_group_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<RrrGroupType> getRRRGroupTypes(String languageCode) {
         return getRepository().getCodeList(RrrGroupType.class, languageCode);
     }
 
+    /**
+     * Retrieves all administrative.rrr_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<RrrType> getRRRTypes(String languageCode) {
         return getRepository().getCodeList(RrrType.class, languageCode);
     }
 
+    /**
+     * Retrieves all administrative.source_ba_unit_rel_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<SourceBaUnitRelationType> getSourceBaUnitRelationTypes(String languageCode) {
         return getRepository().getCodeList(SourceBaUnitRelationType.class, languageCode);
     }
 
+    /**
+     * Locates a BA Unit using by matching the first part and last part of the BA Unit name. First
+     * part and last part must be an exact match.
+     *
+     * @param nameFirstpart The first part of the BA Unit name
+     * @param nameLastpart The last part of the BA Unit name
+     * @return The BA Unit matching the name
+     */
     @Override
     public BaUnit getBaUnitByCode(String nameFirstpart, String nameLastpart) {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -128,6 +161,19 @@ public class AdministrativeEJB extends AbstractEJB
         return getRepository().getEntity(BaUnit.class, params);
     }
 
+    /**
+     * Creates a new BA Unit with a default status of pending and a default type of
+     * administrativeUnit. Will also create a new Transaction record for the BA Unit if the Service
+     * is not already associated to a Transaction.
+     *
+     * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE} role.</p>
+     *
+     * @param serviceId The identifier of the Service the BA Unit is being created as part of
+     * @param baUnitTO The details of the BA Unit to create
+     * @return The new BA Unit
+     * @see #saveBaUnit(java.lang.String,
+     * org.sola.services.ejb.administrative.repository.entities.BaUnit) saveBaUnit
+     */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
     public BaUnit createBaUnit(String serviceId, BaUnit baUnit) {
@@ -139,6 +185,21 @@ public class AdministrativeEJB extends AbstractEJB
         return saveBaUnit(serviceId, baUnit);
     }
 
+    /**
+     * Saves any updates to an existing BA Unit. Can also be used to create a new BA Unit, however
+     * this method does not set any default values on the BA Unit like
+     * {@linkplain #createBaUnit(java.lang.String, org.sola.services.ejb.administrative.repository.entities.BaUnit)
+     * createBaUnit}. Will also create a new Transaction record for the BA Unit if the Service is
+     * not already associated to a Transaction.
+     *
+     * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE} role</p>
+     *
+     * @param serviceId The identifier of the Service the BA Unit is being created as part of
+     * @param baUnitTO The details of the BA Unit to create
+     * @return The updated BA Unit
+     * @see #createBaUnit(java.lang.String,
+     * org.sola.services.ejb.administrative.repository.entities.BaUnit) createBaUnit
+     */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
     public BaUnit saveBaUnit(String serviceId, BaUnit baUnit) {
@@ -151,6 +212,12 @@ public class AdministrativeEJB extends AbstractEJB
         return getRepository().saveEntity(baUnit);
     }
 
+    /**
+     * Retrieves the BA Unit matching the supplied identifier.
+     *
+     * @param id The BA Unit identifier
+     * @return The BA Unit details or null if the identifier is invalid.
+     */
     @Override
     public BaUnit getBaUnitById(String id) {
         BaUnit result = null;
@@ -160,6 +227,16 @@ public class AdministrativeEJB extends AbstractEJB
         return result;
     }
 
+    /**
+     * Applies the appropriate approval action to every BA Unit that is associated to the specified
+     * transaction. Can also be used to test the outcome of the approval using the validateOnly flag.
+     *
+     * @param transactionId The Transaction identifier
+     * @param approvedStatus ? 
+     * @param validateOnly Validate the transaction data, but do not apply and status changes
+     * @param languageCode Language code to use for localization of the validation messages
+     * @return A list of validation results. 
+     */
     @Override
     public List<ValidationResult> approveTransaction(
             String transactionId, String approvedStatus,
@@ -181,7 +258,7 @@ public class AdministrativeEJB extends AbstractEJB
                 getRepository().saveEntity(baUnit);
             }
         }
-        
+
         params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, Rrr.QUERY_WHERE_BYTRANSACTIONID);
         params.put(Rrr.QUERY_PARAMETER_TRANSACTIONID, transactionId);
@@ -211,9 +288,10 @@ public class AdministrativeEJB extends AbstractEJB
 
     /**
      * It runs the business rules for validating BAUnit.
+     *
      * @param baUnit
      * @param languageCode
-     * @return 
+     * @return
      */
     private List<ValidationResult> validateBaUnit(
             BaUnitStatusChanger baUnit, String languageCode) {
@@ -227,9 +305,10 @@ public class AdministrativeEJB extends AbstractEJB
 
     /**
      * It runs the business rules for validating Rrr.
+     *
      * @param rrr
      * @param languageCode
-     * @return 
+     * @return
      */
     private List<ValidationResult> validateRrr(
             RrrStatusChanger rrr, String languageCode) {
@@ -241,6 +320,11 @@ public class AdministrativeEJB extends AbstractEJB
         return this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
     }
 
+    /**
+     * Returns all BA Units that are associated to the specified transaction
+     *
+     * @param transactionId The Transaction identifer
+     */
     @Override
     public List<BaUnit> getBaUnitsByTransactionId(String transactionId) {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -249,11 +333,29 @@ public class AdministrativeEJB extends AbstractEJB
         return getRepository().getEntityList(BaUnit.class, params);
     }
 
+    /**
+     * Retrieves all administrative.ba_unit_rel_type code values.
+     *
+     * @param languageCode The language code to use for localization of display values.
+     * @return
+     */
     @Override
     public List<BaUnitRelType> getBaUnitRelTypes(String languageCode) {
         return getRepository().getCodeList(BaUnitRelType.class, languageCode);
     }
 
+    /**
+     * Identifies a BA Unit as subject to cancellation / termination by linking the BA Unit to a
+     * Transaction via the administrative.ba_unit_target association. The BA Unit is not canceled /
+     * terminated until the application canceling the BA Unit is approved.
+     *
+     * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE} role.</p>
+     *
+     * @param baUnitId The identifier of the BA Unit to be canceled / terminated
+     * @param serviceId The identifier of the service that is canceling / terminating the BA Unit
+     * @return The BA Unit that will be canceled / terminated.
+     * @see #cancelBaUnitTermination(java.lang.String) cancelBaUnitTermination
+     */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
     public BaUnit terminateBaUnit(String baUnitId, String serviceId) {
@@ -279,6 +381,14 @@ public class AdministrativeEJB extends AbstractEJB
         return getBaUnitById(baUnitId);
     }
 
+    /**
+     * Reverses the cancellation / termination of a BA Unit by removing the BA Unit Target created
+     * by {@linkplain #terminateBaUnit(java.lang.String, java.lang.String) terminateBaUnit}.
+     * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE} role.</p>
+     *
+     * @param baUnitId The identifier of the BA Unit to reverse the cancellation for.
+     * @return The details of the BA Unit that has had its termination canceled.
+     */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
     public BaUnit cancelBaUnitTermination(String baUnitId) {
@@ -287,26 +397,26 @@ public class AdministrativeEJB extends AbstractEJB
         }
 
         //TODO: Put BR check to have only one pending transaction for the BaUnit and BaUnit to be with "current" status.
-        
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitTarget.QUERY_WHERE_GET_BY_BAUNITID);
         params.put(BaUnitTarget.PARAM_BAUNIT_ID, baUnitId);
 
         List<BaUnitTarget> targets = getRepository().getEntityList(BaUnitTarget.class, params);
 
-        if (targets != null || targets.size() > 0) {
+        if (targets != null && targets.size() > 0) {
             for (BaUnitTarget baUnitTarget : targets) {
                 Transaction transaction = transactionEJB.getTransactionById(
                         baUnitTarget.getTransactionId(), Transaction.class);
-                if (transaction != null 
-                        || transaction.getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)) {
+                if (transaction != null
+                        && transaction.getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)) {
                     // DELETE peding 
                     baUnitTarget.setEntityAction(EntityAction.DELETE);
                     getRepository().saveEntity(baUnitTarget);
                 }
             }
         }
-        
+
         return getBaUnitById(baUnitId);
     }
 }
