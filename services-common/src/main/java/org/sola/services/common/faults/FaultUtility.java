@@ -51,9 +51,9 @@ public final class FaultUtility {
      * @param t The exception that was caught
      * @return A SOLA SOAP fault. One of SOLAFault, UnhandledFault or OptimisticLockingFault
      */
-    public static Throwable ProcessException(Throwable t) {
+    public static Exception ProcessException(Exception t) {
 
-        Exception fault = null;
+        Exception fault;
         FaultInfoBean faultInfoBean = new FaultInfoBean();
         faultInfoBean.setFaultId(createFaultId(LocalInfo.getUserName()));
 
