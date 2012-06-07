@@ -227,8 +227,11 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
         List<ValidationResult> validationResultList = new ArrayList<ValidationResult>();
         if (brListToValidate != null) {
             for (BrValidation brForValidation : brListToValidate) {
-                validationResultList.add(
-                        this.checkRuleGetValidation(brForValidation, languageCode, parameters));
+                ValidationResult validationResult =
+                        this.checkRuleGetValidation(brForValidation, languageCode, parameters);
+                if (validationResult != null) {
+                    validationResultList.add(validationResult);
+                }
             }
         }
         return validationResultList;
@@ -251,9 +254,11 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
         ValidationResult result = new ValidationResult();
         result.setName(br.getId());
         HashMap rawResult = this.checkRuleBasic(br, parameters);
-        // Result can be null for some checks, so default to True in these cases. 
+        // Result can be null for some checks, in that case return null. A ValidationResult that is
+        //null will not be added to validation result list.
         if (rawResult.get(Result.VALUE_FIELD_NAME) == null) {
-            rawResult.put(Result.VALUE_FIELD_NAME, Boolean.TRUE);
+            //rawResult.put(Result.VALUE_FIELD_NAME, Boolean.TRUE);
+            return null;
         }
         result.setSuccessful(rawResult.get(Result.VALUE_FIELD_NAME).equals(Boolean.TRUE));
         //Replace parameters if they exist
