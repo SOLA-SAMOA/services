@@ -23,9 +23,6 @@
  * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates and open the template in the editor.
- */
 package org.sola.services.ejb.system.businesslogic;
 
 import java.io.Serializable;
@@ -44,8 +41,6 @@ import org.sola.services.ejb.system.repository.entities.BrValidation;
  * The EJB local interface for the {@linkplain SystemEJB}.  
  * The SystemEJB provides access to SOLA System data
  * including business rules. 
- *
- * @author soladev
  */
 @Local
 public interface SystemEJBLocal extends AbstractEJBLocal {

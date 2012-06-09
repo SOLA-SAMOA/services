@@ -39,20 +39,7 @@ import org.sola.services.common.LocalInfo;
 import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
-import org.sola.services.ejb.administrative.repository.entities.BaUnit;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitNotation;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitNotationStatusChanger;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitRelType;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitStatusChanger;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitTarget;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitType;
-import org.sola.services.ejb.administrative.repository.entities.ChangeStatusType;
-import org.sola.services.ejb.administrative.repository.entities.MortgageType;
-import org.sola.services.ejb.administrative.repository.entities.Rrr;
-import org.sola.services.ejb.administrative.repository.entities.RrrGroupType;
-import org.sola.services.ejb.administrative.repository.entities.RrrStatusChanger;
-import org.sola.services.ejb.administrative.repository.entities.RrrType;
-import org.sola.services.ejb.administrative.repository.entities.SourceBaUnitRelationType;
+import org.sola.services.ejb.administrative.repository.entities.*;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
@@ -61,7 +48,8 @@ import org.sola.services.ejb.transaction.repository.entities.Transaction;
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
- *
+ * EJB to manage data in the administrative schema. Supports retrieving and saving BA Units and RRR.
+ * Also provides methods for retrieving reference codes from the administrative schema.
  */
 @Stateless
 @EJB(name = "java:global/SOLA/AdministrativeEJBLocal", beanInterface = AdministrativeEJBLocal.class)
@@ -73,6 +61,18 @@ public class AdministrativeEJB extends AbstractEJB
     @EJB
     private TransactionEJBLocal transactionEJB;
 
+    /**
+     * Sets the entity package for the EJB to BaUnit.class.getPackage().getName(). This is used to
+     * restrict the save and retrieval of Code Entities.
+     *
+     * @see AbstractEJB#getCodeEntity(java.lang.Class, java.lang.String, java.lang.String)
+     * AbstractEJB.getCodeEntity
+     * @see AbstractEJB#getCodeEntityList(java.lang.Class, java.lang.String)
+     * AbstractEJB.getCodeEntityList
+     * @see
+     * AbstractEJB#saveCodeEntity(org.sola.services.common.repository.entities.AbstractCodeEntity)
+     * AbstractEJB.saveCodeEntity
+     */
     @Override
     protected void postConstruct() {
         setEntityPackage(BaUnit.class.getPackage().getName());
@@ -82,7 +82,6 @@ public class AdministrativeEJB extends AbstractEJB
      * Retrieves all administrative.change_status_type code values.
      *
      * @param languageCode The language code to use for localization of display values.
-     * @return
      */
     @Override
     public List<ChangeStatusType> getChangeStatusTypes(String languageCode) {
@@ -93,7 +92,6 @@ public class AdministrativeEJB extends AbstractEJB
      * Retrieves all administrative.ba_unit_type code values.
      *
      * @param languageCode The language code to use for localization of display values.
-     * @return
      */
     @Override
     public List<BaUnitType> getBaUnitTypes(String languageCode) {
@@ -104,7 +102,6 @@ public class AdministrativeEJB extends AbstractEJB
      * Retrieves all administrative.mortgage_type code values.
      *
      * @param languageCode The language code to use for localization of display values.
-     * @return
      */
     @Override
     public List<MortgageType> getMortgageTypes(String languageCode) {
@@ -229,13 +226,15 @@ public class AdministrativeEJB extends AbstractEJB
 
     /**
      * Applies the appropriate approval action to every BA Unit that is associated to the specified
-     * transaction. Can also be used to test the outcome of the approval using the validateOnly flag.
+     * transaction. This includes updating the status of RRR and Notations associated with the BA
+     * Unit. <p>Can also be used to test the outcome of the approval using the validateOnly
+     * flag.</p>
      *
      * @param transactionId The Transaction identifier
-     * @param approvedStatus ? 
+     * @param approvedStatus The status to set if the validation of the BA Unit is successful.
      * @param validateOnly Validate the transaction data, but do not apply and status changes
      * @param languageCode Language code to use for localization of the validation messages
-     * @return A list of validation results. 
+     * @return A list of validation results.
      */
     @Override
     public List<ValidationResult> approveTransaction(
@@ -287,11 +286,11 @@ public class AdministrativeEJB extends AbstractEJB
     }
 
     /**
-     * It runs the business rules for validating BAUnit.
+     * Executes the business rules to validate the BA Unit.
      *
-     * @param baUnit
-     * @param languageCode
-     * @return
+     * @param baUnit The BA Unit to validate
+     * @param languageCode The language code to use for localization of any validation messages
+     * @return The list of validation results.
      */
     private List<ValidationResult> validateBaUnit(
             BaUnitStatusChanger baUnit, String languageCode) {
@@ -304,11 +303,11 @@ public class AdministrativeEJB extends AbstractEJB
     }
 
     /**
-     * It runs the business rules for validating Rrr.
+     * Executes the business rules to validate the RRR.
      *
-     * @param rrr
-     * @param languageCode
-     * @return
+     * @param rrr The RRR to validate
+     * @param languageCode The language code to use for localization of any validation messages
+     * @return The list of validation results.
      */
     private List<ValidationResult> validateRrr(
             RrrStatusChanger rrr, String languageCode) {
@@ -323,7 +322,7 @@ public class AdministrativeEJB extends AbstractEJB
     /**
      * Returns all BA Units that are associated to the specified transaction
      *
-     * @param transactionId The Transaction identifer
+     * @param transactionId The Transaction identifier
      */
     @Override
     public List<BaUnit> getBaUnitsByTransactionId(String transactionId) {
