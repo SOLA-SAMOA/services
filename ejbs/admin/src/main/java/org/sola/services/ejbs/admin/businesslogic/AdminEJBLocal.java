@@ -32,6 +32,9 @@ import org.sola.services.ejbs.admin.businesslogic.repository.entities.Group;
 import org.sola.services.ejbs.admin.businesslogic.repository.entities.GroupSummary;
 import org.sola.services.ejbs.admin.businesslogic.repository.entities.Language;
 
+/**
+ * Local interface for the {@linkplain AdminEJB}. 
+ */
 public interface AdminEJBLocal {
 
     /**

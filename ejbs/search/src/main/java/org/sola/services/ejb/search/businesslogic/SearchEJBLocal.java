@@ -37,51 +37,129 @@ import org.sola.services.ejb.search.spatial.ResultForNavigationInfo;
 import org.sola.services.ejb.search.spatial.ResultForSelectionInfo;
 
 /**
- *
- * @author manoku
+ * Local interface for the {@linkplain SearchEJB}
  */
 @Local
 public interface SearchEJBLocal extends AbstractEJBLocal {
 
+    /**
+     * See {@linkplain SearchEJB#getPropertyVerifier(java.lang.String, java.lang.String, java.lang.String)
+     * SearchEJB.getPropertyVerifier}.
+     */
     PropertyVerifier getPropertyVerifier(String applicationNumber, String firstPart, String lastPart);
 
+    /**
+     * See {@linkplain SearchEJB#getGenericResultList(java.lang.String, java.util.Map)
+     * SearchEJB.getGenericResultList}.
+     */
     GenericResult getGenericResultList(String queryName, Map params);
 
+    /**
+     * See {@linkplain SearchEJB#searchApplications(org.sola.services.ejb.search.repository.entities.ApplicationSearchParams)
+     * SearchEJB.searchApplications}.
+     */
     List<ApplicationSearchResult> searchApplications(ApplicationSearchParams params);
 
+    /**
+     * See {@linkplain SearchEJB#getUnassignedApplications(java.lang.String)
+     * SearchEJB.getUnassignedApplications}.
+     */
     List<ApplicationSearchResult> getUnassignedApplications(String locale);
 
+    /**
+     * See {@linkplain SearchEJB#getAssignedApplications(java.lang.String)
+     * SearchEJB.getAssignedApplications}.
+     */
     List<ApplicationSearchResult> getAssignedApplications(String locale);
 
+    /**
+     * See {@linkplain SearchEJB#getSpatialResult(org.sola.services.ejb.search.spatial.QueryForNavigation)
+     * SearchEJB.getSpatialResult}.
+     */
     ResultForNavigationInfo getSpatialResult(QueryForNavigation spatialQuery);
 
+    /**
+     * See {@linkplain SearchEJB#getConfigMapLayerList(java.lang.String)
+     * SearchEJB.getConfigMapLayerList}.
+     */
     List<ConfigMapLayer> getConfigMapLayerList(String languageCode);
 
+    /**
+     * See {@linkplain SearchEJB#getSpatialResultFromSelection(java.util.List)
+     * SearchEJB.getSpatialResultFromSelection}.
+     */
     List<ResultForSelectionInfo> getSpatialResultFromSelection(
             List<QueryForSelect> queriesForSelection);
 
+    /**
+     * See {@linkplain SearchEJB#getMapSettingList()
+     * SearchEJB.getMapSettingList}.
+     */
     HashMap<String, String> getMapSettingList();
 
+    /**
+     * See {@linkplain SearchEJB#getResultObjectFromStatement(java.lang.String, java.util.Map)
+     * SearchEJB.getResultObjectFromStatement}.
+     */
     HashMap getResultObjectFromStatement(String sqlStatement, Map params);
 
+    /**
+     * See {@linkplain SearchEJB#searchParties(org.sola.services.ejb.search.repository.entities.PartySearchParams)
+     * SearchEJB.searchParties}.
+     */
     List<PartySearchResult> searchParties(PartySearchParams searchParams);
 
+    /**
+     * See {@linkplain SearchEJB#searchSources(org.sola.services.ejb.search.repository.entities.SourceSearchParams)
+     * SearchEJB.searchSources}.
+     */
     List<SourceSearchResult> searchSources(SourceSearchParams searchParams);
 
+    /**
+     * See {@linkplain SearchEJB#getActiveUsers()
+     * SearchEJB.getActiveUsers}.
+     */
     List<UserSearchResult> getActiveUsers();
 
+    /**
+     * See {@linkplain SearchEJB#searchUsers(org.sola.services.ejb.search.repository.entities.UserSearchParams)
+     * SearchEJB.searchUsers}.
+     */
     List<UserSearchResult> searchUsers(UserSearchParams searchParams);
 
+    /**
+     * See {@linkplain SearchEJB#getApplicationLog(java.lang.String)
+     * SearchEJB.getApplicationLog}.
+     */
     List<ApplicationLogResult> getApplicationLog(String applicationId);
 
+    /**
+     * See {@linkplain SearchEJB#searchBr(org.sola.services.ejb.search.repository.entities.BrSearchParams, java.lang.String)
+     * SearchEJB.searchBr}.
+     */
     List<BrSearchResult> searchBr(BrSearchParams searchParams, String lang);
 
+    /**
+     * See {@linkplain SearchEJB#searchBaUnits(org.sola.services.ejb.search.repository.entities.BaUnitSearchParams)
+     * SearchEJB.searchBaUnits}.
+     */
     List<BaUnitSearchResult> searchBaUnits(BaUnitSearchParams searchParams);
 
+    /**
+     * See {@linkplain SearchEJB#getQueryListAll()
+     * SearchEJB.getQueryListAll}.
+     */
     List<DynamicQuery> getQueryListAll();
 
+    /**
+     * See {@linkplain SearchEJB#getSpatialSearchOptions(java.lang.String)
+     * SearchEJB.getSpatialSearchOptions}.
+     */
     List<SpatialSearchOption> getSpatialSearchOptions(String languageCode);
 
+    /**
+     * See {@linkplain SearchEJB#searchSpatialObjects(java.lang.String, java.lang.String)
+     * SearchEJB.searchSpatialObjects}.
+     */
     List<SpatialSearchResult> searchSpatialObjects(String queryName, String searchString);
-
 }
