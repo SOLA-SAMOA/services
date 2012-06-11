@@ -34,7 +34,7 @@ import org.sola.services.common.repository.Localized;
 import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
 /**
- * Entity representing the address.address table. 
+ * Entity representing the system.br_report table. 
  * @author soladev
  */
 @Table(name = "br_report", schema = "system")
