@@ -452,6 +452,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         params.put("maxx", spatialQuery.getEast());
         params.put("maxy", spatialQuery.getNorth());
         params.put("srid", spatialQuery.getSrid());
+        params.put("pixel_res", spatialQuery.getPixelResolution());
         ResultForNavigationInfo spatialResultInfo = new ResultForNavigationInfo();
         getRepository().setLoadInhibitors(new Class[]{DynamicQueryField.class});
         List<SpatialResult> result = executeDynamicQuery(SpatialResult.class,
