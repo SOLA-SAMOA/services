@@ -68,7 +68,7 @@ import org.sola.services.common.repository.entities.AbstractEntity;
     RolesConstants.APPLICATION_WITHDRAW,
     RolesConstants.APPLICATION_REJECT,
     RolesConstants.APPLICATION_VALIDATE,
-    RolesConstants.APPLICATION_DESPATCH,
+    RolesConstants.APPLICATION_DISPATCH,
     RolesConstants.APPLICATION_ARCHIVE,
     RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE,
     RolesConstants.ADMINISTRATIVE_RRR_SAVE,

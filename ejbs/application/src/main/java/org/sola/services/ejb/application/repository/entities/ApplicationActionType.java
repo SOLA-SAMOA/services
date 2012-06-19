@@ -47,7 +47,7 @@ public class ApplicationActionType extends AbstractCodeEntity {
     public static final String LODGE = "lodge";
     public static final String APPROVE = "approve";
     public static final String ARCHIVE = "archive";
-    public static final String DESPATCH = "despatch";
+    public static final String DISPATCH = "dispatch";
     public static final String DOCUMENTS_ADDED = "addDocument";
     public static final String WITHDRAW = "withdraw";
     public static final String CANCEL = "cancel";
