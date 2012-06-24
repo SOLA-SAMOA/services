@@ -135,7 +135,6 @@ public class Development extends AbstractEJBTest {
             baUnit.setName("Test BA Unit Name");
             baUnit.setNameFirstpart("nameFirstPart");
             baUnit.setNameLastpart("nameLastPart");
-            baUnit.setTypeCode("administrativeUnit");
 
             baUnit.setBaUnitNotationList(new ArrayList<BaUnitNotation>());
             baUnit.getBaUnitNotationList().add(this.getNotation("ba unit"));

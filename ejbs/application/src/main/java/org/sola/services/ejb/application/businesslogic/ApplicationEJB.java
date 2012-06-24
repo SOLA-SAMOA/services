@@ -703,8 +703,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Sets the action code on the application to <cpde>despatch</code> to indicate the application
-     * has been despatched. <p>Requires the {@linkplain RolesConstants#APPLICATION_DESPATCH}
+     * Sets the action code on the application to <cpde>dispatch</code> to indicate the application
+     * has been dispatched. <p>Requires the {@linkplain RolesConstants#APPLICATION_DISPATCH}
      * role.</p>
      *
      * @param applicationId The application to perform the action against
@@ -715,11 +715,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * takeActionAgainstApplication
      */
     @Override
-    @RolesAllowed(RolesConstants.APPLICATION_DESPATCH)
+    @RolesAllowed(RolesConstants.APPLICATION_DISPATCH)
     public List<ValidationResult> applicationActionDespatch(
             String applicationId, String languageCode, int rowVersion) {
         return this.takeActionAgainstApplication(
-                applicationId, ApplicationActionType.DESPATCH, languageCode, rowVersion);
+                applicationId, ApplicationActionType.DISPATCH, languageCode, rowVersion);
     }
 
     /**
