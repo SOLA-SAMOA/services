@@ -37,11 +37,11 @@ import javax.transaction.UserTransaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sola.services.common.contracts.GenericTranslator;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 import org.sola.services.ejb.transaction.repository.entities.TransactionCadastreChange;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.transaction.repository.entities.TransactionSource;
 
@@ -64,7 +64,7 @@ public class Development extends AbstractEJBTest {
     }
 
     @Test
-    //@Ignore
+    @Ignore
     public void testTransactionOperations() throws Exception {
 
         TransactionEJBLocal instance = (TransactionEJBLocal) 

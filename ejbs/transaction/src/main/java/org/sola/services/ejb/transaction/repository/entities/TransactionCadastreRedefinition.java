@@ -38,6 +38,7 @@ import org.sola.services.common.repository.ExternalEJB;
 import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTargetRedefinition;
+import org.sola.services.ejb.cadastre.repository.entities.SpatialUnitChange;
 
 /**
  *
@@ -59,6 +60,12 @@ public class TransactionCadastreRedefinition extends Transaction {
             loadMethod = "getCadastreObjectRedefinitionTargetsByTransaction", 
             saveMethod="saveEntity")
     private List<CadastreObjectTargetRedefinition> cadastreObjectTargetList;
+    
+        @ChildEntityList(parentIdField = "transactionId")
+    @ExternalEJB(ejbLocalClass = CadastreEJBLocal.class,
+    loadMethod = "getSpatialUnitChangeByTransaction",
+    saveMethod = "saveEntity")
+    private List<SpatialUnitChange> spatialUnitChangeList;
 
     @ChildEntityList(parentIdField = "transactionId")
     private List<TransactionSource> transactionSourceList;
@@ -87,4 +94,13 @@ public class TransactionCadastreRedefinition extends Transaction {
     public void setTransactionSourceList(List<TransactionSource> transactionSourceList) {
         this.transactionSourceList = transactionSourceList;
     }
+
+    public List<SpatialUnitChange> getSpatialUnitChangeList() {
+        return spatialUnitChangeList;
+    }
+
+    public void setSpatialUnitChangeList(List<SpatialUnitChange> spatialUnitChangeList) {
+        this.spatialUnitChangeList = spatialUnitChangeList;
+    }
+
 }

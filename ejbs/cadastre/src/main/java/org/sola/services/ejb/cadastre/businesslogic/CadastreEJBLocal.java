@@ -140,4 +140,16 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
      * CadastreEJB.approveCadastreRedefinition}.
      */
     void approveCadastreRedefinition(String transactionId);
+
+    /**
+     * See {@linkplain CadastreEJB#applySpatialUnitChanges(java.lang.String)
+     * CadastreEJB.applySpatialUnitChanges}.
+     */
+    void applySpatialUnitChanges(String transactionId);
+
+    /**
+     * See {@linkplain CadastreEJB#getSpatialUnitChangeByTransaction(java.lang.String)
+     * CadastreEJB.getSpatialUnitChangeByTransaction}.
+     */
+    List<SpatialUnitChange> getSpatialUnitChangeByTransaction(String transactionId);
 }

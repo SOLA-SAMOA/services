@@ -195,6 +195,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
         validationOnly = validationOnly || !systemEJB.validationSucceeded(validationResultList);
         if (!validationOnly) {
             this.changeStatusOfTransactionObjectsOnApproval(requestType, transaction.getId());
+            cadastreEJB.applySpatialUnitChanges(transaction.getId());
             transaction.setStatusCode(TransactionStatusType.APPROVED);
             transaction.setApprovalDatetime(DateUtility.now());
             getRepository().saveEntity(transaction);

@@ -296,8 +296,8 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
 
     /**
      * Retrieves all Cadastre Object Node Targets associated to the transaction. <p>A Cadastre
-     * Object Node Target</p> is used to identify the nodes that have been added, moved or removed
-     * as part of a redefinition transaction. </p>
+     * Object Node Target is used to identify the nodes that have been added, moved or removed as
+     * part of a redefinition transaction. </p>
      *
      * @param transactionId The identifier of the transaction
      */
@@ -347,5 +347,65 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
             cadastreObject.setApprovalDatetime(null);
             this.saveEntity(cadastreObject);
         }
+    }
+
+    /**
+     * Process the list of spatialUnitChanges and apply the necessary changes to the spatial unit
+     * records.
+     *
+     * @param transactionId
+     */
+    @Override
+    public void applySpatialUnitChanges(String transactionId) {
+        List<SpatialUnitChange> spatialUnitChanges = getSpatialUnitChangeByTransaction(transactionId);
+        if (spatialUnitChanges != null && !spatialUnitChanges.isEmpty()) {
+            for (SpatialUnitChange change : spatialUnitChanges) {
+                SpatialUnit spUnit = null;
+                if (change.getSpatialUnitId() != null) {
+                    //Retrieve the spatail unit to update
+                    spUnit = getRepository().getEntity(SpatialUnit.class, change.getSpatialUnitId());
+                }
+                if (spUnit == null) {
+                    // Create a new sp unit and set its level
+                    spUnit = new SpatialUnit();
+                    spUnit.setLevelId(change.getLevelId());
+                }
+                if (change.isDeleteOnApproval()) {
+                    // Clear the geom so the sp unit no longer displays
+                    spUnit.setGeom(null);
+                    spUnit.setReferencePoint(null);
+                } else {
+                    // Update the sp unit label and geometry
+                    spUnit.setLabel(change.getLabel());
+                    if (change.isPoint()) {
+                        spUnit.setReferencePoint(change.getGeom());
+                    } else {
+                        spUnit.setGeom(change.getGeom());
+                    }
+                }
+                getRepository().saveEntity(spUnit);
+            }
+        }
+    }
+
+    /**
+     * Retrieves the spatial unit change records that have been associated with a cadastre change or
+     * a cadastre redefinition transaction.
+     *
+     * @param transactionId The identifier of the transaction
+     */
+    @Override
+    public List<SpatialUnitChange> getSpatialUnitChangeByTransaction(
+            String transactionId) {
+        Map params = new HashMap<String, Object>();
+        params.put(
+                CommonSqlProvider.PARAM_WHERE_PART,
+                SpatialUnitChange.QUERY_WHERE_BYTRANSACTIONID);
+        params.put(SpatialUnitChange.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+
+
+
+
+        return getRepository().getEntityList(SpatialUnitChange.class, params);
     }
 }
