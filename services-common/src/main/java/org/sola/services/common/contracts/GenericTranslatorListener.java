@@ -31,6 +31,7 @@
  */
 package org.sola.services.common.contracts;
 
+import java.lang.reflect.Method;
 import org.dozer.DozerEventListener;
 import org.dozer.event.DozerEvent;
 import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
@@ -71,7 +72,18 @@ public class GenericTranslatorListener implements DozerEventListener {
      */
     @Override
     public void postWritingDestinationValue(DozerEvent event) {
-
+        Object array = event.getFieldMap().getSrcFieldValue(event.getSourceObject());
+        if (array != null && array instanceof byte[]) {
+            try {
+                String name = event.getFieldMap().getDestFieldName();
+                name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+                Method method = event.getDestinationObject().getClass().getMethod(name, byte[].class);
+                method.invoke(event.getDestinationObject(), (byte[]) array);
+            } catch (Exception e) {
+                System.out.println("Error occured while assigning byte array value. " + e.getMessage());
+            }
+        }
+        
         if (event.getDestinationObject() instanceof AbstractReadOnlyEntity) {
             // Parent object is an Entity, check the child fields and fire the setter if appropriate.  
             AbstractReadOnlyEntity parent = (AbstractReadOnlyEntity) event.getDestinationObject();
