@@ -6,6 +6,13 @@
     Author     : soladev
     Description:
         Contains configuration details for myBatis used by the DigitialArchiveEJB
+        
+    SOLA Samoa Customization
+    
+    To ensure management for the 50GB+ of images is effecient, the document schema
+    will be split into an independent database. This requires the use of an
+    additional JNDI data source pool in Glassfish to manage the connection to
+    the second database. 
 -->
 
 <!DOCTYPE configuration PUBLIC '-//mybatis.org//DTD Config 3.0//EN' 'http://mybatis.org/dtd/mybatis-3-config.dtd'>
@@ -19,8 +26,8 @@
         <environment id='sharedDataSource'>
             <transactionManager type='MANAGED'/>
             <dataSource type='JNDI'>
-                <property name='data_source' value='jdbc/sola'/>
-            </dataSource>
+                <property name='data_source' value='jdbc/sola_document'/>
+            </dataSource>jdbc/sola
         </environment>
         <environment id='specificDataSource'>
             <transactionManager type='MANAGED'/>
