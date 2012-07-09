@@ -1,28 +1,26 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
- * All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
+ * reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
  *
- *    1. Redistributions of source code must retain the above copyright notice,this list
- *       of conditions and the following disclaimer.
- *    2. Redistributions in binary form must reproduce the above copyright notice,this list
- *       of conditions and the following disclaimer in the documentation and/or other
- *       materials provided with the distribution.
- *    3. Neither the name of FAO nor the names of its contributors may be used to endorse or
- *       promote products derived from this software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
+ * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
+ * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 /*
@@ -32,6 +30,7 @@
 package org.sola.services.ejb.search.repository;
 
 import static org.apache.ibatis.jdbc.SqlBuilder.*;
+import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
 
 /**
  *
@@ -174,6 +173,56 @@ public class SearchSqlProvider {
 
         sql = sql + SQL();
 
+        return sql;
+    }
+
+    /**
+     * Uses the BA Unit Search parameters to build an appropriate SQL Query. This method does not
+     * inject the search parameter values into the SQL as that would prevent the database from
+     * performing statement caching.
+     *
+     * @param nameFirstPart The name first part search parameter value
+     * @param nameLastPart The name last part search parameter value
+     * @param owernName The owner name search parameter value
+     * @return SQL String
+     */
+    public static String buildSearchBaUnitSql(String nameFirstPart,
+            String nameLastPart, String owernName) {
+        String sql;
+        BEGIN();
+        SELECT("DISTINCT prop.id");
+        SELECT("prop.name");
+        SELECT("prop.name_firstpart");
+        SELECT("prop.name_lastpart");
+        SELECT("prop.status_code");
+        SELECT("(SELECT string_agg(COALESCE(p1.name, '') || ' ' || COALESCE(p1.last_name, ''), '::::') "
+                + "FROM administrative.rrr rrr1, administrative.party_for_rrr pr1, party.party p1 "
+                + "WHERE rrr1.ba_unit_id = prop.id "
+                + "AND rrr1.status_code = 'current' "
+                + "AND pr1.rrr_id = rrr1.id "
+                + "AND p1.id = pr1.party_id ) AS rightholders");
+        FROM("administrative.ba_unit prop");
+        if (owernName != null) {
+            FROM("administrative.rrr rrr");
+            FROM("administrative.party_for_rrr pr");
+            FROM("party.party p");
+            WHERE("rrr.ba_unit_id = prop.id");
+            WHERE("rrr.status_code = 'current'");
+            WHERE("pr.rrr_id = rrr.id");
+            WHERE("p.id = pr.party_id");
+            WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_OWNER_NAME
+                    + "}, COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, ''))");
+        }
+        if (nameFirstPart != null) {
+            WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_NAME_FIRSTPART
+                    + "}, COALESCE(prop.name_firstpart, ''))");
+        }
+        if (nameLastPart != null) {
+            WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_NAME_LASTPART
+                    + "}, COALESCE(prop.name_lastpart, ''))");
+        }
+        ORDER_BY(BaUnitSearchResult.QUERY_ORDER_BY + " LIMIT 100");
+        sql = SQL();
         return sql;
     }
 }
