@@ -46,7 +46,7 @@ public class ApplicationStatusType extends AbstractCodeEntity {
     public static final String LODGED = "lodged";
     public static final String APPROVED = "approved";
     public static final String REJECTED = "rejected";
-    public static final String ANULLED = "anulled";
+    public static final String ANNULLED = "annulled";
     
 
     public ApplicationStatusType() {

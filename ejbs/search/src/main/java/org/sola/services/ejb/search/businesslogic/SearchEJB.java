@@ -599,27 +599,31 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
      * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SEARCH} role.</p>
      *
      * @param searchParams The search criteria to use.
-     * @return A maximum of 101 BA Units matching the search criteria.
+     * @return A maximum of 100 BA Units matching the search criteria.
      */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SEARCH)
     public List<BaUnitSearchResult> searchBaUnits(BaUnitSearchParams searchParams) {
         Map params = new HashMap<String, Object>();
 
-        if (searchParams.getNameFirstPart() == null) {
-            searchParams.setNameFirstPart("");
+        if (searchParams.getNameFirstPart() != null
+                && searchParams.getNameFirstPart().trim().isEmpty()) {
+            searchParams.setNameFirstPart(null);
         }
-        if (searchParams.getNameLastPart() == null) {
-            searchParams.setNameLastPart("");
+        if (searchParams.getNameLastPart() != null
+                && searchParams.getNameLastPart().trim().isEmpty()) {
+            searchParams.setNameLastPart(null);
         }
-        if (searchParams.getOwnerName() == null) {
-            searchParams.setOwnerName("");
+        if (searchParams.getOwnerName() != null && searchParams.getOwnerName().trim().isEmpty()) {
+            searchParams.setOwnerName(null);
         }
 
-        params.put(CommonSqlProvider.PARAM_QUERY, BaUnitSearchResult.SEARCH_QUERY);
-        params.put("ownerName", searchParams.getOwnerName());
-        params.put("nameFirstPart", searchParams.getNameFirstPart());
-        params.put("nameLastPart", searchParams.getNameLastPart());
+        params.put(CommonSqlProvider.PARAM_QUERY,
+                SearchSqlProvider.buildSearchBaUnitSql(searchParams.getNameFirstPart(),
+                searchParams.getNameLastPart(), searchParams.getOwnerName()));
+        params.put(BaUnitSearchResult.QUERY_PARAM_OWNER_NAME, searchParams.getOwnerName());
+        params.put(BaUnitSearchResult.QUERY_PARAM_NAME_FIRSTPART, searchParams.getNameFirstPart());
+        params.put(BaUnitSearchResult.QUERY_PARAM_NAME_LASTPART, searchParams.getNameLastPart());
         return getRepository().getEntityList(BaUnitSearchResult.class, params);
     }
 

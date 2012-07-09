@@ -1034,7 +1034,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                         && systemEJB.validationSucceeded(serviceValidation);
                 resultList.addAll(serviceValidation);
             }
-        } else if (ApplicationStatusType.ANULLED.equals(statusToSet)) {
+        } else if (ApplicationStatusType.ANNULLED.equals(statusToSet)) {
             List<ServiceActionTaker> serviceList =
                     this.getServiceActionTakerList(application.getId());
             for (ServiceActionTaker service : serviceList) {

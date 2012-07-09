@@ -1,28 +1,26 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
- * All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
+ * reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
  *
- *    1. Redistributions of source code must retain the above copyright notice,this list
- *       of conditions and the following disclaimer.
- *    2. Redistributions in binary form must reproduce the above copyright notice,this list
- *       of conditions and the following disclaimer in the documentation and/or other
- *       materials provided with the distribution.
- *    3. Neither the name of FAO nor the names of its contributors may be used to endorse or
- *       promote products derived from this software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
+ * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
+ * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.common.repository;
@@ -50,45 +48,48 @@ import org.sola.services.common.repository.entities.ChildEntityInfo;
 import org.sola.services.common.repository.entities.ColumnInfo;
 
 /**
- * Implementation of the {@linkplain CommonRepository} interface that uses the Mybatis library
- * to connect to the database and execute SQL statements. 
+ * Implementation of the {@linkplain CommonRepository} interface that uses the Mybatis library to
+ * connect to the database and execute SQL statements.
+ *
  * @author soladev
  */
 public class CommonRepositoryImpl implements CommonRepository {
 
-    /** The default name of the mybatis configuation file - mybatisConnectionConfig.xml */
-    public static final String CONNECT_CONFIG_FILE_NAME = "mybatisConnectionConfig.xml";
+    /**
+     * The default name of the mybatis configuation file - mybatisConnectionConfig.xml
+     */
     private static final String LOAD_INHIBITORS = "Repository.loadInhibitors";
     private DatabaseConnectionManager dbConnectionManager = null;
 
     /**
-     * Loads the mybatis configuration file and initializes a connection to the database.
+     * Loads the myBatis configuration file and initializes a connection to the database.
+     *
+     * @param connectionConfigFileUrl URL of the myBatis config file to load
      */
-    public CommonRepositoryImpl() {
+    public CommonRepositoryImpl(URL connectionConfigFileUrl) {
 
-        URL configFileUrl = this.getClass().getResource("/" + CONNECT_CONFIG_FILE_NAME);
-        if (configFileUrl == null) {
+        if (connectionConfigFileUrl == null) {
             throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED,
                     // Capture the specific details so they are added to the log
                     new Object[]{"File named " + CONNECT_CONFIG_FILE_NAME + " is not located in "
                         + "the default resource package for " + this.getClass().getSimpleName()});
         }
-        dbConnectionManager = new DatabaseConnectionManager(configFileUrl.toString(),
+        dbConnectionManager = new DatabaseConnectionManager(connectionConfigFileUrl.toString(),
                 CommonMapper.class);
     }
 
     /**
-     * Returns the {@linkplain DatabaseConnectionManager} used for this instance of the 
-     * repository.  
+     * Returns the {@linkplain DatabaseConnectionManager} used for this instance of the repository.
      */
     public DatabaseConnectionManager getDbConnectionManager() {
         return dbConnectionManager;
     }
 
-    /** 
-     * Allows the {@linkplain DatabaseConnectionManager} used for the repository to be replaced. 
-     * This is useful for Unit testing and allows simple mocking of the connection to the database. 
-     * @param dbConnectionManager  the Mock Database Connection Manager. 
+    /**
+     * Allows the {@linkplain DatabaseConnectionManager} used for the repository to be replaced.
+     * This is useful for Unit testing and allows simple mocking of the connection to the database.
+     *
+     * @param dbConnectionManager the Mock Database Connection Manager.
      */
     @Override
     public void setDbConnectionManager(DatabaseConnectionManager dbConnectionManager) {
@@ -110,7 +111,8 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Sets the loaded flag on the entity to indicate it has been loaded from the database. 
+     * Sets the loaded flag on the entity to indicate it has been loaded from the database.
+     *
      * @param entity The entity to flag
      */
     protected void markAsLoaded(AbstractReadOnlyEntity entity) {
@@ -126,10 +128,11 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     /**
      * Overloaded version of {@linkplain #markAsLoaded(AbstractReadOnlyEntity)} that marks every
-     * entity in a list as loaded. 
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     * entity in a list as loaded.
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
-     * @param entities The list of entities to mark as loaded. 
+     * @param entities The list of entities to mark as loaded.
      */
     protected <T extends AbstractReadOnlyEntity> void markAsLoaded(List<T> entities) {
         if (entities != null) {
@@ -141,7 +144,7 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     /**
      * Clears the load inhibitors set on the repository. See
-     * {@linkplain #setLoadInhibitors()}. 
+     * {@linkplain #setLoadInhibitors()}.
      */
     @Override
     public void clearLoadInhibitors() {
@@ -151,17 +154,18 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Allows an array of entity classes to be set as inhibitors for a given SQL Query. 
-     * <p> The Common Repository will attempt to eagerly load all child entities of an entity when that 
+     * Allows an array of entity classes to be set as inhibitors for a given SQL Query. <p> The
+     * Common Repository will attempt to eagerly load all child entities of an entity when that
      * entity is loaded via a getEntity or getEntityList method. In some cases, the child entities
      * are not required and the additional load is an unnecessary performance overhead. The Load
      * Inhibitors allows the developer to indicate which child entities should not be loaded based
-     * on the child entity class. </p>
-     * <p> Once set, the load inhibitors remain set until the developer calls the {@linkplain 
-     * #clearLoadInhibitors()} method. This is to ensure any level of the child hierarchy can be 
+     * on the child entity class. </p> <p> Once set, the load inhibitors remain set until the
+     * developer calls the {@linkplain
+     * #clearLoadInhibitors()} method. This is to ensure any level of the child hierarchy can be
      * inhibited, but also means that the clear method should be called once the necessary loading
      * is complete </p>
-     * @param entityClasses The array of child entity classes that should not be loaded. 
+     *
+     * @param entityClasses The array of child entity classes that should not be loaded.
      */
     @Override
     public void setLoadInhibitors(Class<?>[] entityClasses) {
@@ -169,9 +173,10 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Checks if the entity class has been flagged as load inhibited. 
+     * Checks if the entity class has been flagged as load inhibited.
+     *
      * @param entityClass The entity class to check
-     * @return true if load of the entity class is inhibited, false otherwise. 
+     * @return true if load of the entity class is inhibited, false otherwise.
      */
     private Boolean isInhibitLoad(Class<?> entityClass) {
         Boolean result = false;
@@ -183,21 +188,21 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Retrieves a child entity that is in a one to one relationship with its parent entity. 
-     * <p> To customize the default join criteria used to load the child entity, override the parent
-     * entity {@linkplain AbstractReadOnlyEntity#getChildJoinSqlParams} to return the appropriately 
-     * configured SQL Parameters. </p>
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     * Retrieves a child entity that is in a one to one relationship with its parent entity. <p> To
+     * customize the default join criteria used to load the child entity, override the parent entity {@linkplain AbstractReadOnlyEntity#getChildJoinSqlParams}
+     * to return the appropriately configured SQL Parameters. </p>
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain CommonMapper}
-     * @param <V> The generic type of the child entity. Must be a descendent of 
-     *            {@linkplain AbstractReadOnlyEntity}. 
+     * @param <V> The generic type of the child entity. Must be a descendent of
+     *            {@linkplain AbstractReadOnlyEntity}.
      * @param parentEntity The parent entity that references the child entity to load
-     * @param childEntityClass The class of the child entity to load. 
-     * @param childInfo Provides the details from the {@linkplain ChildEntity} annotation that
-     *                  are used to assist loading of the child entity.
+     * @param childEntityClass The class of the child entity to load.
+     * @param childInfo Provides the details from the {@linkplain ChildEntity} annotation that are
+     * used to assist loading of the child entity.
      * @param mapper The Mybatis mapper class used for this loading process.
-     * @return The child entity or null if there is no child to load.        
+     * @return The child entity or null if there is no child to load.
      */
     private <T extends AbstractReadOnlyEntity, U extends CommonMapper, V extends AbstractReadOnlyEntity> V getChildEntity(
             T parentEntity, Class<V> childEntityClass, ChildEntityInfo childInfo, U mapper) {
@@ -239,10 +244,11 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Processes a row of the the generic result set returned from Mybatis after executing an SQL query. 
-     * Each column of the result is mapped to the entity field based on the name of the column 
-     * specified in the @Column annotation.  
-     * @param <T> The generic type of the entity to populate. Must be a descendent of 
+     * Processes a row of the the generic result set returned from Mybatis after executing an SQL
+     * query. Each column of the result is mapped to the entity field based on the name of the
+     * column specified in the @Column annotation.
+     *
+     * @param <T> The generic type of the entity to populate. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param entity The entity to populate with details from the result row
      * @param row The Mybatis Map object representing one row of a result set
@@ -263,12 +269,12 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Processes a row of the the generic result set returned from Mybatis after executing an SQL query. 
-     * Each column of the result is mapped to the entity field based on the name of the column 
-     * specified in the @Column annotation. 
-     * <p> Overloaded version of {@linkplain #mapToEntity(.AbstractReadOnlyEntity, Map)} that 
-     * creates a new instance of the entity to populate based on the entity class. </p>
-     * @param <T> The generic type of the entity to populate. Must be a descendent of 
+     * Processes a row of the the generic result set returned from Mybatis after executing an SQL
+     * query. Each column of the result is mapped to the entity field based on the name of the
+     * column specified in the @Column annotation. <p> Overloaded version of {@linkplain #mapToEntity(.AbstractReadOnlyEntity, Map)}
+     * that creates a new instance of the entity to populate based on the entity class. </p>
+     *
+     * @param <T> The generic type of the entity to populate. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param entityClass The class of the entity to populate with details from the result row
      * @param row The Mybatis Map object representing one row of a result set
@@ -287,13 +293,14 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Overloaded version of {@linkplain #mapToEntity(.AbstractReadOnlyEntity, Map)} that 
-     * maps a complete generic result set to an entity list.
-     * @param <T> The generic type of the entity to populate. Must be a descendent of 
+     * Overloaded version of {@linkplain #mapToEntity(.AbstractReadOnlyEntity, Map)} that maps a
+     * complete generic result set to an entity list.
+     *
+     * @param <T> The generic type of the entity to populate. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
-     * @param entityClass The class of the entity to populate with details from the result row 
+     * @param entityClass The class of the entity to populate with details from the result row
      * @param resultList The generic result set returned from the MyBatis query
-     * @return A list of populated entities. 
+     * @return A list of populated entities.
      */
     private <T extends AbstractReadOnlyEntity> List<T> mapToEntityList(
             Class<T> entityClass, ArrayList<HashMap> resultList) {
@@ -311,15 +318,16 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Performs the save processing for an entity. Recursively saves all child entities. Note
-     * that the save only supports {@linkplain AbstractEntity}. 
-     * @param <T> The generic type of the entity to save. Must be a descendent of 
+     * Performs the save processing for an entity. Recursively saves all child entities. Note that
+     * the save only supports {@linkplain AbstractEntity}.
+     *
+     * @param <T> The generic type of the entity to save. Must be a descendent of
      *            {@linkplain AbstractEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain CommonMapper}
-     * @param entity The entity to save. 
+     * @param entity The entity to save.
      * @param mapper The Mybatis mapper class used for this saving process.
-     * @return The saved entity. This entity may have changed from the one passed in due to
-     *         default database column values and/or foreign keys. 
+     * @return The saved entity. This entity may have changed from the one passed in due to default
+     * database column values and/or foreign keys.
      */
     protected <T extends AbstractEntity, U extends CommonMapper> T saveEntity(T entity, U mapper) {
         if (entity == null) {
@@ -384,14 +392,15 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Processes all child entities of the parent saving them as appropriate. Child entities are 
-     * identified using the {@linkplain ChildEntity} and {@linkplain ChildEntityList} annotations. 
+     * Processes all child entities of the parent saving them as appropriate. Child entities are
+     * identified using the {@linkplain ChildEntity} and {@linkplain ChildEntityList} annotations.
+     *
      * @param <T> The generic type of the parent entity. Must extend {@linkplain AbstractEntity}.
      * @param <U> The generic type of the mybatis mapper class. Must extend {@linkplain CommonMapper}.
-     * @param entity The parent entity. 
-     * @param mapper The mybatis mapper class used for the saving process. 
-     * @param beforeSave Flag to indicate if the save of the parent entity has occurred (true) or not
-     * (false). 
+     * @param entity The parent entity.
+     * @param mapper The mybatis mapper class used for the saving process.
+     * @param beforeSave Flag to indicate if the save of the parent entity has occurred (true) or
+     * not (false).
      */
     private <T extends AbstractEntity, U extends CommonMapper> void saveChildren(T entity,
             U mapper, boolean beforeSave) {
@@ -418,14 +427,16 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Save child entities that have a one to one association with the parent. 
+     * Save child entities that have a one to one association with the parent.
+     *
      * @param <T> The generic type of the parent entity. Must extend {@linkplain AbstractEntity}.
      * @param <U> The generic type of the mybatis mapper class. Must extend {@linkplain CommonMapper}.
-     * @param entity The parent entity. 
+     * @param entity The parent entity.
      * @param childInfo Child entity information that describes the association between the child
-     * and the parent. 
-     * @param beforeSave Flag to indicate if the save of the parent entity has occurred (true) or not
-     * @param mapper The mybatis mapper. 
+     * and the parent.
+     * @param beforeSave Flag to indicate if the save of the parent entity has occurred (true) or
+     * not
+     * @param mapper The mybatis mapper.
      */
     private <T extends AbstractEntity, U extends CommonMapper> void saveChild(T entity,
             ChildEntityInfo childInfo, boolean beforeSave, U mapper) {
@@ -496,14 +507,16 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Saves the child entities that are in a One to Many association with the parent entity. 
+     * Saves the child entities that are in a One to Many association with the parent entity.
+     *
      * @param <T> The generic type of the parent entity. Must extend {@linkplain AbstractEntity}.
      * @param <U> The generic type of the Mybatis mapper class. Must extend {@linkplain CommonMapper}.
-     * @param entity The parent entity. 
+     * @param entity The parent entity.
      * @param childInfo Child entity information that describes the association between the child
-     * and the parent. 
-     * @param beforeSave Flag to indicate if the save of the parent entity has occurred (true) or not
-     * @param mapper The mybatis mapper. 
+     * and the parent.
+     * @param beforeSave Flag to indicate if the save of the parent entity has occurred (true) or
+     * not
+     * @param mapper The mybatis mapper.
      */
     private <T extends AbstractEntity, U extends CommonMapper> void saveOneToManyChildList(T entity,
             ChildEntityInfo childInfo, boolean beforeSave, U mapper) {
@@ -554,13 +567,14 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Uses the information provided in the {@linkplain ChildEntityList} annotation to create
-     * a many to many association entity to link the parent and child. 
+     * Uses the information provided in the {@linkplain ChildEntityList} annotation to create a many
+     * to many association entity to link the parent and child.
+     *
      * @param <T> The generic type of the parent entity. Must extend {@linkplain AbstractEntity}.
-     * @param childInfo The child entity information describing the many to many association. 
-     * @param entity The parent entity. 
-     * @param child The child entity. 
-     * @return The many to many entity. 
+     * @param childInfo The child entity information describing the many to many association.
+     * @param entity The parent entity.
+     * @param child The child entity.
+     * @return The many to many entity.
      */
     private <T extends AbstractEntity> AbstractEntity createManyToManyEntity(ChildEntityInfo childInfo,
             T entity, AbstractEntity child) {
@@ -584,17 +598,18 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Performs save of child entities that are associated to the parent entity via a many to many 
-     * association table. This method uses the details from the {@linkplain ChildEntityList} 
-     * annotation manage (i.e. create and delete) the many to many entity. 
+     * Performs save of child entities that are associated to the parent entity via a many to many
+     * association table. This method uses the details from the {@linkplain ChildEntityList}
+     * annotation manage (i.e. create and delete) the many to many entity.
+     *
      * @param <T> The generic type of the parent entity. Must extends {@linkplain AbstractEntity}.
-     * @param <U> The generic type of the mybatis mapper class. Must extend {@linkplain CommonMapper}. 
-     * @param entity The parent entity. 
+     * @param <U> The generic type of the mybatis mapper class. Must extend {@linkplain CommonMapper}.
+     * @param entity The parent entity.
      * @param childInfo Describes the child entity list to be processed including details of the
-     * many to many entity to use to associate the child entities with the parent. 
-     * @param beforeSave Flag indicating if the parent entity is about to be saved (true) or has been
-     * saved (false)
-     * @param mapper The mybtis mapper class to use for the save. 
+     * many to many entity to use to associate the child entities with the parent.
+     * @param beforeSave Flag indicating if the parent entity is about to be saved (true) or has
+     * been saved (false)
+     * @param mapper The mybtis mapper class to use for the save.
      */
     private <T extends AbstractEntity, U extends CommonMapper> void saveManyToManyChildList(T entity,
             ChildEntityInfo childInfo, boolean beforeSave, U mapper) {
@@ -688,13 +703,14 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     /**
      * Delegates saving the child entity to an different EJB based using the details provided in the
-     * {@linkplain ExternalEJB} annotation. 
-     * @param <T> The generic type of the child entity. Must be a descendent of 
+     * {@linkplain ExternalEJB} annotation.
+     *
+     * @param <T> The generic type of the child entity. Must be a descendent of
      *            {@linkplain AbstractEntity}
      * @param childEntity The child entity to save using the external EJB
      * @param childInfo Details of the child entity (or entity list) that can be used to obtain the
-     *                  external EJB name and save method details
-     * @return The saved child entity. 
+     * external EJB name and save method details
+     * @return The saved child entity.
      */
     private <T extends AbstractReadOnlyEntity> T saveExternalEntity(
             T childEntity, ChildEntityInfo childInfo) {
@@ -722,29 +738,31 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     /**
      * This is a placeholder method that can be optionally overridden/implemented in descendent
-     * repositories. This method can be used to save entities that do not inherit from the 
-     * SOLA repository abstract entity classes. 
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     * repositories. This method can be used to save entities that do not inherit from the SOLA
+     * repository abstract entity classes.
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain AbstractMapper}
      * @param entity The parent entity that references the child entity or child entity list to save
-     * @param childInfo Details of the child entity (or entity list) that can be used to identify the
-     *                  child entity to be processed. 
-     * @param beforeSave Flag to indicate if the child is being processed before (true) or 
-     *                   after (false) the parent entity is saved. 
-     * @param mapper The Mybatis mapper class used for this save process. 
+     * @param childInfo Details of the child entity (or entity list) that can be used to identify
+     * the child entity to be processed.
+     * @param beforeSave Flag to indicate if the child is being processed before (true) or after
+     * (false) the parent entity is saved.
+     * @param mapper The Mybatis mapper class used for this save process.
      */
     protected <T extends AbstractEntity, U extends CommonMapper> void saveOtherEntity(T entity,
             ChildEntityInfo childInfo, boolean beforeSave, U mapper) {
     }
 
     /**
-     * Reloads an entity from the database, overwriting any data values the entity previously had. 
-     * @param <T> The generic type of the entity to refresh. Must be a descendent of 
+     * Reloads an entity from the database, overwriting any data values the entity previously had.
+     *
+     * @param <T> The generic type of the entity to refresh. Must be a descendent of
      *            {@linkplain AbstractEntity}
-     * @param entity The entity to refresh. 
+     * @param entity The entity to refresh.
      * @param mapper The Mybatis mapper to use for the refresh
-     * @return The refreshed entity. 
+     * @return The refreshed entity.
      */
     protected <T extends AbstractReadOnlyEntity> T refreshEntity(T entity, CommonMapper mapper) {
 
@@ -778,10 +796,11 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Saves the specified entity and any child entities. 
+     * Saves the specified entity and any child entities.
+     *
      * @param <T> Generic type of the entity. Must extend {@linkplain AbstractEntity}.
-     * @param entity The entity to save. 
-     * @return The saved entity. 
+     * @param entity The entity to save.
+     * @return The saved entity.
      */
     @Override
     public <T extends AbstractEntity> T saveEntity(T entity) {
@@ -797,12 +816,13 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Executes an SQL query against the database that returns a single primative type value
-     * E.g. String, boolean, integer, etc. 
-     * @param <T> The generic Boxed type of the scalar value. 
+     * Executes an SQL query against the database that returns a single primative type value E.g.
+     * String, boolean, integer, etc.
+     *
+     * @param <T> The generic Boxed type of the scalar value.
      * @param scalarClass The boxed class of the scalar. e.g. Boolean.class, Integer.class, etc
-     * @param params The SQL parameters to use for executing the query. 
-     * @return The scalar value returned from the query or null if no value is returned. 
+     * @param params The SQL parameters to use for executing the query.
+     * @return The scalar value returned from the query or null if no value is returned.
      */
     @Override
     public <T> T getScalar(Class<T> scalarClass, Map params) {
@@ -820,12 +840,13 @@ public class CommonRepositoryImpl implements CommonRepository {
     /**
      * Overloaded version of {@linkplain #getScalar(java.lang.Class, java.util.Map)} that also
      * specifies the mapper to use
-     * @param <T> The generic Boxed type of the scalar value. 
-     * @param <U> The generic type of the mapper. Must extend {@linkplain CommonMapper}. 
+     *
+     * @param <T> The generic Boxed type of the scalar value.
+     * @param <U> The generic type of the mapper. Must extend {@linkplain CommonMapper}.
      * @param scalarClass The boxed class of the scalar. e.g. Boolean.class, Integer.class, etc
      * @param params The SQL parameters to use for executing the query.
-     * @param mapper The Mybatis Mapper to use when executing the SQL query. 
-     * @return The scalar value returned from the query or null if no value is returned. 
+     * @param mapper The Mybatis Mapper to use when executing the SQL query.
+     * @return The scalar value returned from the query or null if no value is returned.
      */
     private <T, U extends CommonMapper> T getScalar(Class<T> scalarClass, Map params,
             U mapper) {
@@ -1078,15 +1099,15 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Retrieves a list of entities by generating a where clause based on the list of entity ids. 
-     * <p> Uses and IN clause for the SQL query. </p>
-     * <p> Overloaded version of {@linkplain #getEntityListByIds(java.lang.Class, java.util.List, 
+     * Retrieves a list of entities by generating a where clause based on the list of entity ids.
+     * <p> Uses and IN clause for the SQL query. </p> <p> Overloaded version of {@linkplain #getEntityListByIds(java.lang.Class, java.util.List,
      * java.util.Map) } that defaults the parameter map to null. </p>
-     * @param <T> The generic type of the entity being loaded. Must be a descendent of 
+     *
+     * @param <T> The generic type of the entity being loaded. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
-     * @param entityClass The class of the entity list to load. 
-     * @param ids The list identifiers to query the entity table with.  
-     * @return THe list of entities returned from the SQL query. 
+     * @param entityClass The class of the entity list to load.
+     * @param ids The list identifiers to query the entity table with.
+     * @return THe list of entities returned from the SQL query.
      */
     @Override
     public <T extends AbstractReadOnlyEntity> List<T> getEntityListByIds(Class<T> entityClass,
@@ -1095,15 +1116,16 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Retrieves a list of entities by generating a where clause based on the list of entity ids. 
+     * Retrieves a list of entities by generating a where clause based on the list of entity ids.
      * <p> Uses and IN clause for the SQL query. If a PARAM_WHERE_PART is provided in the params
      * map, the IN clause is ANDed to the existing PARAM_WHERE_PART.</p>
-     * @param <T> The generic type of the entity being loaded. Must be a descendent of 
+     *
+     * @param <T> The generic type of the entity being loaded. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
-     * @param entityClass The class of the entity list to load. 
-     * @param ids The list identifiers to query the entity table with. 
-     * @param params Any additional parameters that are required for the SQL query. 
-     * @return THe list of entities returned from the SQL query. 
+     * @param entityClass The class of the entity list to load.
+     * @param ids The list identifiers to query the entity table with.
+     * @param params Any additional parameters that are required for the SQL query.
+     * @return THe list of entities returned from the SQL query.
      */
     @Override
     public <T extends AbstractReadOnlyEntity> List<T> getEntityListByIds(Class<T> entityClass,
@@ -1140,20 +1162,21 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Loads the child entity lists for both One to Many and Many to Many associations. 
-     * <p> To customize the default join criteria used to load the child entity list, override
-     * {@linkplain AbstractReadOnlyEntity#getChildJoinSqlParams} to return the appropriately 
+     * Loads the child entity lists for both One to Many and Many to Many associations. <p> To
+     * customize the default join criteria used to load the child entity list, override
+     * {@linkplain AbstractReadOnlyEntity#getChildJoinSqlParams} to return the appropriately
      * configured SQL Parameters. </p>
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
-     * @param <V> The generic type of the child entity. Must be a descendent of 
-     *            {@linkplain AbstractReadOnlyEntity}. 
-     * @param parentEntity The parent entity that references the child entity or child entity list 
-     *                     to load
-     * @param childEntityClass The class of the child entity to load. 
+     * @param <V> The generic type of the child entity. Must be a descendent of
+     *            {@linkplain AbstractReadOnlyEntity}.
+     * @param parentEntity The parent entity that references the child entity or child entity list
+     * to load
+     * @param childEntityClass The class of the child entity to load.
      * @param childInfo Provides the details from the {@linkplain ChildEntityList} annotation that
-     *                  are used to assist loading of the child entity list.
-     * @return The list of child entities or null if there are none to load.        
+     * are used to assist loading of the child entity list.
+     * @return The list of child entities or null if there are none to load.
      */
     @Override
     public <T extends AbstractReadOnlyEntity, V extends AbstractReadOnlyEntity> List<V> getChildEntityList(
@@ -1171,22 +1194,23 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Loads the child entity lists for both One to Many and Many to Many associations. 
-     * <p> To customize the default join criteria used to load the child entity list, override
-     * {@linkplain AbstractReadOnlyEntity#getChildJoinSqlParams} to return the appropriately 
+     * Loads the child entity lists for both One to Many and Many to Many associations. <p> To
+     * customize the default join criteria used to load the child entity list, override
+     * {@linkplain AbstractReadOnlyEntity#getChildJoinSqlParams} to return the appropriately
      * configured SQL Parameters. </p>
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain CommonMapper}
-     * @param <V> The generic type of the child entity. Must be a descendent of 
-     *            {@linkplain AbstractReadOnlyEntity}. 
-     * @param parentEntity The parent entity that references the child entity or child entity list 
-     *                     to load
-     * @param childEntityClass The class of the child entity to load. 
+     * @param <V> The generic type of the child entity. Must be a descendent of
+     *            {@linkplain AbstractReadOnlyEntity}.
+     * @param parentEntity The parent entity that references the child entity or child entity list
+     * to load
+     * @param childEntityClass The class of the child entity to load.
      * @param childInfo Provides the details from the {@linkplain ChildEntityList} annotation that
-     *                  are used to assist loading of the child entity list.
+     * are used to assist loading of the child entity list.
      * @param mapper The Mybatis mapper class used for this loading process.
-     * @return The list of child entities or null if there are none to load.        
+     * @return The list of child entities or null if there are none to load.
      */
     private <T extends AbstractReadOnlyEntity, U extends CommonMapper, V extends AbstractReadOnlyEntity> List<V> getChildEntityList(
             T parentEntity, Class<V> childEntityClass, ChildEntityInfo childInfo, U mapper) {
@@ -1234,12 +1258,13 @@ public class CommonRepositoryImpl implements CommonRepository {
     /**
      * Processes each child of the parent entity that has been marked with a {@linkplain ChildEntity}
      * or {@linkplain ChildEntityList} annotation and uses the details from those annotations to
-     * load the child entities. 
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     * load the child entities.
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain CommonMapper}
-     * @param entity The parent entity that references the child entity or child entity list to load 
-     * @param mapper The Mybatis mapper class used for this loading process. 
+     * @param entity The parent entity that references the child entity or child entity list to load
+     * @param mapper The Mybatis mapper class used for this loading process.
      */
     public <T extends AbstractReadOnlyEntity, U extends CommonMapper> void loadChildren(T entity, U mapper) {
         for (ChildEntityInfo childInfo : entity.getChildEntityInfo()) {
@@ -1270,17 +1295,18 @@ public class CommonRepositoryImpl implements CommonRepository {
     }
 
     /**
-     * Loads an entity or entity list from another EJB using the details provided in the 
-     * {@linkplain ExternalEJB} annotation. 
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     * Loads an entity or entity list from another EJB using the details provided in the
+     * {@linkplain ExternalEJB} annotation.
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain CommonMapper}
      * @param entity The parent entity that references the child entity or child entity list to load
-     * @param childInfo Details of the child entity (or entity list) that can be used to identify the
-     *                  child entity to be processed.  
-     * @param mapper The Mybatis mapper class used for this loading process. 
-     * @return The entity or entity list loaded from the external EJB, or null if there are no
-     * child entities. 
+     * @param childInfo Details of the child entity (or entity list) that can be used to identify
+     * the child entity to be processed.
+     * @param mapper The Mybatis mapper class used for this loading process.
+     * @return The entity or entity list loaded from the external EJB, or null if there are no child
+     * entities.
      */
     private <T extends AbstractReadOnlyEntity, U extends CommonMapper> Object getExternalEntity(
             T entity, ChildEntityInfo childInfo, U mapper) {
@@ -1323,48 +1349,51 @@ public class CommonRepositoryImpl implements CommonRepository {
 
     /**
      * This is a placeholder method that can be optionally overridden/implemented in descendent
-     * repositories. This method can be used to load entities that do not inherit from the 
-     * SOLA repository abstract entity classes. 
-     * @param <T> The generic type of the parent entity. Must be a descendent of 
+     * repositories. This method can be used to load entities that do not inherit from the SOLA
+     * repository abstract entity classes.
+     *
+     * @param <T> The generic type of the parent entity. Must be a descendent of
      *            {@linkplain AbstractReadOnlyEntity}
      * @param <U> The generic type of the mapper. Must be a descendent of {@linkplain CommonMapper}
      * @param entity The parent entity that references the child entity or child entity list to load
-     * @param childInfo Details of the child entity (or entity list) that can be used to identify the
-     *                  child entity to be processed.  
-     * @param mapper The Mybatis mapper class used for this save process. 
+     * @param childInfo Details of the child entity (or entity list) that can be used to identify
+     * the child entity to be processed.
+     * @param mapper The Mybatis mapper class used for this save process.
      */
     protected <T extends AbstractReadOnlyEntity, U extends CommonMapper> void loadOtherEntity(T entity,
             ChildEntityInfo childInfo, U mapper) {
     }
 
-    /** 
+    /**
      * Executes function with given parameters.
-     * @param params Parameters list needed to form SQL statement. 
-     * {@link CommonSqlProvider#PARAM_QUERY} should be supplied as a select 
-     * statement to run function.
+     *
+     * @param params Parameters list needed to form SQL statement.
+     * {@link CommonSqlProvider#PARAM_QUERY} should be supplied as a select statement to run
+     * function.
      */
     @Override
     public ArrayList<HashMap> executeFunction(Map params) {
         return executeSql(params);
     }
 
-    /** 
+    /**
      * Executes function with given parameters.
-     * @param params Parameters list needed to form SQL statement. 
-     * {@link CommonSqlProvider#PARAM_QUERY} should be supplied as a select 
-     * statement to run function.
-     * @param entityClass The class of the entity to cast results to. 
+     *
+     * @param params Parameters list needed to form SQL statement.
+     * {@link CommonSqlProvider#PARAM_QUERY} should be supplied as a select statement to run
+     * function.
+     * @param entityClass The class of the entity to cast results to.
      */
     @Override
-    public <T extends AbstractReadOnlyEntity> List<T> executeFunction(Map params, Class<T> entityClass){
+    public <T extends AbstractReadOnlyEntity> List<T> executeFunction(Map params, Class<T> entityClass) {
         return mapToEntityList(entityClass, executeSql(params));
     }
-    
-    /** 
+
+    /**
      * Executes dynamic SQL queries using the specified parameters.
-     * @param params Parameters list needed to form SQL statement. 
-     * {@link CommonSqlProvider#PARAM_QUERY} must be supplied as a select 
-     * statement to run the SQL.
+     *
+     * @param params Parameters list needed to form SQL statement.
+     * {@link CommonSqlProvider#PARAM_QUERY} must be supplied as a select statement to run the SQL.
      */
     @Override
     public ArrayList<HashMap> executeSql(Map params) {
