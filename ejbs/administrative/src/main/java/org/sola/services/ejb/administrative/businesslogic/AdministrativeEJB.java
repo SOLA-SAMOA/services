@@ -34,6 +34,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.sola.common.RolesConstants;
+import org.sola.common.SOLAException;
+import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.EntityAction;
 import org.sola.services.common.LocalInfo;
 import org.sola.services.common.br.ValidationResult;
@@ -200,6 +202,13 @@ public class AdministrativeEJB extends AbstractEJB
     public BaUnit saveBaUnit(String serviceId, BaUnit baUnit) {
         if (baUnit == null) {
             return null;
+        }
+        if (baUnit.isNew() && baUnit.getNameFirstpart() == null && baUnit.getNameLastpart() == null
+                && (baUnit.getCadastreObjectList() == null || baUnit.getCadastreObjectList().isEmpty())) {
+            // Samoa Customization. Creating a new Proprety with no reference to a parcel is not
+            // valid if the NameFirstPart (i.e. Lot number) and NameLastPart (i.e. Plan number) are
+            // not provided. 
+            throw new SOLAException(ServiceMessage.EJB_ADMINISTRATIVE_NO_PARCEL); 
         }
         TransactionBasic transaction =
                 transactionEJB.getTransactionByServiceId(serviceId, true, TransactionBasic.class);
