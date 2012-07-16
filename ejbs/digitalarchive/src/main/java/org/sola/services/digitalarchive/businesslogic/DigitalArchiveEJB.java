@@ -185,7 +185,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
             return null;
         }
 
-        document.setExtension(FileUtility.getFileExtesion(fileName));
+        document.setExtension(FileUtility.getFileExtension(fileName));
         document.setBody(fileBytes);
         document.setDescription(fileName);
         document = createDocument(document);
