@@ -58,6 +58,11 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     private File thumbFolder;
     private int thumbWidth;
     private int thumbHeight;
+    
+    /**
+     * The maximum size of a file (in bytes) that can be loaded into SOLA. Default is 30Mb.
+     */
+    private static final long MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024;
 
     /**
      * Configures the default network location to read scanned images as well as the default folder
@@ -180,7 +185,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         }
 
         // Get file from shared folder
-        byte[] fileBytes = FileUtility.getFileBinary(filePath);
+        byte[] fileBytes = FileUtility.getFileBinary(filePath, MAX_FILE_SIZE_BYTES);
         if (fileBytes == null) {
             return null;
         }
@@ -248,7 +253,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         }
 
         // Get file from shared folder
-        byte[] fileBytes = FileUtility.getFileBinary(filePath);
+        byte[] fileBytes = FileUtility.getFileBinary(filePath, MAX_FILE_SIZE_BYTES);
         if (fileBytes == null) {
             return null;
         }
