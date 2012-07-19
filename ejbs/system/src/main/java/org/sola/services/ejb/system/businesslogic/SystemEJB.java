@@ -78,7 +78,7 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
     @Override
     public BigDecimal getTaxRate() {
         // Note that the String constructor is perferred for BigDecimal
-        BigDecimal taxRate = new BigDecimal("0.075");
+        BigDecimal taxRate = new BigDecimal("0.15");
         String taxRateStr = getSetting(ConfigConstants.TAX_RATE, taxRate.toString());
         try {
             taxRate = new BigDecimal(taxRateStr);
