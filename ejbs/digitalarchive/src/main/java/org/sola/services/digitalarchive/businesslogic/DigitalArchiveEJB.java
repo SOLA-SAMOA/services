@@ -34,6 +34,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.imageio.ImageIO;
+import org.sola.common.ConfigConstants;
 import org.sola.common.DateUtility;
 import org.sola.common.FileUtility;
 import org.sola.common.RolesConstants;
@@ -43,6 +44,7 @@ import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.digitalarchive.repository.entities.Document;
 import org.sola.services.digitalarchive.repository.entities.FileBinary;
 import org.sola.services.digitalarchive.repository.entities.FileInfo;
+import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 
 /**
  * EJB to manage data in the document schema. Supports retrieving and saving digital documents
@@ -54,14 +56,12 @@ import org.sola.services.digitalarchive.repository.entities.FileInfo;
 @EJB(name = "java:global/SOLA/DigitalArchiveEJBLocal", beanInterface = DigitalArchiveEJBLocal.class)
 public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBLocal {
 
+    @EJB
+    private SystemEJBLocal systemEJB;
     private File scanFolder;
     private File thumbFolder;
     private int thumbWidth;
     private int thumbHeight;
-    /**
-     * The maximum size of a file (in bytes) that can be loaded into SOLA. Default is 100Mb.
-     */
-    private static final long MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 
     /**
      * Configures the default network location to read scanned images as well as the default folder
@@ -70,9 +70,10 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     @Override
     protected void postConstruct() {
 
-        // TODO: Implement reading config from DB
-        // Set user's home folder
-        scanFolder = new File(System.getProperty("user.home") + "/sola/scan");
+        String scanFolderLocation = systemEJB.getSetting(ConfigConstants.NETWORK_SCAN_FOLDER,
+                System.getProperty("user.home") + "/sola/scan");
+
+        scanFolder = new File(scanFolderLocation);
         thumbFolder = new File(scanFolder.getAbsolutePath() + File.separatorChar + "thumb");
         thumbWidth = 225;
         thumbHeight = 322;
@@ -85,10 +86,18 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         if (!thumbFolder.exists()) {
             new File(thumbFolder.getAbsolutePath()).mkdirs();
         }
-        
+
         // Set some cache values for the server documents cache. 
-        FileUtility.setMaxCacheSizeBytes(500 * 1024 * 1024);
-        FileUtility.setResizedCacheSizeBytes(200 * 1024 * 1024);
+        String maxCacheSizeMB = systemEJB.getSetting(ConfigConstants.SERVER_DOCUMENT_CACHE_MAX_SIZE, "500");
+        long maxCacheSizeBytes = Long.parseLong(maxCacheSizeMB) * 1024 * 1024;
+        FileUtility.setMaxCacheSizeBytes(maxCacheSizeBytes);
+
+        String maxCacheResizedMB = systemEJB.getSetting(ConfigConstants.SERVER_DOCUMENT_CACHE_RESIZED, "200");
+        long maxCacheResizeBytes = Long.parseLong(maxCacheResizedMB) * 1024 * 1024;
+        FileUtility.setResizedCacheSizeBytes(maxCacheResizeBytes);
+
+        FileUtility.setCachePath(systemEJB.getSetting(ConfigConstants.SERVER_DOCUMENT_CACHE_FOLDER,
+                FileUtility.getCachePath()));
     }
 
     /**
@@ -189,7 +198,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         }
 
         // Get file from shared folder
-        byte[] fileBytes = FileUtility.getFileBinary(filePath, MAX_FILE_SIZE_BYTES);
+        byte[] fileBytes = FileUtility.getFileBinary(filePath);
         if (fileBytes == null) {
             return null;
         }
@@ -236,8 +245,8 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Loads the specified file from the Network Scan folder. Updated to avoid loading the file.
-     * The file is uploaded using the FileStreaming service instead. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
+     * Loads the specified file from the Network Scan folder. Updated to avoid loading the file. The
+     * file is uploaded using the FileStreaming service instead. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
      * role.</p>
      *
      * @param fileName The name of the file to load
