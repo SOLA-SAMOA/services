@@ -58,11 +58,10 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     private File thumbFolder;
     private int thumbWidth;
     private int thumbHeight;
-    
     /**
-     * The maximum size of a file (in bytes) that can be loaded into SOLA. Default is 30Mb.
+     * The maximum size of a file (in bytes) that can be loaded into SOLA. Default is 100Mb.
      */
-    private static final long MAX_FILE_SIZE_BYTES = 30 * 1024 * 1024;
+    private static final long MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
 
     /**
      * Configures the default network location to read scanned images as well as the default folder
@@ -86,6 +85,10 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         if (!thumbFolder.exists()) {
             new File(thumbFolder.getAbsolutePath()).mkdirs();
         }
+        
+        // Set some cache values for the server documents cache. 
+        FileUtility.setMaxCacheSizeBytes(500 * 1024 * 1024);
+        FileUtility.setResizedCacheSizeBytes(200 * 1024 * 1024);
     }
 
     /**
@@ -100,6 +103,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         Document result = null;
         if (documentId != null) {
             result = getRepository().getEntity(Document.class, documentId);
+
         }
         return result;
     }
@@ -232,7 +236,8 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Loads the specified file from the Network Scan folder. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
+     * Loads the specified file from the Network Scan folder. Updated to avoid loading the file.
+     * The file is uploaded using the FileStreaming service instead. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
      * role.</p>
      *
      * @param fileName The name of the file to load
@@ -240,7 +245,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      */
     @Override
     @RolesAllowed(RolesConstants.SOURCE_SEARCH)
-    public FileBinary getFileBinary(String fileName) {
+    public FileInfo getFileBinary(String fileName) {
         if (fileName == null || fileName.equals("")) {
             return null;
         }
@@ -253,16 +258,19 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         }
 
         // Get file from shared folder
-        byte[] fileBytes = FileUtility.getFileBinary(filePath, MAX_FILE_SIZE_BYTES);
-        if (fileBytes == null) {
-            return null;
-        }
+        // AM 18 Jul 2012 - Don't load the file from the file system. Use the FileStreaming 
+        // service to return the file to the client instead. 
+//        byte[] fileBytes = FileUtility.getFileBinary(filePath, MAX_FILE_SIZE_BYTES);
+//        if (fileBytes == null) {
+//            return null;
+//        }
 
         File file = new File(filePath);
-        FileBinary fileBinary = new FileBinary();
-        fileBinary.setContent(fileBytes);
+        FileInfo fileBinary = new FileInfo();
+        //FileBinary fileBinary = new FileBinary();
+        //fileBinary.setContent(fileBytes);
         fileBinary.setFileSize(file.length());
-        fileBinary.setName(fileName);
+        fileBinary.setName(filePath);
         fileBinary.setModificationDate(new Date(file.lastModified()));
         return fileBinary;
     }
