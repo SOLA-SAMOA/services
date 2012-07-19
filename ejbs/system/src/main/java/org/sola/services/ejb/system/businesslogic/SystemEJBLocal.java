@@ -36,20 +36,30 @@ import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.repository.entities.Br;
 import org.sola.services.ejb.system.repository.entities.BrReport;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
+import org.sola.services.ejb.system.repository.entities.Setting;
 
 /**
- * The EJB local interface for the {@linkplain SystemEJB}.  
- * The SystemEJB provides access to SOLA System data
- * including business rules. 
+ * The EJB local interface for the {@linkplain SystemEJB}. The SystemEJB provides access to SOLA
+ * System data including business rules.
  */
 @Local
 public interface SystemEJBLocal extends AbstractEJBLocal {
 
     /**
      * See {@linkplain SystemEJB#getTaxRate()
-     * SystemEJB.getTaxRate
+     * SystemEJB.getTaxRate}
      */
     BigDecimal getTaxRate();
+
+    /**
+     * See {@linkplain SystemEJB#getAllSettings() SystemEJB.getAllSettings}
+     */
+    List<Setting> getAllSettings();
+
+    /**
+     * See {@linkplain SystemEJB#getSetting(java.lang.String, java.lang.String)  SystemEJB.getSetting}
+     */
+    String getSetting(String name, String defaultValue);
 
     /**
      * See {@linkplain org.sola.services.ejb.system.businesslogic.SystemEJB#getBr(java.lang.String, java.lang.String)
@@ -70,60 +80,60 @@ public interface SystemEJBLocal extends AbstractEJBLocal {
     List<BrReport> getBrs(List<String> ids);
 
     /**
-     * See {@linkplain SystemEJB#getAllBrs() 
+     * See {@linkplain SystemEJB#getAllBrs()
      * SystemEJB.getAllBrs
      */
     List<BrReport> getAllBrs();
 
     /**
-     * See {@linkplain SystemEJB#getBrReport(java.lang.String) 
-     * SystemEJB.getBrReport 
+     * See {@linkplain SystemEJB#getBrReport(java.lang.String)
+     * SystemEJB.getBrReport
      */
     BrReport getBrReport(String id);
 
     /**
-     * See {@linkplain SystemEJB#getBrForValidatingApplication(java.lang.String) 
+     * See {@linkplain SystemEJB#getBrForValidatingApplication(java.lang.String)
      * SystemEJB.getBrForValidatingApplication
      */
     List<BrValidation> getBrForValidatingApplication(String momentCode);
 
     /**
-     * See {@linkplain SystemEJB#getBrForValidatingService(java.lang.String, java.lang.String) 
+     * See {@linkplain SystemEJB#getBrForValidatingService(java.lang.String, java.lang.String)
      * SystemEJB.getBrForValidatingService
      */
     List<BrValidation> getBrForValidatingService(String momentCode, String requestTypeCode);
 
     /**
-     * See {@linkplain SystemEJB#getBrForValidatingTransaction(java.lang.String, java.lang.String, java.lang.String) 
-     * SystemEJB.getBrForValidatingTransaction 
+     * See {@linkplain SystemEJB#getBrForValidatingTransaction(java.lang.String, java.lang.String, java.lang.String)
+     * SystemEJB.getBrForValidatingTransaction
      */
     List<BrValidation> getBrForValidatingTransaction(
             String targetCode, String momentCode, String requestTypeCode);
 
     /**
-     * See {@linkplain SystemEJB#getBrForValidatingRrr(java.lang.String, java.lang.String) 
-     * SystemEJB.getBrForValidatingRrr 
+     * See {@linkplain SystemEJB#getBrForValidatingRrr(java.lang.String, java.lang.String)
+     * SystemEJB.getBrForValidatingRrr
      */
     List<BrValidation> getBrForValidatingRrr(String momentCode, String rrrType);
 
     /**
-     * See {@linkplain SystemEJB#checkRuleGetResultSingle(java.lang.String, java.util.HashMap) 
-     * SystemEJB.checkRuleGetResultSingle 
+     * See {@linkplain SystemEJB#checkRuleGetResultSingle(java.lang.String, java.util.HashMap)
+     * SystemEJB.checkRuleGetResultSingle
      */
     Result checkRuleGetResultSingle(
             String brName, HashMap<String, Serializable> parameters);
 
     /**
-     *See {@linkplain SystemEJB#checkRulesGetValidation(java.util.List, java.lang.String, java.util.HashMap) 
-     * SystemEJB.checkRulesGetValidation 
+     * See {@linkplain SystemEJB#checkRulesGetValidation(java.util.List, java.lang.String, java.util.HashMap)
+     * SystemEJB.checkRulesGetValidation
      */
     List<ValidationResult> checkRulesGetValidation(
             List<BrValidation> brListToValidate, String languageCode,
             HashMap<String, Serializable> parameters);
 
     /**
-     * See {@linkplain SystemEJB#validationSucceeded(java.util.List) 
-     * SystemEJB.validationSucceeded 
+     * See {@linkplain SystemEJB#validationSucceeded(java.util.List)
+     * SystemEJB.validationSucceeded
      */
     boolean validationSucceeded(List<ValidationResult> validationResultList);
 }

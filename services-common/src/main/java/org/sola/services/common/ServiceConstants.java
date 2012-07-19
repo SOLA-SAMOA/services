@@ -58,4 +58,5 @@ public class ServiceConstants {
     public final static String ADMINISTRATIVE_WS_NAMESPACE = "http://webservices.sola.org/administrative";
     public final static String ADMIN_WS_NAMESPACE = "http://webservices.sola.org/admin";
     public final static String TRANSACTION_TO_NAMESPACE = "http://webservices.sola.org/transferobjects/transaction/";
+    public final static String FILE_STREAMING_WS_NAMESPACE = "http://webservices.sola.org/filestreaming";
 }

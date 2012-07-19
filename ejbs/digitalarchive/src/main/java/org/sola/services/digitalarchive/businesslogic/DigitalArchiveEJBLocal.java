@@ -72,7 +72,7 @@ public interface DigitalArchiveEJBLocal extends AbstractEJBLocal {
      * See {@linkplain DigitalArchiveEJB#getFileBinary(java.lang.String)
      * AddressEJB.getFileBinary}.
      */
-    public FileBinary getFileBinary(String fileName);
+    public FileInfo getFileBinary(String fileName);
 
     /**
      * See {@linkplain DigitalArchiveEJB#getFileThumbnail(java.lang.String)

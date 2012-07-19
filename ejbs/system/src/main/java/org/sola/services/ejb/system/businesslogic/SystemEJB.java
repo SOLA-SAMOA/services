@@ -34,6 +34,7 @@ import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.sola.common.ConfigConstants;
 import org.sola.common.RolesConstants;
 import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
@@ -42,10 +43,7 @@ import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.search.businesslogic.SearchEJBLocal;
 import org.sola.services.ejb.system.br.Result;
-import org.sola.services.ejb.system.repository.entities.Br;
-import org.sola.services.ejb.system.repository.entities.BrCurrent;
-import org.sola.services.ejb.system.repository.entities.BrReport;
-import org.sola.services.ejb.system.repository.entities.BrValidation;
+import org.sola.services.ejb.system.repository.entities.*;
 
 /**
  * System EJB - Provides access to SOLA System data including business rules
@@ -80,7 +78,41 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
     @Override
     public BigDecimal getTaxRate() {
         // Note that the String constructor is perferred for BigDecimal
-        return new BigDecimal("0.15");
+        BigDecimal taxRate = new BigDecimal("0.075");
+        String taxRateStr = getSetting(ConfigConstants.TAX_RATE, taxRate.toString());
+        try {
+            taxRate = new BigDecimal(taxRateStr);
+        } catch (NumberFormatException ex) {
+        }
+        return taxRate;
+    }
+
+    /**
+     * Returns all configuration settings in the system.setting table.
+     */
+    @Override
+    public List<Setting> getAllSettings() {
+        return getRepository().getEntityList(Setting.class);
+    }
+
+    /**
+     * Retrieves the value for the named setting. Constants for each setting are available in
+     * {@linkplain  ConfigConstants}. If the setting does not exist, the default value for the
+     * setting is returned.
+     *
+     * @param name The name of the setting to retrieve
+     * @param defaultValue The default value for the setting if it no override value is recorded in
+     * the system.settings table.
+     * @return The override value for the setting or the defaultValue.
+     */
+    @Override
+    public String getSetting(String name, String defaultValue) {
+        String result = defaultValue;
+        Setting config = getRepository().getEntity(Setting.class, name);
+        if (config != null && config.getValue() != null) {
+            result = config.getValue();
+        }
+        return result;
     }
 
     /**

@@ -49,10 +49,14 @@ public class ConfigMapLayer extends AbstractReadOnlyEntity {
     private String id;
     @Column(name = "type_code")
     private String typeCode;
-    @Column(name = "wms_url")
-    private String wmsUrl;
+    @Column(name = "url")
+    private String url;
     @Column(name = "wms_layers")
     private String wmsLayers;
+    @Column(name = "wms_version")
+    private String wmsVersion;
+    @Column(name = "wms_format")
+    private String wmsFormat;
     @Column(name = "pojo_query_name")
     private String pojoQueryName;
     @Column(name = "pojo_query_name_for_select")
@@ -68,6 +72,10 @@ public class ConfigMapLayer extends AbstractReadOnlyEntity {
     private String title;
     @Column(name = "visible_in_start")
     private boolean visible;
+    @Column(name = "security_user")
+    private String securityUser;
+    @Column(name = "security_password")
+    private String securityPassword;
 
     public ConfigMapLayer() {
         super();
@@ -145,12 +153,12 @@ public class ConfigMapLayer extends AbstractReadOnlyEntity {
         this.wmsLayers = wmsLayers;
     }
 
-    public String getWmsUrl() {
-        return wmsUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setWmsUrl(String wmsUrl) {
-        this.wmsUrl = wmsUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public boolean isVisible() {
@@ -160,4 +168,38 @@ public class ConfigMapLayer extends AbstractReadOnlyEntity {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
+    public String getSecurityPassword() {
+        return securityPassword;
+    }
+
+    public void setSecurityPassword(String securityPassword) {
+        this.securityPassword = securityPassword;
+    }
+
+    public String getSecurityUser() {
+        return securityUser;
+    }
+
+    public void setSecurityUser(String securityUser) {
+        this.securityUser = securityUser;
+    }
+
+    public String getWmsFormat() {
+        return wmsFormat;
+    }
+
+    public void setWmsFormat(String wmsFormat) {
+        this.wmsFormat = wmsFormat;
+    }
+
+    public String getWmsVersion() {
+        return wmsVersion;
+    }
+
+    public void setWmsVersion(String wmsVersion) {
+        this.wmsVersion = wmsVersion;
+    }
+    
+    
 }

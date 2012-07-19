@@ -40,6 +40,7 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.sola.services.digitalarchive.repository.entities.Document;
 import org.sola.services.digitalarchive.repository.entities.FileBinary;
+import org.sola.services.digitalarchive.repository.entities.FileInfo;
 
 public class DigitalArchiveEJBIT extends AbstractEJBTest {
 
@@ -123,11 +124,11 @@ public class DigitalArchiveEJBIT extends AbstractEJBTest {
         System.out.println("Trying to get file from scan folder");
 
         DigitalArchiveEJBLocal instance = (DigitalArchiveEJBLocal) getEJBInstance(DigitalArchiveEJB.class.getSimpleName());
-        FileBinary result = instance.getFileBinary(fileName1);
+        FileInfo result = instance.getFileBinary(fileName1);
         assertNotNull(result);
 
         if (result != null) {
-            System.out.println("File size = " + result.getContent().length);
+            System.out.println("File Name = " + result.getName());
         } else {
             fail("Can't get file from shared folder");
         }
