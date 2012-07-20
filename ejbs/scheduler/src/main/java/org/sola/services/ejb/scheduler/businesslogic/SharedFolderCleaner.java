@@ -78,6 +78,7 @@ public class SharedFolderCleaner implements SharedFolderCleanerLocal {
      * Configure the service based on the configuration data available in the settings table
      */
     private void configureService() {
+        cleanFolder = false; 
         String cleanFolderFlag = systemEJB.getSetting(ConfigConstants.CLEAN_NETWORK_SCAN_FOLDER, "N");
         if (cleanFolderFlag.equalsIgnoreCase("Y")) {
             cleanFolder = true;
