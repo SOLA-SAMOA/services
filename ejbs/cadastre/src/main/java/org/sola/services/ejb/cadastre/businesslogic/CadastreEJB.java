@@ -84,6 +84,8 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
     public List<CadastreObject> getCadastreObjectByParts(String searchString) {
         Integer numberOfMaxRecordsReturned = 10;
         HashMap params = new HashMap();
+        // Replace / and \ with space to improve the search
+        searchString = searchString.replaceAll("\\\\|\\/", " "); 
         params.put("search_string", searchString);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
         return getRepository().getEntityList(CadastreObject.class,

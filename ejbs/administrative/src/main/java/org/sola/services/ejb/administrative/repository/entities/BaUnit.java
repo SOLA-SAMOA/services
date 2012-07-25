@@ -264,6 +264,10 @@ public class BaUnit extends AbstractVersionedEntity {
             HashMap<String, Serializable> params = new HashMap<String, Serializable>();
             if (this.getCadastreObjectList() != null && this.getCadastreObjectList().size() > 0) {
                 params.put("cadastreObjectId", this.getCadastreObjectList().get(0).getId());
+                // Set the default number as the parcel may not yet exist in the database if it 
+                // has been created as part of the property. 
+                result = this.getCadastreObjectList().get(0).getNameFirstpart() + "/"
+                        + this.getCadastreObjectList().get(0).getNameLastpart();
             }
             Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-baunit-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {

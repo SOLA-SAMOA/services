@@ -48,7 +48,7 @@ import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 @Table(name = "cadastre_object", schema = "cadastre")
 public class CadastreObject extends AbstractVersionedEntity {
 
-    public static final String QUERY_WHERE_SEARCHBYPARTS = "status_code= 'current' and "
+    public static final String QUERY_WHERE_SEARCHBYPARTS = "status_code = 'current' and "
             + "compare_strings(#{search_string}, name_firstpart || ' ' || name_lastpart)";
     public static final String QUERY_WHERE_SEARCHBYPOINT = "status_code= 'current' and "
             + "ST_Intersects(geom_polygon, ST_SetSRID(ST_Point(#{x}, #{y}), #{srid}))";
