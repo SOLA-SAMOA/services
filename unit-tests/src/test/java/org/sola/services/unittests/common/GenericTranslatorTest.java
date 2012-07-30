@@ -1,28 +1,26 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO).
- * All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
+ * reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
  *
- *    1. Redistributions of source code must retain the above copyright notice,this list
- *       of conditions and the following disclaimer.
- *    2. Redistributions in binary form must reproduce the above copyright notice,this list
- *       of conditions and the following disclaimer in the documentation and/or other
- *       materials provided with the distribution.
- *    3. Neither the name of FAO nor the names of its contributors may be used to endorse or
- *       promote products derived from this software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
+ * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
+ * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.unittests.common;
@@ -31,6 +29,7 @@ import org.sola.services.boundary.transferobjects.referencedata.RequestTypeTO;
 import org.sola.services.ejb.address.repository.entities.Address;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.*;
 import org.sola.services.ejb.application.repository.entities.RequestType;
 import org.sola.services.boundary.transferobjects.casemanagement.ServiceTO;
 import org.sola.services.ejb.application.repository.entities.Service;
@@ -40,14 +39,6 @@ import org.sola.services.boundary.transferobjects.casemanagement.PartyTO;
 import org.sola.services.ejb.party.repository.entities.Party;
 import org.sola.services.ejb.application.repository.entities.Application;
 import org.sola.services.boundary.transferobjects.casemanagement.ApplicationTO;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
-
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.sola.common.DateUtility;
 import org.sola.services.common.EntityAction;
 import org.sola.services.common.contracts.GenericTranslator;
@@ -93,7 +84,7 @@ public class GenericTranslatorTest {
         assertEquals(appTO.isFeePaid(), outApp.isFeePaid());
         assertEquals(appTO.getId(), outApp.getId());
         assertEquals(appTO.getLodgingDatetime(), outApp.getLodgingDatetime());
-        assertEquals(appTO.getLocation(), outApp.getLocation());
+        assertArrayEquals(appTO.getLocation(), outApp.getLocation());
         assertEquals(appTO.getNr(), outApp.getNr());
         assertEquals(appTO.getRowVersion(), outApp.getRowVersion());
         assertEquals(appTO.getStatusCode(), outApp.getStatusCode());
@@ -103,17 +94,17 @@ public class GenericTranslatorTest {
         assertEquals(appTO.getTotalFee(), outApp.getTotalFee());
 
         if (app != null) {
-           // assertEquals(app.getChangeAction(), outApp.getChangeAction());
+            // assertEquals(app.getChangeAction(), outApp.getChangeAction());
             assertEquals(app.getChangeUser(), outApp.getChangeUser());
         } else {
-           // assertEquals(Character.UNASSIGNED, outApp.getChangeAction());
+            // assertEquals(Character.UNASSIGNED, outApp.getChangeAction());
             assertNull(outApp.getChangeUser());
         }
 
         if (hasAgent) {
             assertNotNull(outApp.getAgent());
             if (app != null) {
-                if (app.getAgent().getId().equals(outApp.getAgent().getId()))  {
+                if (app.getAgent().getId().equals(outApp.getAgent().getId())) {
                     // Check the object references are the same
                     assertTrue(app.getAgent() == outApp.getAgent());
                 } else {
@@ -141,8 +132,8 @@ public class GenericTranslatorTest {
             assertNotNull(outApp.getServiceList());
             assertEquals(numServices, outApp.getServiceList().size());
             for (int i = 0; i < numServices; i++) {
-               // ? assertNotNull(outApp.getServiceList().get(i).getApplication());
-               // ? assertEquals(outApp, outApp.getServiceList().get(i).getApplication());
+                // ? assertNotNull(outApp.getServiceList().get(i).getApplication());
+                // ? assertEquals(outApp, outApp.getServiceList().get(i).getApplication());
                 if (app != null) {
                     // Used to verify the object in the outApp list is the same object as the
                     // one from the original app list. Double == checks the object reference
@@ -173,10 +164,10 @@ public class GenericTranslatorTest {
         assertEquals(partyTO.getTypeCode(), outParty.getTypeCode());
 
         if (party != null) {
-           // assertEquals(party.getChangeAction(), outParty.getChangeAction());
+            // assertEquals(party.getChangeAction(), outParty.getChangeAction());
             assertEquals(party.getChangeUser(), outParty.getChangeUser());
         } else {
-           // assertEquals(Character.UNASSIGNED, outParty.getChangeAction());
+            // assertEquals(Character.UNASSIGNED, outParty.getChangeAction());
             assertNull(outParty.getChangeUser());
         }
 
@@ -207,7 +198,7 @@ public class GenericTranslatorTest {
             assertEquals(party.getPhone(), outParty.getPhone());
             assertEquals(party.getPreferredCommunicationCode(), outParty.getPreferredCommunicationCode());
         } else {
-           // assertEquals(Character.UNASSIGNED, outParty.getChangeAction());
+            // assertEquals(Character.UNASSIGNED, outParty.getChangeAction());
             assertNull(outParty.getChangeUser());
             assertNull(outParty.getEmail());
             assertNull(outParty.getFax());
@@ -246,7 +237,7 @@ public class GenericTranslatorTest {
         }
 
         if (addr != null) {
-           // assertEquals(addr.getChangeAction(), outAddr.getChangeAction());
+            // assertEquals(addr.getChangeAction(), outAddr.getChangeAction());
             assertEquals(addr.getChangeUser(), outAddr.getChangeUser());
         } else {
             //assertEquals(Character.UNASSIGNED, outAddr.getChangeAction());
@@ -277,9 +268,9 @@ public class GenericTranslatorTest {
             assertEquals(service.getChangeUser(), outService.getChangeUser());
         } else {
             if (outService.getEntityAction() == EntityAction.DELETE) {
-             //   assertEquals('d', outService.getChangeAction());
+                //   assertEquals('d', outService.getChangeAction());
             } else {
-             //   assertEquals(Character.UNASSIGNED, outService.getChangeAction());
+                //   assertEquals(Character.UNASSIGNED, outService.getChangeAction());
             }
             assertNull(outService.getChangeUser());
         }
@@ -323,7 +314,7 @@ public class GenericTranslatorTest {
         assertEquals(app.isFeePaid(), appTO.isFeePaid());
         assertEquals(app.getId(), appTO.getId());
         assertEquals(app.getLodgingDatetime(), appTO.getLodgingDatetime());
-        assertEquals(app.getLocation(), appTO.getLocation());
+        assertArrayEquals(app.getLocation(), appTO.getLocation());
         assertEquals(app.getNr(), appTO.getNr());
         assertEquals(app.getRowVersion(), appTO.getRowVersion());
         assertEquals(app.getStatusCode(), appTO.getStatusCode());
@@ -344,15 +335,17 @@ public class GenericTranslatorTest {
             assertPartyTO(app.getContactPerson(), appTO.getContactPerson());
         }
 
+        assertServiceTOList(app.getServiceList(), appTO.getServiceList());
+    }
+
+    private void assertServiceTOList(List<Service> services, List<ServiceTO> serviceTOs) {
         if (numServices > 0) {
-            assertNotNull(appTO.getServiceList());
-            assertEquals(numServices, appTO.getServiceList().size());
+            assertNotNull(serviceTOs);
+            assertEquals(numServices, serviceTOs.size());
             for (int i = 0; i < numServices; i++) {
-                assertServiceTO(app.getServiceList().get(i), appTO.getServiceList().get(i));
+                assertServiceTO(services.get(i), serviceTOs.get(i));
             }
-
         }
-
     }
 
     private void assertPartyTO(Party party, PartyTO partyTO) {
@@ -442,7 +435,9 @@ public class GenericTranslatorTest {
         assertApplicationTO(app, result);
     }
 
-    /** Test toTO with a null entity */
+    /**
+     * Test toTO with a null entity
+     */
     @Test
     public void testToTO_NullEntity() {
         System.out.println("toTO - Null entity");
@@ -451,7 +446,9 @@ public class GenericTranslatorTest {
         assertNull(result);
     }
 
-    /** Test toTO with a list of strings and char characters */
+    /**
+     * Test toTO with a list of strings and char characters
+     */
     @Test
     public void testToTO_StringListAndChar() {
         System.out.println("toTO - String List and Char");
@@ -483,7 +480,9 @@ public class GenericTranslatorTest {
 
     }
 
-    /** Tests the fromTO methods of Generic Translator using an Application entity */
+    /**
+     * Tests the fromTO methods of Generic Translator using an Application entity
+     */
     @Test
     public void testFromTO_Application() {
         System.out.println("FromTO - Application");
@@ -497,7 +496,9 @@ public class GenericTranslatorTest {
         assertApplication(app, appTO, result);
     }
 
-    /** Test fromTO with a null TO */
+    /**
+     * Test fromTO with a null TO
+     */
     @Test
     public void testFromTO_NullTO() {
         System.out.println("FromTO - Null TO");
@@ -506,7 +507,9 @@ public class GenericTranslatorTest {
         assertNull(result);
     }
 
-    /** Test fromTO with a list of strings and char characters */
+    /**
+     * Test fromTO with a list of strings and char characters
+     */
     @Test
     public void testFromTO_StringListAndChar() {
         System.out.println("FromTO - String List and Char");
@@ -524,7 +527,9 @@ public class GenericTranslatorTest {
         assertRequestType(requestType, requestTypeTO, result);
     }
 
-    /** Test fromTO with a null entity */
+    /**
+     * Test fromTO with a null entity
+     */
     @Test
     public void testFromTO_NullEntity() {
         System.out.println("FromTO - Null Entity Simple");
@@ -542,7 +547,9 @@ public class GenericTranslatorTest {
         assertRequestType(null, requestTypeTO, result);
     }
 
-    /** Tests the fromTO methods of Generic Translator using an Application entity */
+    /**
+     * Tests the fromTO methods of Generic Translator using an Application entity
+     */
     @Test
     public void testFromTO_NullEntityApplication() {
         System.out.println("FromTO - Null Entity Application ");
@@ -556,7 +563,9 @@ public class GenericTranslatorTest {
         assertApplication(null, appTO, result);
     }
 
-    /** Tests that the entity in the list is updated and not replaced with a copy */
+    /**
+     * Tests that the entity in the list is updated and not replaced with a copy
+     */
     @Test
     public void testFromTO_ListUpdate() {
         System.out.println("FromTO - List Update");
@@ -572,7 +581,9 @@ public class GenericTranslatorTest {
         assertApplication(app, appTO, result);
     }
 
-    /** Tests that the entity in the list is updated and not replaced with a copy */
+    /**
+     * Tests that the entity in the list is updated and not replaced with a copy
+     */
     @Test
     public void testFromTO_ChangeAgent() {
         System.out.println("FromTO - Change Agent");
@@ -585,6 +596,42 @@ public class GenericTranslatorTest {
         appTO.getAgent().setId("changedAgentId");
         Application result = GenericTranslator.fromTO(appTO, Application.class, app);
         assertNotNull(result);
+        assertApplication(app, appTO, result);
+    }
+
+    @Test
+    public void testToTOList_FromTOList() {
+        System.out.println("ToTOList_FromTOList");
+        MockEntityFactory factory = new MockEntityFactory();
+        Application app = factory.createApplication();
+        List<ServiceTO> serviceTOs = GenericTranslator.toTOList(app.getServiceList(), ServiceTO.class);
+        assertNotNull(serviceTOs);
+
+        app.getServiceList().add(factory.createService("ser3", 3));
+
+        List<Service> result = GenericTranslator.fromTOList(serviceTOs, Service.class, app.getServiceList());
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        assertService(app.getServiceList().get(0), serviceTOs.get(0), result.get(0));
+        assertService(app.getServiceList().get(1), serviceTOs.get(1), result.get(1));
+        assertEquals("ser3", result.get(2).getId());
+    }
+
+    @Test
+    public void testByteArrayTranslation() {
+        System.out.println("ByteArrayTranslation");
+        MockEntityFactory factory = new MockEntityFactory();
+        Application app = factory.createApplication();
+        app.setLocation("abcd".getBytes()); 
+        ApplicationTO appTO = GenericTranslator.toTO(app, ApplicationTO.class);
+        assertNotNull(appTO);
+        assertEquals(app.getLocation().length, appTO.getLocation().length);
+        assertEquals("abcd", new String(appTO.getLocation()));
+        assertApplicationTO(app, appTO);
+        Application result = GenericTranslator.fromTO(appTO, Application.class, app);
+        assertNotNull(result);
+        assertEquals("abcd", new String(result.getLocation()));
+        assertEquals(app.getLocation().length, result.getLocation().length);
         assertApplication(app, appTO, result);
     }
 }
