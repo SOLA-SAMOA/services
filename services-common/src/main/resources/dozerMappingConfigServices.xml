@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <!-- Mappings used to configure the NonCumulativeListConverter. This converter takes the
+    entity list class and TO list class as a parameter to overcome the issue of Java type erasure. 
+    The order of the classes in the parameter field is not important. The converter will be used
+    on the named fields for both toTO and fromTO translation. Resolves issue #178 (Lighthouse) -->
+    <mapping> <!-- BaUnit -->
+        <class-a>org.sola.services.boundary.transferobjects.administrative.BaUnitTO</class-a>
+        <class-b>org.sola.services.ejb.administrative.repository.entities.BaUnit</class-b>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.administrative.repository.entities.Rrr,
+               org.sola.services.boundary.transferobjects.administrative.RrrTO">
+            <a>rrrList</a>
+            <b>rrrList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.cadastre.repository.entities.CadastreObject,
+               org.sola.services.boundary.transferobjects.cadastre.CadastreObjectTO">
+            <a>cadastreObjectList</a>
+            <b>cadastreObjectList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.administrative.repository.entities.BaUnitNotation,
+               org.sola.services.boundary.transferobjects.administrative.BaUnitNotationTO">
+            <a>baUnitNotationList</a>
+            <b>baUnitNotationList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.source.repository.entities.Source,
+               org.sola.services.boundary.transferobjects.casemanagement.SourceTO">
+            <a>sourceList</a>
+            <b>sourceList</b>
+        </field>
+    </mapping>  
+    <mapping> <!-- Application -->
+        <class-a>org.sola.services.boundary.transferobjects.casemanagement.ApplicationTO</class-a>
+        <class-b>org.sola.services.ejb.application.repository.entities.Application</class-b>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.application.repository.entities.Service,
+               org.sola.services.boundary.transferobjects.casemanagement.ServiceTO">
+            <a>serviceList</a>
+            <b>serviceList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.source.repository.entities.Source,
+               org.sola.services.boundary.transferobjects.casemanagement.SourceTO">
+            <a>sourceList</a>
+            <b>sourceList</b>
+        </field>
+    </mapping> 
+    <mapping> <!-- RRR -->
+        <class-a>org.sola.services.boundary.transferobjects.administrative.RrrTO</class-a>
+        <class-b>org.sola.services.ejb.administrative.repository.entities.Rrr</class-b>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.administrative.repository.entities.RrrShare,
+               org.sola.services.boundary.transferobjects.administrative.RrrShareTO">
+            <a>rrrShareList</a>
+            <b>rrrShareList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.party.repository.entities.Party,
+               org.sola.services.boundary.transferobjects.casemanagement.PartySummaryTO">
+            <a>rightHolderList</a>
+            <b>rightHolderList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.source.repository.entities.Source,
+               org.sola.services.boundary.transferobjects.casemanagement.SourceTO">
+            <a>sourceList</a>
+            <b>sourceList</b>
+        </field>
+    </mapping> 
+    <mapping> <!-- RRR Share-->
+        <class-a>org.sola.services.boundary.transferobjects.administrative.RrrShareTO</class-a>
+        <class-b>org.sola.services.ejb.administrative.repository.entities.RrrShare</class-b>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.party.repository.entities.Party,
+               org.sola.services.boundary.transferobjects.casemanagement.PartySummaryTO">
+            <a>rightHolderList</a>
+            <b>rightHolderList</b>
+        </field>
+    </mapping>
+    <mapping> <!-- Transaction Cadastre Change -->
+        <class-a>org.sola.services.boundary.transferobjects.transaction.TransactionCadastreChangeTO</class-a>
+        <class-b>org.sola.services.ejb.transaction.repository.entities.TransactionCadastreChange</class-b>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.cadastre.repository.entities.CadastreObject,
+               org.sola.services.boundary.transferobjects.cadastre.CadastreObjectTO">
+            <a>CadastreObjectList</a>
+            <b>CadastreObjectList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.cadastre.repository.entities.SurveyPoint,
+               org.sola.services.boundary.transferobjects.cadastre.SurveyPointTO">
+            <a>surveyPointList</a>
+            <b>surveyPointList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget,
+               org.sola.services.boundary.transferobjects.cadastre.CadastreObjectTargetTO">
+            <a>cadastreObjectTargetList</a>
+            <b>cadastreObjectTargetList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.transaction.repository.entities.TransactionSource,
+               org.sola.services.boundary.transferobjects.transaction.TransactionSourceTO">
+            <a>transactionSourceList</a>
+            <b>transactionSourceList</b>
+        </field>
+    </mapping>
+    <mapping> <!-- Transaction Cadastre Redefinition -->
+        <class-a>org.sola.services.boundary.transferobjects.transaction.TransactionCadastreRedefinitionTO</class-a>
+        <class-b>org.sola.services.ejb.transaction.repository.entities.TransactionCadastreRedefinition</class-b>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTargetRedefinition,
+               org.sola.services.boundary.transferobjects.cadastre.CadastreObjectTargetRedefinitionTO">
+            <a>cadastreObjectTargetList</a>
+            <b>cadastreObjectTargetList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="oorg.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget,
+               org.sola.services.boundary.transferobjects.cadastre.CadastreObjectNodeTargetTO">
+            <a>cadastreObjectNodeTargetList</a>
+            <b>cadastreObjectNodeTargetList</b>
+        </field>
+        <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
+               custom-converter-param="org.sola.services.ejb.transaction.repository.entities.TransactionSource,
+               org.sola.services.boundary.transferobjects.transaction.TransactionSourceTO">
+            <a>transactionSourceList</a>
+            <b>transactionSourceList</b>
+        </field>
+    </mapping>
+</mappings>
