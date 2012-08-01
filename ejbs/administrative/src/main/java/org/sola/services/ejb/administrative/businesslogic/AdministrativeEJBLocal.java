@@ -28,14 +28,7 @@ package org.sola.services.ejb.administrative.businesslogic;
 import java.util.List;
 import javax.ejb.Local;
 import org.sola.services.common.ejbs.AbstractSolaTransactionEJBLocal;
-import org.sola.services.ejb.administrative.repository.entities.BaUnit;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitRelType;
-import org.sola.services.ejb.administrative.repository.entities.BaUnitType;
-import org.sola.services.ejb.administrative.repository.entities.ChangeStatusType;
-import org.sola.services.ejb.administrative.repository.entities.MortgageType;
-import org.sola.services.ejb.administrative.repository.entities.RrrGroupType;
-import org.sola.services.ejb.administrative.repository.entities.RrrType;
-import org.sola.services.ejb.administrative.repository.entities.SourceBaUnitRelationType;
+import org.sola.services.ejb.administrative.repository.entities.*;
 
 /**
  * Provides local interface for the {@linkplain AdministrativeEJB}
@@ -128,4 +121,19 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
      * AdministrativeEJB.cancelBaUnitTermination}
      */
     BaUnit cancelBaUnitTermination(String baUnitId);
+    
+      /**
+     * see {@linkplain AdministrativeEJB#getBaUnitAreas(java.lang.String)
+     * AdministrativeEJB.getBaUnitAreas}
+     */
+    BaUnitArea getBaUnitAreas(String baUnitId);
+    
+    /**
+     * see {@linkplain AdministrativeEJB#createBaUnitArea(java.lang.String,
+     * org.sola.services.ejb.administrative.repository.entities.BaUnitArea)
+     * AdministrativeEJB.createBAUnitArea}
+     */
+    BaUnitArea createBaUnitArea(String baUnitId, BaUnitArea baUnitArea);
+
+
 }

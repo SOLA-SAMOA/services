@@ -27,15 +27,13 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
-import org.sola.services.common.repository.AccessFunctions;
-import org.sola.services.common.repository.ChildEntityList;
-import org.sola.services.common.repository.ExternalEJB;
-import org.sola.services.common.repository.RepositoryUtility;
+import org.sola.services.common.repository.*;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
@@ -109,6 +107,8 @@ public class BaUnit extends AbstractVersionedEntity {
     @Column(insertable=false, updatable=false, name = "pending_action_code")
     @AccessFunctions(onSelect = "administrative.get_ba_unit_pending_action(id)")
     private String pendingActionCode;
+//    @ChildEntityList(parentIdField = "baUnitId")
+//    private List<BaUnitArea> baunitareaList;
     
     public BaUnit() {
         super();
@@ -243,6 +243,16 @@ public class BaUnit extends AbstractVersionedEntity {
         this.pendingActionCode = pendingActionCode;
     }
     
+    
+//    public List<BaUnitArea> getBaUnitAreaList() {
+//        baunitareaList = baunitareaList == null ? new ArrayList<BaUnitArea>() : baunitareaList;
+//        return baunitareaList;
+//    }
+//
+//    public void setBaUnitAreaList(List<BaUnitArea> baunitareaList) {
+//        this.baunitareaList = baunitareaList;
+//    }
+ 
     public Boolean isLocked() {
         if (locked == null) {
             locked = false;

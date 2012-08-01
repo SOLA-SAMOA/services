@@ -416,4 +416,48 @@ public class AdministrativeEJB extends AbstractEJB
 
         return getBaUnitById(baUnitId);
     }
+    
+      /**
+     * Retrieves the actions a specific user has performed against any application during a specific
+     * period.
+     *
+     * @param baUnitId
+     * @return The list of areas of the baunit
+     */
+    @Override
+    public BaUnitArea getBaUnitAreas(String baUnitId) {
+        BaUnitArea result = null;
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitArea.QUERY_WHERE_BYUNITAREAID);
+        params.put(BaUnitArea.QUERY_WHERE_BYBAUNITID, baUnitId);
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, BaUnitArea.QUERY_ORDER_BYCHANGETIME);
+        params.put(CommonSqlProvider.PARAM_LIMIT_PART, 1);
+        result = getRepository().getEntity(BaUnitArea.class, params);
+        
+        
+        System.out.println("PARAMS QUERY: "+params);
+        return result;
+    }
+    
+    
+    /**
+     * Creates a new BA Unit Area 
+     * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE} role.</p>
+     *
+     * @param baUnitId The identifier of the area the BA Unit is being created as part of
+     * @param baUnitAreaTO The details of the BA Unit to create
+     * @return The new BA Unit Area
+     * @see #saveBaUnit(java.lang.String,
+     * org.sola.services.ejb.administrative.repository.entities.BaUnitArea) createBaUnit
+     */
+    @Override
+//    @RolesAllowed(RolesConstants.ADMINISTRATIVE_BA_UNIT_SAVE)
+    public BaUnitArea createBaUnitArea(String baUnitId, BaUnitArea baUnitArea) {
+        if (baUnitArea == null) {
+            return null;
+        }
+        return getRepository().saveEntity(baUnitArea);
+    }
+    
+    
 }
