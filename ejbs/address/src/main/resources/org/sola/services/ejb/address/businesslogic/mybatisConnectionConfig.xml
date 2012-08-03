@@ -14,7 +14,7 @@
         <typeHandler javaType='java.lang.Character' handler='org.sola.services.common.repository.CharTypeHandler'/>
     </typeHandlers>
     
-    <environments default='specificDataSource'>
+    <environments default='sharedDataSource'>
         <environment id='sharedDataSource'>
             <transactionManager type='MANAGED'/>
             <dataSource type='JNDI'>

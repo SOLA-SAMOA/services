@@ -35,9 +35,9 @@ option applies only if the new code is made subject to such option by the copyri
             <property name="connectionAttributes" value=";create=true"/>
         </jdbc-connection-pool>
         <jdbc-connection-pool driver-classname="" datasource-classname="org.postgresql.ds.PGConnectionPoolDataSource" res-type="javax.sql.ConnectionPoolDataSource" description="" name="sola">
-            <property name="portNumber" value="${glassfish.jdbc-connection-pool.port}"></property>
             <property name="databaseName" value="${glassfish.jdbc-connection-pool.database}"></property>
-            <property description="exlprcadreg3.ext.fao.org" name="serverName" value="${glassfish.jdbc-connection-pool.server}"></property>
+            <property name="portNumber" value="${glassfish.jdbc-connection-pool.port}"></property>
+            <property name="serverName" value="${glassfish.jdbc-connection-pool.server}"></property>
             <property name="user" value="${glassfish.jdbc-connection-pool.username}"></property>
             <property name="password" value="${glassfish.jdbc-connection-pool.password}"></property>
         </jdbc-connection-pool>

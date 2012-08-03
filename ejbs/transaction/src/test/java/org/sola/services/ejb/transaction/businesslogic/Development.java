@@ -31,19 +31,15 @@
  */
 package org.sola.services.ejb.transaction.businesslogic;
 
-import java.util.ArrayList;
 import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 import org.junit.After;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
-import org.sola.services.common.contracts.GenericTranslator;
-import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectTarget;
-import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
-import org.sola.services.ejb.transaction.repository.entities.TransactionCadastreChange;
-import static org.junit.Assert.*;
 import org.sola.services.common.test.AbstractEJBTest;
-import org.sola.services.ejb.transaction.repository.entities.TransactionSource;
+import org.sola.services.ejb.cadastre.repository.entities.SurveyPoint;
+import org.sola.services.ejb.transaction.repository.entities.TransactionCadastreChange;
 
 /**
  *
@@ -75,32 +71,14 @@ public class Development extends AbstractEJBTest {
         UserTransaction tx = getUserTransaction();
         try {
             tx.begin();
-            System.out.println("Test getTransactionByServiceId");
-            TransactionBasic result = instance.createTransaction(null, TransactionBasic.class);
-            assertNotNull(result);
-            String transactionId = result.getId();
-            System.out.println("Transaction created with service id null. Transaction id is:"
-                    + transactionId);
-            
+            String transactionId = "7ce22c22-21e1-449a-820f-8533233515a7";
             System.out.println("Test getTransactionById for id:" + transactionId);
-            result = instance.getTransactionById(transactionId, TransactionBasic.class);
-            assertNotNull(result);
-            System.out.println("Transaction found.");
-            System.out.println("Test getTransactionById for non existing id");
-            result = instance.getTransactionById("supposed to return null", TransactionBasic.class);
-            assertNull(result);
-            System.out.println("Succeded");
-            TransactionCadastreChange trns = new TransactionCadastreChange();
-            trns.setFromServiceId("4012");
-            CadastreObjectTarget newcoT = new CadastreObjectTarget();
-            newcoT.setCadastreObjectId("4694627");
-            trns.setCadastreObjectTargetList(new ArrayList<CadastreObjectTarget>());
-            trns.getCadastreObjectTargetList().add(newcoT);
             
-            trns.setTransactionSourceList(new ArrayList<TransactionSource>());
-            TransactionSource trnsSource = new TransactionSource();
-            trnsSource.setSourceId("80348a41-ace6-41f7-8e20-9f631b5b6e62");
-            trns.getTransactionSourceList().add(trnsSource);
+            TransactionCadastreChange trns = 
+                    instance.getTransactionById(transactionId, TransactionCadastreChange.class);
+            SurveyPoint surveyPoint = trns.getSurveyPointList().get(0);
+            surveyPoint.setBoundary(false);
+            //surveyPoint.setEntityAction(EntityAction.UPDATE);
             instance.saveTransaction(trns, "cadastreChange", "en");
             tx.commit();
         } catch (Exception ex) {

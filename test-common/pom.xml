@@ -17,15 +17,16 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <glassfish.jdbc-connection-pool.server>ubtserver</glassfish.jdbc-connection-pool.server>
+        <!-- <glassfish.jdbc-connection-pool.server>ubtserver</glassfish.jdbc-connection-pool.server>
         <glassfish.jdbc-connection-pool.database>sola</glassfish.jdbc-connection-pool.database>
         <glassfish.jdbc-connection-pool.port>5432</glassfish.jdbc-connection-pool.port>
         <glassfish.jdbc-connection-pool.username>postgres</glassfish.jdbc-connection-pool.username>
         <glassfish.jdbc-connection-pool.password>PRGS143</glassfish.jdbc-connection-pool.password>
+        -->
         <!-- If any of the data values above are changed, or any of the configuration files are
         updated, this value must be incremented to ensure the new values and configuration are
         used when executing tests -->
-        <sola-test-common.configuration.version>v026</sola-test-common.configuration.version>
+        <sola-test-common.configuration.version>v032</sola-test-common.configuration.version>
     </properties>
 
     <dependencies>

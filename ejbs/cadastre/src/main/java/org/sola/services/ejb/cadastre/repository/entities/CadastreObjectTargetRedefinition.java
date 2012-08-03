@@ -47,11 +47,11 @@ public class CadastreObjectTargetRedefinition extends CadastreObjectTarget{
     onChange = "get_geometry_with_srid(#{geomPolygon})")
     private byte[] geomPolygon;
 
-    @Column(name = "geom_polygon_current", updatable=false, insertable=false)
-    @AccessFunctions(onSelect = "(select st_asewkb(geom_polygon) from cadastre.cadastre_object"
-            + " where id = cadastre_object_id)")
-    private byte[] geomPolygonCurrent;
-
+//    @Column(name = "geom_polygon_current", updatable=false, insertable=false)
+//    @AccessFunctions(onSelect = "(select st_asewkb(geom_polygon) from cadastre.cadastre_object"
+//            + " where id = cadastre_object_id)")
+//    private byte[] geomPolygonCurrent;
+//
     public byte[] getGeomPolygon() {
         return geomPolygon;
     }
@@ -60,11 +60,11 @@ public class CadastreObjectTargetRedefinition extends CadastreObjectTarget{
         this.geomPolygon = geomPolygon;
     }
 
-    public byte[] getGeomPolygonCurrent() {
-        return geomPolygonCurrent;
-    }
-
-    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) {
-        this.geomPolygonCurrent = geomPolygonCurrent;
-    }
+//    public byte[] getGeomPolygonCurrent() {
+//        return geomPolygonCurrent;
+//    }
+//
+//    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) {
+//        this.geomPolygonCurrent = geomPolygonCurrent;
+//    }
 }

@@ -37,6 +37,7 @@ import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.sola.services.common.EntityAction;
@@ -67,6 +68,7 @@ public class AddressEJBIT extends AbstractEJBTest {
      * Performs CRUD tests for the Address EJB
      */
     @Test
+    @Ignore
     public void testSaveAddress() throws Exception {
 
         System.out.println("testSaveAddress");

@@ -35,6 +35,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
@@ -53,6 +54,19 @@ public class CadastreObjectTarget extends AbstractVersionedEntity{
     @Id
     @Column(name = "transaction_id")
     private String transactionId;
+
+    @Column(name = "geom_polygon_current", updatable=false, insertable=false)
+    @AccessFunctions(onSelect = "(select st_asewkb(geom_polygon) from cadastre.cadastre_object"
+            + " where id = cadastre_object_id)")
+    private byte[] geomPolygonCurrent;
+
+    public byte[] getGeomPolygonCurrent() {
+        return geomPolygonCurrent;
+    }
+
+    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) {
+        this.geomPolygonCurrent = geomPolygonCurrent;
+    }
 
     public String getCadastreObjectId() {
         return cadastreObjectId;

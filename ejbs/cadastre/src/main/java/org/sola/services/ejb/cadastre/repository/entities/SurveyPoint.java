@@ -34,7 +34,6 @@ package org.sola.services.ejb.cadastre.repository.entities;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.LocalInfo;
 import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
