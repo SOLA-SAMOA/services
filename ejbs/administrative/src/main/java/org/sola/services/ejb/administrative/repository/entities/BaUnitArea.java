@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
@@ -29,6 +30,17 @@ public class BaUnitArea extends AbstractVersionedEntity {
     private BigDecimal size;
     @Column(name = "type_code")
     private String typeCode;
+    @Column(insertable=false, updatable=false, name = "calculated_area_size")
+    @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(ba_unit_id)")
+    private BigDecimal calculatedAreaSize;
+
+    public BigDecimal getCalculatedAreaSize() {
+        return calculatedAreaSize;
+    }
+
+    public void setCalculatedAreaSize(BigDecimal calculatedAreaSize) {
+        this.calculatedAreaSize = calculatedAreaSize;
+    }
     
     public String getBaUnitId() {
         return baUnitId;
