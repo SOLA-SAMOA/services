@@ -27,6 +27,7 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -107,6 +108,17 @@ public class BaUnit extends AbstractVersionedEntity {
     @Column(insertable=false, updatable=false, name = "pending_action_code")
     @AccessFunctions(onSelect = "administrative.get_ba_unit_pending_action(id)")
     private String pendingActionCode;
+
+    public BigDecimal getCalculatedAreaSize() {
+        return calculatedAreaSize;
+    }
+
+    public void setCalculatedAreaSize(BigDecimal calculatedAreaSize) {
+        this.calculatedAreaSize = calculatedAreaSize;
+    }
+    @Column(insertable=false, updatable=false, name = "calculated_area_size")
+    @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(id)")
+    private BigDecimal calculatedAreaSize;
     
     public BaUnit() {
         super();
