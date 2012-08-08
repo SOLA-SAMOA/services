@@ -101,11 +101,13 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      * SRID used by SOLA.
      */
     @Override
-    public CadastreObject getCadastreObjectByPoint(double x, double y, int srid) {
+    public CadastreObject getCadastreObjectByPoint(
+            double x, double y, int srid, String typeCode) {
         HashMap params = new HashMap();
         params.put("x", x);
         params.put("y", y);
         params.put("srid", srid);
+        params.put("type_code", typeCode);
         return getRepository().getEntity(
                 CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYPOINT, params);
     }
@@ -237,7 +239,8 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      */
     @Override
     public CadastreObjectNode getCadastreObjectNode(
-            double xMin, double yMin, double xMax, double yMax, int srid) {
+            double xMin, double yMin, double xMax, double yMax, int srid, 
+            String cadastreObjectType) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART,
                 CadastreObjectNode.QUERY_GET_BY_RECTANGLE_FROM_PART);
@@ -249,11 +252,13 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         params.put("maxx", xMax);
         params.put("maxy", yMax);
         params.put("srid", srid);
+        params.put("cadastre_object_type", cadastreObjectType);
         CadastreObjectNode cadastreObjectNode = getRepository().getEntity(
                 CadastreObjectNode.class, params);
         if (cadastreObjectNode != null) {
             params.clear();
             params.put("geom", cadastreObjectNode.getGeom());
+            params.put("type_code", cadastreObjectType);
             cadastreObjectNode.setCadastreObjectList(getRepository().getEntityList(
                     CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params));
         }
@@ -273,7 +278,8 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      */
     @Override
     public CadastreObjectNode getCadastreObjectNodePotential(
-            double xMin, double yMin, double xMax, double yMax, int srid) {
+            double xMin, double yMin, double xMax, double yMax, int srid,
+            String cadastreObjectType) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART,
                 CadastreObjectNode.QUERY_GET_BY_RECTANGLE_POTENTIAL_FROM_PART);
@@ -283,11 +289,13 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         params.put("maxx", xMax);
         params.put("maxy", yMax);
         params.put("srid", srid);
+        params.put("cadastre_object_type", cadastreObjectType);
         CadastreObjectNode cadastreObjectNode = getRepository().getEntity(
                 CadastreObjectNode.class, params);
         if (cadastreObjectNode != null) {
             params.clear();
             params.put("geom", cadastreObjectNode.getGeom());
+            params.put("type_code", cadastreObjectType);
             cadastreObjectNode.setCadastreObjectList(getRepository().getEntityList(
                     CadastreObject.class, CadastreObject.QUERY_WHERE_SEARCHBYGEOM, params));
         }

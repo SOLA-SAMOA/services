@@ -50,7 +50,8 @@ public class CadastreObject extends AbstractVersionedEntity {
 
     public static final String QUERY_WHERE_SEARCHBYPARTS = "status_code= 'current' and "
             + "compare_strings(#{search_string}, name_firstpart || ' ' || name_lastpart)";
-    public static final String QUERY_WHERE_SEARCHBYPOINT = "status_code= 'current' and "
+    public static final String QUERY_WHERE_SEARCHBYPOINT = "type_code= #{type_code} "
+            + "and status_code= 'current' and "
             + "ST_Intersects(geom_polygon, ST_SetSRID(ST_Point(#{x}, #{y}), #{srid}))";
     public static final String QUERY_WHERE_SEARCHBYBAUNIT = "id in "
             + " (select spatial_unit_id from administrative.ba_unit_contains_spatial_unit "
@@ -60,7 +61,8 @@ public class CadastreObject extends AbstractVersionedEntity {
             + " (select id from transaction.transaction where from_service_id = #{service_id}) ";
     public static final String QUERY_WHERE_SEARCHBYTRANSACTION =
             "transaction_id = #{transaction_id}";
-    public static final String QUERY_WHERE_SEARCHBYGEOM = "status_code= 'current' and "
+    public static final String QUERY_WHERE_SEARCHBYGEOM = "type_code=#{type_code} "
+            + "and status_code= 'current' and "
             + "ST_DWithin(geom_polygon, get_geometry_with_srid(#{geom}), "
             + "system.get_setting('map-tolerance')::double precision)";
 
