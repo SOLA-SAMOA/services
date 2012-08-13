@@ -122,7 +122,7 @@
             <b>cadastreObjectTargetList</b>
         </field>
         <field custom-converter="org.sola.common.mapping.NonCumulativeListConverter"
-               custom-converter-param="oorg.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget,
+               custom-converter-param="org.sola.services.ejb.cadastre.repository.entities.CadastreObjectNodeTarget,
                org.sola.services.boundary.transferobjects.cadastre.CadastreObjectNodeTargetTO">
             <a>cadastreObjectNodeTargetList</a>
             <b>cadastreObjectNodeTargetList</b>
