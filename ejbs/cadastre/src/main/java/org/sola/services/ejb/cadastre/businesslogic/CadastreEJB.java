@@ -370,6 +370,7 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
                 if (spUnit == null) {
                     // Create a new sp unit and set its level
                     spUnit = new SpatialUnit();
+                    spUnit.setId(change.getId()); 
                     spUnit.setLevelId(change.getLevelId());
                 }
                 if (change.isDeleteOnApproval()) {
@@ -404,10 +405,6 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
                 CommonSqlProvider.PARAM_WHERE_PART,
                 SpatialUnitChange.QUERY_WHERE_BYTRANSACTIONID);
         params.put(SpatialUnitChange.QUERY_PARAMETER_TRANSACTIONID, transactionId);
-
-
-
-
         return getRepository().getEntityList(SpatialUnitChange.class, params);
     }
 }

@@ -78,6 +78,7 @@ public class SpatialUnit extends AbstractVersionedEntity {
     }
 
     public String getId() {
+        id = id == null ? generateId() : id;
         return id;
     }
 
