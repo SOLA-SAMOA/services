@@ -1,26 +1,30 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
- * reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations
+ * (FAO). All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, are permitted
- * provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
- * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
- * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
- * contributors may be used to endorse or promote products derived from this software without
- * specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this
+ * list of conditions and the following disclaimer. 2. Redistributions in binary
+ * form must reproduce the above copyright notice,this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.ejb.source.businesslogic;
@@ -49,7 +53,8 @@ import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusT
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
- * EJB to manage data in the source schema. Supports retrieving and saving source details.
+ * EJB to manage data in the source schema. Supports retrieving and saving
+ * source details.
  */
 @Stateless
 @EJB(name = "java:global/SOLA/SourceEJBLocal", beanInterface = SourceEJBLocal.class)
@@ -63,11 +68,12 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     SystemEJBLocal systemEJB;
 
     /**
-     * Sets the entity package for the EJB to Source.class.getPackage().getName(). This is used to
-     * restrict the save and retrieval of Code Entities.
+     * Sets the entity package for the EJB to
+     * Source.class.getPackage().getName(). This is used to restrict the save
+     * and retrieval of Code Entities.
      *
-     * @see AbstractEJB#getCodeEntity(java.lang.Class, java.lang.String, java.lang.String)
-     * AbstractEJB.getCodeEntity
+     * @see AbstractEJB#getCodeEntity(java.lang.Class, java.lang.String,
+     * java.lang.String) AbstractEJB.getCodeEntity
      * @see AbstractEJB#getCodeEntityList(java.lang.Class, java.lang.String)
      * AbstractEJB.getCodeEntityList
      * @see
@@ -90,10 +96,23 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
         params.put(Source.QUERY_PARAMETER_TRANSACTIONID, transactionId);
         return getRepository().getEntityList(Source.class, params);
     }
+    
+    /**
+     * Retrieves a list of power of attorney created by the specified transaction.
+     *
+     * @param transactionId Identifier of the transaction.
+     */
+    private List<PowerOfAttorney> getPowerOfAttorneyByTransactionId(String transactionId) {
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_QUERY, PowerOfAttorney.QUERY_GET_BY_TRANSACTION_ID);
+        params.put(PowerOfAttorney.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        return getRepository().getEntityList(PowerOfAttorney.class, params);
+    }
 
     /**
-     * Can be used to create a new source or save any updates to the details of an existing source.
-     * <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE} role.</p>
+     * Can be used to create a new source or save any updates to the details of
+     * an existing source. <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE}
+     * role.</p>
      *
      * @param source The source to create/save
      * @return The source after the save is completed.
@@ -105,8 +124,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     }
 
     /**
-     * Retrieves all source.source records from the database.<p>No role is required to execute this
-     * method.</p>
+     * Retrieves all source.source records from the database.<p>No role is
+     * required to execute this method.</p>
      */
     @Override
     public List<Source> getAllsources() {
@@ -114,8 +133,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     }
 
     /**
-     * Returns a list of sources matching the supplied ids. <p>No role is required to execute this
-     * method.</p>
+     * Returns a list of sources matching the supplied ids. <p>No role is
+     * required to execute this method.</p>
      *
      * @param sourceIds The list of source ids
      */
@@ -136,10 +155,16 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
         return getRepository().getEntity(Source.class, id);
     }
 
+    @Override
+    public PowerOfAttorney getPowerOfAttorneyById(String id) {
+        return getRepository().getEntity(PowerOfAttorney.class, id);
+    }
+
     /**
      * Retrieves all source.source_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<SourceType> getSourceTypes(String languageCode) {
@@ -149,7 +174,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     /**
      * Retrieves all source.availability_status_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<AvailabilityStatus> getAvailabilityStatusList(String languageCode) {
@@ -159,7 +185,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     /**
      * Retrieves all source.presentation_form_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<PresentationFormType> getPresentationFormTypes(String languageCode) {
@@ -167,17 +194,20 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     }
 
     /**
-     * Performs the approval action against all sources created by the specified transaction.
-     * Triggered as part of the application approval action.
+     * Performs the approval action against all sources created by the specified
+     * transaction. Triggered as part of the application approval action.
      *
      * <p>Requires the {@linkplain RolesConstants#APPLICATION_APPROVE} role.</p>
      *
      * @param transactionId The identifier of the transaction.
      * @param approvedStatus The status to update the source records with
-     * @param validateOnly Indicates only validation of the sources should occur.
-     * @param languageCode Language code to use for localization of validation messages
-     * @return The validation messages resulting from the approval action. Note that currently there
-     * are no validation rules for sources so this list is always empty.
+     * @param validateOnly Indicates only validation of the sources should
+     * occur.
+     * @param languageCode Language code to use for localization of validation
+     * messages
+     * @return The validation messages resulting from the approval action. Note
+     * that currently there are no validation rules for sources so this list is
+     * always empty.
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_APPROVE)
@@ -202,17 +232,19 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
 
     /**
      * Associates a source with a transaction and sets the source status to
-     * <code>pending</code>. Also validates the source to ensure it does not have any other pending
-     * transaction associations. Note that the original source record is duplicated. Will also
-     * create a new transaction record if one does not already exist for the service.
+     * <code>pending</code>. Also validates the source to ensure it does not
+     * have any other pending transaction associations. Note that the original
+     * source record is duplicated. Will also create a new transaction record if
+     * one does not already exist for the service.
      *
-     * <p>Requires the {@linkplain RolesConstants#SOURCE_TRANSACTIONAL} role.</p>
+     * <p>Requires the {@linkplain RolesConstants#SOURCE_TRANSACTIONAL}
+     * role.</p>
      *
-     * @param serviceId Identifier of the service the source relates to. Used to determine the
-     * transaction to associate the source with.
+     * @param serviceId Identifier of the service the source relates to. Used to
+     * determine the transaction to associate the source with.
      * @param sourceId Identifier of the source to validate
-     * @throws SOLAValidationException If the source already has a pending association with another
-     * transaction.
+     * @throws SOLAValidationException If the source already has a pending
+     * association with another transaction.
      * @throws SOLAException If the source does not exist
      */
     @Override
@@ -250,10 +282,46 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     }
 
     /**
+     * Associates a Power of attorney with a transaction and sets the related
+     * source status to
+     * <code>pending</code>. Also validates the source to ensure it does not
+     * have any other pending transaction associations. Note that the original
+     * source record is duplicated. Will also create a new transaction record if
+     * one does not already exist for the service.
+     *
+     * <p>Requires the {@linkplain RolesConstants#SOURCE_TRANSACTIONAL}
+     * role.</p>
+     *
+     * @param serviceId Identifier of the service the source relates to. Used to
+     * determine the transaction to associate the source with.
+     * @param powerOfAttorney Power of attorney object containing related
+     * source.
+     * @throws SOLAValidationException If the source already has a pending
+     * association with another transaction.
+     * @throws SOLAException If the source does not exist
+     */
+    @RolesAllowed(RolesConstants.SOURCE_TRANSACTIONAL)
+    @Override
+    public PowerOfAttorney attachPowerOfAttorneyToTransaction(String serviceId,
+            PowerOfAttorney powerOfAttorney, String languageCode) {
+        if (powerOfAttorney == null || powerOfAttorney.getSource() == null) {
+            return null;
+        }
+
+        Source source = attachSourceToTransaction(serviceId, 
+                powerOfAttorney.getSource().getId(), languageCode);
+        
+        powerOfAttorney.setSource(source);
+        powerOfAttorney.setId(source.getId());
+        return getRepository().saveEntity(powerOfAttorney);
+    }
+
+    /**
      * Deletes the specified source if the status of the source is
      * <code>pending</code>.
      *
-     * <p>Requires the {@linkplain RolesConstants#SOURCE_TRANSACTIONAL} role.</p>
+     * <p>Requires the {@linkplain RolesConstants#SOURCE_TRANSACTIONAL}
+     * role.</p>
      *
      * @param sourceId Identifier of the source to detach from the transaction.
      * @return true if the source is successfully deleted.
@@ -280,8 +348,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
     }
 
     /**
-     * Retrieves all sources associated with the service. Uses the transaction associated with the
-     * service to determine the sources to return.
+     * Retrieves all sources associated with the service. Uses the transaction
+     * associated with the service to determine the sources to return.
      *
      * @param serviceId Identifier of the service
      * @see #getSourceByTransactionId(java.lang.String) getSourceByTransactionId
@@ -301,11 +369,13 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
      * Executes the business rules for validating the source.
      *
      * @param sourceId The id of the source to be validated.
-     * @param languageCode The language code to use for localizing the validation messages.
+     * @param languageCode The language code to use for localizing the
+     * validation messages.
      * @return The list of validation messages.
      * @see
      * org.sola.services.ejb.system.businesslogic.SystemEJB#getBrForValidatingTransaction(java.lang.String,
-     * java.lang.String, java.lang.String) SystemEJB.getBrForValidatingTransaction
+     * java.lang.String, java.lang.String)
+     * SystemEJB.getBrForValidatingTransaction
      * @see
      * org.sola.services.ejb.system.businesslogic.SystemEJB#checkRuleGetValidation(org.sola.services.ejb.system.repository.entities.BrValidation,
      * java.lang.String, java.util.HashMap) SystemEJB.checkRuleGetValidation
@@ -321,4 +391,22 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
                 brValidationList, languageCode, params);
     }
 
+    /**
+     * Retrieves all Power of attorneys associated with the service. Uses the transaction
+     * associated with the service to determine the attorneys to return.
+     *
+     * @param serviceId Identifier of the service
+     * @see #getPowerOfAttorneyByTransactionId(java.lang.String) getPowerOfAttorneyByTransactionId
+     */
+    @Override
+    public List<PowerOfAttorney> getPowerOfAttorneyByServiceId(String serviceId) {
+
+        List<PowerOfAttorney> powerOfAttorneyList = new ArrayList<PowerOfAttorney>();
+        TransactionBasic transaction =
+                transactionEJB.getTransactionByServiceId(serviceId, false, TransactionBasic.class);
+        if (transaction != null) {
+            powerOfAttorneyList = getPowerOfAttorneyByTransactionId(transaction.getId());
+        }
+        return powerOfAttorneyList;
+    }
 }

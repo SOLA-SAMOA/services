@@ -28,10 +28,7 @@ package org.sola.services.ejb.source.businesslogic;
 import java.util.List;
 import javax.ejb.Local;
 import org.sola.services.common.ejbs.AbstractSolaTransactionEJBLocal;
-import org.sola.services.ejb.source.repository.entities.AvailabilityStatus;
-import org.sola.services.ejb.source.repository.entities.PresentationFormType;
-import org.sola.services.ejb.source.repository.entities.Source;
-import org.sola.services.ejb.source.repository.entities.SourceType;
+import org.sola.services.ejb.source.repository.entities.*;
 
 /**
  * Local interface for the {@linkplain SourceEJB}
@@ -86,6 +83,14 @@ public interface SourceEJBLocal extends AbstractSolaTransactionEJBLocal {
      * SourceEJB.attachSourceToTransaction}.
      */
     Source attachSourceToTransaction(String serviceId, String sourceId, String languageCode);
+    
+    /**
+     * Attaches Power of attorney to the transaction.
+     */
+    PowerOfAttorney attachPowerOfAttorneyToTransaction(String serviceId, PowerOfAttorney powerOfAttorney, String languageCode);
+    
+    /** Returns Power of attorney by id */
+    PowerOfAttorney getPowerOfAttorneyById(String id);
 
     /**
      * See {@linkplain SourceEJB#dettachSourceFromTransaction(java.lang.String)
@@ -98,4 +103,10 @@ public interface SourceEJBLocal extends AbstractSolaTransactionEJBLocal {
      * SourceEJB.getSourcesByServiceId}.
      */
     List<Source> getSourcesByServiceId(String serviceId);
+    
+    /**
+     * See {@linkplain SourceEJB#getPowerOfAttorneyByServiceId(java.lang.String)
+     * SourceEJB.getPowerOfAttorneyByServiceId}.
+     */
+    List<PowerOfAttorney> getPowerOfAttorneyByServiceId(String serviceId);
 }

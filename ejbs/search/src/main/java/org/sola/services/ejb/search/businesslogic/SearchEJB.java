@@ -265,14 +265,19 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
      *
      * <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      *
-     * @param params The criteria to use for the search.
+     * @param searchParams The criteria to use for the search.
      * @return A maximum of 101 sources that match the search criteria.
      */
     @Override
     @RolesAllowed(RolesConstants.SOURCE_SEARCH)
     public List<SourceSearchResult> searchSources(SourceSearchParams searchParams) {
-        Map params = new HashMap<String, Object>();
+        Map params = processSourceSearchParams(searchParams);
+        params.put(CommonSqlProvider.PARAM_QUERY, SourceSearchResult.SEARCH_QUERY);
+        return getRepository().getEntityList(SourceSearchResult.class, params);
+    }
 
+    private Map<String, Object> processSourceSearchParams(SourceSearchParams searchParams){
+        Map params = new HashMap<String, Object>();
         params.put(SourceSearchResult.QUERY_PARAM_FROM_RECORDATION_DATE,
                 searchParams.getFromRecordationDate() == null
                 ? new GregorianCalendar(1, 1, 1).getTime()
@@ -297,11 +302,30 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
                 searchParams.getLaNumber() == null ? "" : searchParams.getLaNumber());
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE,
                 searchParams.getLocale() == null ? "en" : searchParams.getLocale());
-
-        params.put(CommonSqlProvider.PARAM_QUERY, SourceSearchResult.SEARCH_QUERY);
-        return getRepository().getEntityList(SourceSearchResult.class, params);
+        return params;
     }
-
+    
+    /**
+     * Executes a search across all power of attorney using the search criteria provided. 
+     * Partial matches are supported for the document number and the document reference number criteria.
+     *
+     * <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
+     *
+     * @param searchParams The criteria to use for the search.
+     * @return A maximum of 101 sources that match the search criteria.
+     */
+    @Override
+    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
+    public List<PowerOfAttorneySearchResult> searchPowerOfAttorney(PowerOfAttorneySearchParams searchParams){
+        Map params = processSourceSearchParams(searchParams);
+        params.put(PowerOfAttorneySearchResult.QUERY_PARAM_PERSON_NAME,
+                searchParams.getPersonName() == null ? "" : searchParams.getPersonName());
+        params.put(PowerOfAttorneySearchResult.QUERY_PARAM_ATTORNEY_NAME,
+                searchParams.getAttorneyName() == null ? "" : searchParams.getAttorneyName());
+        params.put(CommonSqlProvider.PARAM_QUERY, PowerOfAttorneySearchResult.SEARCH_POWER_OF_ATTORNEY_QUERY);
+        return getRepository().getEntityList(PowerOfAttorneySearchResult.class, params);
+    }
+    
     /**
      * Executes a search across all users using the search criteria provided. Partial matches are
      * supported for the username, first name and last name criteria.

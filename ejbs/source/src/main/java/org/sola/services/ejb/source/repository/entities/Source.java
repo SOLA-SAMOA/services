@@ -45,8 +45,6 @@ import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
-import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
-import org.sola.services.ejb.transaction.repository.entities.TransactionStatusChanger;
 import org.sola.services.ejb.transaction.repository.entities.TransactionStatusType;
 
 /**
