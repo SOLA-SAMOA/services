@@ -39,6 +39,9 @@ public class SourceSearchParams extends AbstractReadOnlyEntity {
     private Date toRecordationDate;
     private Date fromSubmissionDate;
     private Date toSubmissionDate;
+    private String ownerName;
+    private String version;
+    private String description;
     
     public SourceSearchParams(){
         super();
@@ -107,5 +110,28 @@ public class SourceSearchParams extends AbstractReadOnlyEntity {
     public void setToSubmissionDate(Date toSubmissionDate) {
         this.toSubmissionDate = toSubmissionDate;
     }
-    
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }   
 }

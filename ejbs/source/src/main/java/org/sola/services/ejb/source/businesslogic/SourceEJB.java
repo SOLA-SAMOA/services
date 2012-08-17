@@ -40,6 +40,7 @@ import javax.ejb.Stateless;
 import org.sola.common.RolesConstants;
 import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
+import org.sola.services.common.EntityAction;
 import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.faults.SOLAValidationException;
@@ -313,6 +314,8 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
         
         powerOfAttorney.setSource(source);
         powerOfAttorney.setId(source.getId());
+        powerOfAttorney.setRowVersion(0);
+        powerOfAttorney.setRowId(null);
         return getRepository().saveEntity(powerOfAttorney);
     }
 

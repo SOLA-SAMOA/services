@@ -302,6 +302,12 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
                 searchParams.getLaNumber() == null ? "" : searchParams.getLaNumber());
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE,
                 searchParams.getLocale() == null ? "en" : searchParams.getLocale());
+        params.put(SourceSearchResult.QUERY_PARAM_OWNER_NAME,
+                searchParams.getOwnerName() == null ? "" : searchParams.getOwnerName());
+        params.put(SourceSearchResult.QUERY_PARAM_DESCRIPTION,
+                searchParams.getDescription() == null ? "" : searchParams.getDescription());
+        params.put(SourceSearchResult.QUERY_PARAM_VERSION,
+                searchParams.getVersion() == null ? "" : searchParams.getVersion());
         return params;
     }
     

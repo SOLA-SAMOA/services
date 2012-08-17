@@ -46,21 +46,31 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
     public static final String QUERY_PARAM_TO_RECORDATION_DATE = "toRecordationDate";
     public static final String QUERY_PARAM_FROM_SUBMISSION_DATE = "fromSubmissionDate";
     public static final String QUERY_PARAM_TO_SUBMISSION_DATE = "toSubmissionDate";
-    public static final String SEARCH_QUERY =
-            "SELECT id, la_nr, reference_nr, archive_id, ext_archive_id, type_code, "
+    public static final String QUERY_PARAM_OWNER_NAME = "ownerName";
+    public static final String QUERY_PARAM_VERSION = "version";
+    public static final String QUERY_PARAM_DESCRIPTION = "description";
+    
+    public static final String SELECT_PART = "SELECT s.id, s.la_nr, s.reference_nr, s.archive_id, s.ext_archive_id, s.type_code, "
             + " get_translation(st.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS typeDisplayValue, "
-            + " acceptance, recordation, submission, status_code, "
-            + " get_translation(t.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS statusDisplayValue "
-            + " FROM (source.source AS s LEFT JOIN transaction.reg_status_type AS t on s.status_code = t.code) "
-            + " LEFT JOIN source.administrative_source_type AS st ON s.type_code = st.code "
-            + " WHERE (type_code = #{" + QUERY_PARAM_TYPE_CODE + "} OR COALESCE(#{" + QUERY_PARAM_TYPE_CODE + "}, '') = '') "
-            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_LA_NUMBER + "}, '') IN COALESCE(la_nr, '')) > 0 "
-            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_REF_NUMBER + "}, '') IN COALESCE(reference_nr, '')) > 0 "
-            + " AND (recordation BETWEEN #{" + QUERY_PARAM_FROM_RECORDATION_DATE + "} "
-            + " AND #{" + QUERY_PARAM_TO_RECORDATION_DATE + "} OR (recordation IS NULL)) "
-            + " AND (submission BETWEEN #{" + QUERY_PARAM_FROM_SUBMISSION_DATE + "} "
-            + " AND #{" + QUERY_PARAM_TO_SUBMISSION_DATE + "} OR (submission IS NULL)) "
-            + "LIMIT 101";
+            + " s.acceptance, s.recordation, s.submission, s.status_code, s.owner_name, s.version, s.description, "
+            + " get_translation(t.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS statusDisplayValue ";
+    
+    public static final String FROM_PART = " FROM (source.source AS s LEFT JOIN transaction.reg_status_type AS t on s.status_code = t.code) "
+            + " LEFT JOIN source.administrative_source_type AS st ON s.type_code = st.code ";
+    
+    public static final String WHERE_PART = " WHERE (type_code = #{" + QUERY_PARAM_TYPE_CODE + "} OR COALESCE(#{" + QUERY_PARAM_TYPE_CODE + "}, '') = '') "
+            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_LA_NUMBER + "}, '') IN COALESCE(s.la_nr, '')) > 0 "
+            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_REF_NUMBER + "}, '') IN COALESCE(s.reference_nr, '')) > 0 "
+            + " AND (s.recordation BETWEEN #{" + QUERY_PARAM_FROM_RECORDATION_DATE + "} "
+            + " AND #{" + QUERY_PARAM_TO_RECORDATION_DATE + "} OR (s.recordation IS NULL)) "
+            + " AND (s.submission BETWEEN #{" + QUERY_PARAM_FROM_SUBMISSION_DATE + "} "
+            + " AND #{" + QUERY_PARAM_TO_SUBMISSION_DATE + "} OR (s.submission IS NULL)) "
+            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_OWNER_NAME + "}, '') IN COALESCE(s.owner_name, '')) > 0 "
+            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_DESCRIPTION + "}, '') IN COALESCE(s.description, '')) > 0 "
+            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_VERSION + "}, '') IN COALESCE(s.version, '')) > 0 ";
+            
+    public static final String SEARCH_QUERY = SELECT_PART + FROM_PART + WHERE_PART + "LIMIT 101";
+    
     @Id
     @Column
     private String id;
@@ -89,7 +99,13 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
     private String statusDisplayValue;
     @Column(name = "status_code")
     private String statusCode;
-
+    @Column(name = "owner_name")
+    private String ownerName;
+    @Column
+    private String version;
+    @Column
+    private String description;
+    
     public SourceSearchResult() {
         super();
     }
@@ -188,5 +204,29 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
 
     public void setArchiveDocumentId(String archiveDocumentId) {
         this.archiveDocumentId = archiveDocumentId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

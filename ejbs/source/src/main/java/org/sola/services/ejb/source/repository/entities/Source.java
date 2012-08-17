@@ -90,6 +90,12 @@ public class Source extends AbstractVersionedEntity {
     loadMethod = "getDocumentInfo")
     @ChildEntity(childIdField = "archiveDocumentId")
     private Document archiveDocument;
+    @Column(name="owner_name")
+    private String ownerName;
+    @Column
+    private String version;
+    @Column
+    private String description;
     private Boolean locked = null;
 
     public Source() {
@@ -245,6 +251,30 @@ public class Source extends AbstractVersionedEntity {
         if (archiveDocument != null) {
             this.setArchiveDocumentId(archiveDocument.getId());
         }
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public Boolean isLocked() {
