@@ -36,6 +36,7 @@ import javax.transaction.UserTransaction;
 import org.junit.After;
 import static org.junit.Assert.fail;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sola.services.common.test.AbstractEJBTest;
 import org.sola.services.ejb.cadastre.repository.entities.SurveyPoint;
