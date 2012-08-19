@@ -52,7 +52,7 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
     
     public static final String SELECT_PART = "SELECT s.id, s.la_nr, s.reference_nr, s.archive_id, s.ext_archive_id, s.type_code, "
             + " get_translation(st.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS typeDisplayValue, "
-            + " s.acceptance, s.recordation, s.submission, s.status_code, s.owner_name, s.version, s.description, "
+            + " s.acceptance, s.recordation, s.submission, s.transaction_id, s.status_code, s.owner_name, s.version, s.description, "
             + " get_translation(t.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS statusDisplayValue ";
     
     public static final String FROM_PART = " FROM (source.source AS s LEFT JOIN transaction.reg_status_type AS t on s.status_code = t.code) "
@@ -67,7 +67,9 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
             + " AND #{" + QUERY_PARAM_TO_SUBMISSION_DATE + "} OR (s.submission IS NULL)) "
             + " AND POSITION(COALESCE(#{" + QUERY_PARAM_OWNER_NAME + "}, '') IN COALESCE(s.owner_name, '')) > 0 "
             + " AND POSITION(COALESCE(#{" + QUERY_PARAM_DESCRIPTION + "}, '') IN COALESCE(s.description, '')) > 0 "
-            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_VERSION + "}, '') IN COALESCE(s.version, '')) > 0 ";
+            + " AND POSITION(COALESCE(#{" + QUERY_PARAM_VERSION + "}, '') IN COALESCE(s.version, '')) > 0 "
+            + " AND (s.status_code='historic' OR s.status_code='current' OR s.status_code IS NULL) "
+            + " AND (st.is_for_registration = 'f' OR (st.is_for_registration = 't' AND s.status_code IS NOT NULL)) ";
             
     public static final String SEARCH_QUERY = SELECT_PART + FROM_PART + WHERE_PART + "LIMIT 101";
     
@@ -105,6 +107,8 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
     private String version;
     @Column
     private String description;
+    @Column(name="transaction_id")
+    private String transactionId;
     
     public SourceSearchResult() {
         super();
@@ -228,5 +232,13 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 }
