@@ -102,6 +102,7 @@ public class PartyEJBIT extends AbstractEJBTest {
         
         PartyEJBLocal instance = (PartyEJBLocal) getEJBInstance(PARTY_MODULE_NAME,
                 PartyEJB.class.getSimpleName());
+            login("test", "test");
 
         // Create the Address
         UserTransaction tx = getUserTransaction();

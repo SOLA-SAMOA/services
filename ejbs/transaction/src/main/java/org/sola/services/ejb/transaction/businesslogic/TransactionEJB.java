@@ -269,8 +269,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
     }
 
     /**
-     * Saves the transaction by first deleting, then replacing the transaction with the transaction
-     * specified. Also validates the transaction.
+     * Saves the transaction. Also validates the transaction.
      *
      * @param <T> Generic type of the transaction class. Must extend {@linkplain TransactionBasic}.
      * @param transaction The transaction to save
@@ -287,15 +286,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
     public <T extends TransactionBasic> List<ValidationResult> saveTransaction(
             T transaction, String requestType, String languageCode) {
 
-        //It removes first the transaction from db
-        TransactionBasic tmpTransaction = this.getTransactionByServiceId(
-                transaction.getFromServiceId(), false, TransactionBasic.class);
-        if (tmpTransaction != null) {
-            tmpTransaction.setEntityAction(EntityAction.DELETE);
-            this.saveEntity(tmpTransaction);
-        }
-
-        //It adds it
+        //Saves the transaction
         transaction = this.saveEntity(transaction);
 
         //It runs the validation

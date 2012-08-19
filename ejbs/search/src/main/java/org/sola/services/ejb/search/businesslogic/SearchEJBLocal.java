@@ -114,6 +114,12 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
      * SearchEJB.searchSources}.
      */
     List<SourceSearchResult> searchSources(SourceSearchParams searchParams);
+    
+    /**
+     * See {@linkplain SearchEJB#searchPowerOfAttorney(org.sola.services.ejb.search.repository.entities.PowerOfAttorneySearchParams)
+     * SearchEJB.searchPowerOfAttorney}.
+     */
+    List<PowerOfAttorneySearchResult> searchPowerOfAttorney(PowerOfAttorneySearchParams searchParams);
 
     /**
      * See {@linkplain SearchEJB#getActiveUsers()

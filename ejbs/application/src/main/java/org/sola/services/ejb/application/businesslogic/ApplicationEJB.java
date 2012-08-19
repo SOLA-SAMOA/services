@@ -1136,4 +1136,17 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     public List<RequestCategoryType> getRequestCategoryTypes(String languageCode) {
         return getRepository().getCodeList(RequestCategoryType.class, languageCode);
     }
+
+    @Override
+    public Application getApplicationByTransactionId(String transactionId) {
+        Application application = null;
+        TransactionBasic transaction = transactionEJB.getTransactionById(transactionId, TransactionBasic.class);
+        if(transaction!=null){
+            Service service = getRepository().getEntity(Service.class, transaction.getFromServiceId());
+            if(service!=null){
+                application = getRepository().getEntity(Application.class, service.getApplicationId());
+            }
+        }
+        return application;
+    }
 }

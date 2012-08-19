@@ -47,8 +47,6 @@ import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
-import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
-import org.sola.services.ejb.transaction.repository.entities.TransactionStatusChanger;
 import org.sola.services.ejb.transaction.repository.entities.TransactionStatusType;
 
 /**
@@ -94,6 +92,12 @@ public class Source extends AbstractVersionedEntity {
     loadMethod = "getDocumentInfo")
     @ChildEntity(childIdField = "archiveDocumentId")
     private Document archiveDocument;
+    @Column(name="owner_name")
+    private String ownerName;
+    @Column
+    private String version;
+    @Column
+    private String description;
     private Boolean locked = null;
     private String laNrReferenceId = null; 
 
@@ -254,7 +258,31 @@ public class Source extends AbstractVersionedEntity {
         }
     }
 
-    public String getLaNrReferenceId() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+        
+        public String getLaNrReferenceId() {
         return laNrReferenceId;
     }
 
@@ -267,7 +295,7 @@ public class Source extends AbstractVersionedEntity {
     public void setLaNrReferenceId(String laNrReferenceId) {
         this.laNrReferenceId = laNrReferenceId;
     }
-       
+    
     public Boolean isLocked() {
         if (locked == null) {
             locked = false;

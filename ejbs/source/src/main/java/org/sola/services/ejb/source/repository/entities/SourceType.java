@@ -44,19 +44,18 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
 @DefaultSorter(sortString="display_value")
 public class SourceType extends AbstractCodeEntity {
 
-    @Column(name = "has_status")
-    private boolean hasStatus;
+    @Column(name = "is_for_registration")
+    private boolean  forRegistration;
 
     public SourceType() {
         super();
     }
 
-    public boolean isHasStatus() {
-        return hasStatus;
+    public boolean isForRegistration() {
+        return forRegistration;
     }
 
-    public void setHasStatus(boolean hasStatus) {
-        this.hasStatus = hasStatus;
-    }   
-    
+    public void setForRegistration(boolean forRegistration) {
+        this.forRegistration = forRegistration;
+    }
 }

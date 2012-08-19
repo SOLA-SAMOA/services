@@ -70,7 +70,7 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
      * See {@linkplain CadastreEJB#getCadastreObjectByPoint(double, double, int)
      * CadastreEJB.getCadastreObjectByPoint}.
      */
-    CadastreObject getCadastreObjectByPoint(double x, double y, int srid);
+    CadastreObject getCadastreObjectByPoint(double x, double y, int srid, String typeCode);
 
     /**
      * See {@linkplain CadastreEJB#getCadastreObjectsByBaUnit(java.lang.String)
@@ -113,14 +113,14 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
      * CadastreEJB.getCadastreObjectNode}.
      */
     CadastreObjectNode getCadastreObjectNode(
-            double xMin, double yMin, double xMax, double yMax, int srid);
+            double xMin, double yMin, double xMax, double yMax, int srid, String cadastreObjectType);
 
     /**
      * See {@linkplain CadastreEJB#getCadastreObjectNodePotential(double, double, double, double, int)
      * CadastreEJB.getCadastreObjectNodePotential}.
      */
     CadastreObjectNode getCadastreObjectNodePotential(
-            double xMin, double yMin, double xMax, double yMax, int srid);
+            double xMin, double yMin, double xMax, double yMax, int srid, String cadastreObjectType);
 
     /**
      * See {@linkplain CadastreEJB#getCadastreObjectNodeTargetsByTransaction(java.lang.String)

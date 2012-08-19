@@ -87,7 +87,7 @@ public class Development extends AbstractEJBTest{
      * Test of createApplication method, of class ApplicationEJB.
      */
     @Test
-    //@Ignore
+    @Ignore
     public void testDev() throws Exception {
         if (skipIntegrationTest()) {
             return;
@@ -114,7 +114,7 @@ public class Development extends AbstractEJBTest{
      * Test of createApplication method, of class ApplicationEJB.
      */
     @Test
-    @Ignore
+    //@Ignore
     public void testCreateApplication() throws Exception {
         
         System.out.println("createApplication");

@@ -253,4 +253,9 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
      * ApplicationEJB.saveInformationService}.
      */
     Service saveInformationService(Service service, String languageCode);
+    
+    /**
+     * Returns {@link Application} by the given transaction ID.
+     */
+    Application getApplicationByTransactionId(String transactionId);
 }

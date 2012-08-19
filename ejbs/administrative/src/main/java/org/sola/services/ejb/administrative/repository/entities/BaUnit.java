@@ -25,17 +25,14 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
-import java.io.Serializable;
-import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
-import org.sola.services.common.repository.AccessFunctions;
-import org.sola.services.common.repository.ChildEntityList;
-import org.sola.services.common.repository.ExternalEJB;
-import org.sola.services.common.repository.RepositoryUtility;
+import org.sola.services.common.repository.*;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
@@ -110,6 +107,17 @@ public class BaUnit extends AbstractVersionedEntity {
     @AccessFunctions(onSelect = "administrative.get_ba_unit_pending_action(id)")
     private String pendingActionCode;
 
+    public BigDecimal getCalculatedAreaSize() {
+        return calculatedAreaSize;
+    }
+
+    public void setCalculatedAreaSize(BigDecimal calculatedAreaSize) {
+        this.calculatedAreaSize = calculatedAreaSize;
+    }
+    @Column(insertable=false, updatable=false, name = "calculated_area_size")
+    @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(id)")
+    private BigDecimal calculatedAreaSize;
+    
     public BaUnit() {
         super();
     }
@@ -242,8 +250,8 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setPendingActionCode(String pendingActionCode) {
         this.pendingActionCode = pendingActionCode;
     }
-
-    public Boolean isLocked() {
+    
+     public Boolean isLocked() {
         if (locked == null) {
             locked = false;
             Transaction transaction = getTransaction();
