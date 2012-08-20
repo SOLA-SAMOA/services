@@ -55,6 +55,8 @@ public class SurveyPoint extends AbstractVersionedEntity {
     private String id;
     @Column(name = "boundary")
     private boolean boundary;
+    @Column(name = "linked")
+    private boolean linked; 
     @Column(name = "geom")
     @AccessFunctions(
             onSelect="st_asewkb(geom)", 
@@ -74,6 +76,13 @@ public class SurveyPoint extends AbstractVersionedEntity {
         this.boundary = boundary;
     }
 
+    public boolean isLinked() {
+        return linked;
+    }
+
+    public void setLinked(boolean linked) {
+        this.linked = linked;
+    }   
 
     public String getId() {
         return id;
