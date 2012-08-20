@@ -171,16 +171,4 @@ public class SpatialUnitChange extends AbstractVersionedEntity {
         }
         super.preSave();
     }
-
-    /**
-     * Need to override the isNew method due to the delete/insert strategy used by The
-     * saveTransaction method on TransactionEJB. The repository will not re-insert the entity unless
-     * it recognizes it as being new. The GIS functionality should be modified so that it works as
-     * per the other SOLA EJB's but this will be a significant change. Until that change is made,
-     * this nasty hack will need to used.
-     */
-    @Override
-    public Boolean isNew() {
-        return Boolean.TRUE;
-    }
 }

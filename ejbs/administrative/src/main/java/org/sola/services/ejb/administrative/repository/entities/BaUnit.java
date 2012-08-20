@@ -25,14 +25,18 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
-import org.sola.services.common.repository.*;
+import org.sola.services.common.repository.AccessFunctions;
+import org.sola.services.common.repository.ChildEntityList;
+import org.sola.services.common.repository.ExternalEJB;
+import org.sola.services.common.repository.RepositoryUtility;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObject;
