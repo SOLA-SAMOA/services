@@ -99,6 +99,8 @@ public class Party extends AbstractVersionedEntity {
     private List<PartyRole> roleList;
     @Column(name = "party.is_rightholder(id) AS is_rightholder", insertable=false, updatable=false)
     private boolean rightHolder;
+    //Samoa Customization to help distinguish whether the agent is a surveyor or lawyer  see LH #27
+    private String primaryRole;
     
     public Party() {
         super();
@@ -267,5 +269,13 @@ public class Party extends AbstractVersionedEntity {
 
     public void setRightHolder(boolean rightHolder) {
         this.rightHolder = rightHolder;
+    }
+
+    public String getPrimaryRole() {
+        return primaryRole;
+    }
+
+    public void setPrimaryRole(String primaryRole) {
+        this.primaryRole = primaryRole;
     }
 }

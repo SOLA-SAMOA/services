@@ -43,6 +43,10 @@ import org.sola.services.common.repository.entities.AbstractCodeEntity;
 @DefaultSorter(sortString="display_value")
 public class PartyRoleType extends AbstractCodeEntity {
 
+    // Customization for SOLA Samoa  see LH #27
+    public static final String ROLE_CODE_SURVEYOR = "surveyor";
+    public static final String ROLE_CODE_LAWYER = "lawyer";
+    public static final String ROLE_CODE_BANK = "bank"; 
     public PartyRoleType() {
         super();
     }

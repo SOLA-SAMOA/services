@@ -42,7 +42,7 @@ import org.sola.services.common.repository.entities.AbstractVersionedEntity;
  */
 @Table(name="party_role", schema="party")
 public class PartyRole extends AbstractVersionedEntity {
-
+  
     @Id
     @Column(name = "party_id")
     private String partyId;

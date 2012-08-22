@@ -154,11 +154,23 @@ public class PartyEJB extends AbstractEJB implements PartyEJBLocal {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, Party.QUERY_WHERE_LODGING_AGENTS);
 
-        // Don't load Address or PartyRole as these are not required for the agents list. 
-        getRepository().setLoadInhibitors(new Class<?>[]{PartyRole.class, Address.class});
+        // Don't load Address as it is not required for the agents list. 
+        getRepository().setLoadInhibitors(new Class<?>[]{Address.class});
         List<Party> agents = getRepository().getEntityList(Party.class, params);
         getRepository().clearLoadInhibitors();
 
+        // Customizatino for SOLA Samoa - determine the primary role of the agent  see LH #27
+        for (Party p : agents) {
+            for (PartyRole pr : p.getRoleList()) {
+                if (PartyRoleType.ROLE_CODE_LAWYER.equals(pr.getRoleCode())) {
+                    p.setPrimaryRole(pr.getRoleCode());
+                    break;
+                }
+                if (PartyRoleType.ROLE_CODE_SURVEYOR.equals(pr.getRoleCode())) {
+                    p.setPrimaryRole(pr.getRoleCode());
+                }
+            }
+        }
         return agents;
     }
 
