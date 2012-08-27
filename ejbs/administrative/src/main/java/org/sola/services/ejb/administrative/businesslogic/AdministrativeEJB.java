@@ -272,6 +272,8 @@ public class AdministrativeEJB extends AbstractEJB
             params = new HashMap<String, Object>();
             params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitNotation.QUERY_WHERE_BYTRANSACTIONID);
             params.put(BaUnitNotation.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+            params.put(CommonSqlProvider.PARAM_ORDER_BY_PART,  BaUnitNotation.QUERY_ORDER_BY);
+        
             List<BaUnitNotationStatusChanger> baUnitNotationList =
                     getRepository().getEntityList(BaUnitNotationStatusChanger.class, params);
             for (BaUnitNotationStatusChanger baUnitNotation : baUnitNotationList) {

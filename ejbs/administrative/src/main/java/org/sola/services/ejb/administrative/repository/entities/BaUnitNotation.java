@@ -31,6 +31,7 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -54,6 +55,8 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
+    public static final String QUERY_ORDER_BY = "change_time desc";
+    
     @Id
     @Column(name = "id")
     private String id;
@@ -70,7 +73,17 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     @Column(name = "notation_text")
     private String notationText;
     private Boolean locked = null;
+    @Column(name = "change_time")
+    private Date changeTime;
 
+    public Date getChangeTime() {
+        return changeTime;
+    }
+
+    public void setChangeTime(Date changeTime) {
+        this.changeTime = changeTime;
+    }
+    
     public BaUnitNotation() {
         super();
     }
