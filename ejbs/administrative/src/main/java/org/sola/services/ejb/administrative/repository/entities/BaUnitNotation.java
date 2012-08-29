@@ -55,7 +55,7 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
-    public static final String QUERY_ORDER_BY = "change_time desc";
+    public static final String QUERY_ORDER_BY = "change_time asc ";
     
     @Id
     @Column(name = "id")
