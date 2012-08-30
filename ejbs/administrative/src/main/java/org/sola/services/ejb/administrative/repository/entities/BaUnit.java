@@ -110,6 +110,12 @@ public class BaUnit extends AbstractVersionedEntity {
     @Column(insertable = false, updatable = false, name = "pending_action_code")
     @AccessFunctions(onSelect = "administrative.get_ba_unit_pending_action(id)")
     private String pendingActionCode;
+    @Column(insertable = false, updatable = false, name = "village")
+    @AccessFunctions(onSelect = "administrative.getVillage(id)")
+    private String village;
+    @Column(insertable = false, updatable = false, name = "district")
+    @AccessFunctions(onSelect = "administrative.getDistrict(id)")
+    private String district;
 
     public BigDecimal getCalculatedAreaSize() {
         return calculatedAreaSize;
@@ -253,6 +259,22 @@ public class BaUnit extends AbstractVersionedEntity {
 
     public void setPendingActionCode(String pendingActionCode) {
         this.pendingActionCode = pendingActionCode;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
     
      public Boolean isLocked() {
