@@ -38,10 +38,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
-import org.sola.services.common.repository.ChildEntity;
-import org.sola.services.common.repository.ChildEntityList;
-import org.sola.services.common.repository.ExternalEJB;
-import org.sola.services.common.repository.RepositoryUtility;
+import org.sola.services.common.repository.*;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.party.businesslogic.PartyEJBLocal;
 import org.sola.services.ejb.party.repository.entities.Party;
@@ -64,6 +61,7 @@ public class Rrr extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
+    public static final String QUERY_ORDER_BY = " status_code, nr ";
     @Id
     @Column(name = "id")
     private String id;
@@ -107,6 +105,19 @@ public class Rrr extends AbstractVersionedEntity {
     @ChildEntityList(parentIdField = "rrrId", childIdField = "partyId",
     manyToManyClass = PartyForRrr.class, readOnly = true)
     private List<Party> rightHolderList;
+    @Column(insertable=false, updatable=false, name = "concatenated_name")
+    @AccessFunctions(onSelect = "administrative.get_concatenated_name(ba_unit_id)")
+    private String concatenatedName;
+
+    public String getConcatenatedName() {
+        return concatenatedName;
+    }
+
+    public void setConcatenatedName(String concatenatedName) {
+        this.concatenatedName = concatenatedName;
+    }
+    
+    
     // Other fields
     private Boolean locked = null;
 
