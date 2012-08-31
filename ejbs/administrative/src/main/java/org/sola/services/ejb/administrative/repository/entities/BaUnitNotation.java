@@ -36,6 +36,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
+import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.RepositoryUtility;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.system.br.Result;
@@ -50,6 +51,7 @@ import org.sola.services.ejb.transaction.repository.entities.TransactionStatusTy
  * @author soladev
  */
 @Table(name = "notation", schema = "administrative")
+@DefaultSorter(sortString="status_code, reference_nr")
 public class BaUnitNotation extends AbstractVersionedEntity {
 
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";

@@ -56,6 +56,7 @@ import org.sola.services.ejb.transaction.repository.entities.TransactionStatusTy
  * @author soladev
  */
 @Table(name = "rrr", schema = "administrative")
+@DefaultSorter(sortString="status_code, nr")
 public class Rrr extends AbstractVersionedEntity {
 
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
