@@ -58,6 +58,16 @@ public class User extends AbstractVersionedEntity {
     private boolean active;
     @Column(name = "description")
     private String description;
+    @Column(name = "passwd")
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
     @ChildEntityList(parentIdField = "userId")
     private List<UserGroup> userGroups;
