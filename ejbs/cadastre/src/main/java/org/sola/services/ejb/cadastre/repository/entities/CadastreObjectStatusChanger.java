@@ -37,8 +37,7 @@ import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 @Table(schema = "cadastre", name = "cadastre_object")
 public class CadastreObjectStatusChanger extends AbstractStatusChangerEntity {
     public static final String QUERY_WHERE_SEARCHBYTRANSACTION_PENDING = 
-            " transaction_id = #{transaction_id} or id in (select cadastre_object_id from "
-            + " cadastre.cadastre_object_target where transaction_id= #{transaction_id})";
+            " transaction_id = #{transaction_id}";
     public static final String QUERY_WHERE_SEARCHBYTRANSACTION_TARGET = 
             " id in (select cadastre_object_id from "
             + " cadastre.cadastre_object_target where transaction_id= #{transaction_id})";
