@@ -244,6 +244,7 @@ public class AdministrativeEJB extends AbstractEJB
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYTRANSACTIONID);
         params.put(BaUnit.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        params.put("username", getUserName());
         List<BaUnitStatusChanger> baUnitList =
                 getRepository().getEntityList(BaUnitStatusChanger.class, params);
 
@@ -259,6 +260,7 @@ public class AdministrativeEJB extends AbstractEJB
         params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, Rrr.QUERY_WHERE_BYTRANSACTIONID);
         params.put(Rrr.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        params.put("username", getUserName());
         List<RrrStatusChanger> rrrStatusChangerList =
                 getRepository().getEntityList(RrrStatusChanger.class, params);
         for (RrrStatusChanger rrr : rrrStatusChangerList) {
@@ -272,6 +274,7 @@ public class AdministrativeEJB extends AbstractEJB
             params = new HashMap<String, Object>();
             params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitNotation.QUERY_WHERE_BYTRANSACTIONID);
             params.put(BaUnitNotation.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+            params.put("username", getUserName());
             params.put(CommonSqlProvider.PARAM_ORDER_BY_PART,  BaUnitNotation.QUERY_ORDER_BY);
         
             List<BaUnitNotationStatusChanger> baUnitNotationList =
@@ -315,6 +318,7 @@ public class AdministrativeEJB extends AbstractEJB
                 RegistrationStatusType.STATUS_CURRENT, rrr.getTypeCode());
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", rrr.getId());
+        params.put("username", getUserName());
         //Run the validation
         return this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
     }

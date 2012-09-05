@@ -894,6 +894,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", service.getId());
+        params.put("username",getUserName());
         //Run the validation
         resultList = this.systemEJB.checkRulesGetValidation(
                 brValidationList, languageCode, params);
