@@ -74,8 +74,8 @@ public class Document extends AbstractVersionedEntity {
         return body;
     }
 
-    public void setBody(byte[] body) {
-        this.body = body;
+    public void setBody(byte[] body) { //NOSONAR
+        this.body = body; //NOSONAR
     }
 
     public String getDescription() {

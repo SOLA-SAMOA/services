@@ -46,8 +46,8 @@ public class GenericResult {
         return fieldNames;
     }
 
-    public void setFieldNames(String[] fieldNames) {
-        this.fieldNames = fieldNames;
+    public void setFieldNames(String[] fieldNames) { //NOSONAR
+        this.fieldNames = fieldNames; //NOSONAR
     }
 
     public List<String[]> getValues() {
