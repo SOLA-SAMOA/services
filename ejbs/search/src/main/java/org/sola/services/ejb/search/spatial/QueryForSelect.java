@@ -42,7 +42,7 @@ public class QueryForSelect extends Query{
         return filteringGeometry;
     }
 
-    public void setFilteringGeometry(byte[] filteringGeometry) {
-        this.filteringGeometry = filteringGeometry;
+    public void setFilteringGeometry(byte[] filteringGeometry) { //NOSONAR
+        this.filteringGeometry = filteringGeometry; //NOSONAR
     }
 }

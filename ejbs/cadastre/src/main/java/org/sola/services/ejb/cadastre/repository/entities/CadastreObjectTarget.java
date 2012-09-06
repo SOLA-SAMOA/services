@@ -25,26 +25,24 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.ejb.cadastre.repository.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.LocalInfo;
 import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
- *
+ * Entity representing the cadastre.cadastre_object_target table.
  * @author Elton Manoku
  */
 @Table(name = "cadastre_object_target", schema = "cadastre")
 public class CadastreObjectTarget extends AbstractVersionedEntity{
 
+    /**
+     * WHERE clause to return the CO Target by transaction id
+     */
      public static final String QUERY_WHERE_SEARCHBYTRANSACTION = 
              "transaction_id = #{transaction_id}";
     
@@ -64,8 +62,8 @@ public class CadastreObjectTarget extends AbstractVersionedEntity{
         return geomPolygonCurrent;
     }
 
-    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) {
-        this.geomPolygonCurrent = geomPolygonCurrent;
+    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) { //NOSONAR
+        this.geomPolygonCurrent = geomPolygonCurrent; //NOSONAR
     }
 
     public String getCadastreObjectId() {

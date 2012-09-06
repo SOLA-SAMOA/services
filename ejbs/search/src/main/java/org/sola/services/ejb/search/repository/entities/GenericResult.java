@@ -25,10 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.ejb.search.repository.entities;
 
 import java.util.ArrayList;
@@ -58,11 +54,11 @@ public class GenericResult {
         return values;
     }
 
-    public void setValues(List<String[]> values) {
-        this.values = values;
+    public void setValues(List<String[]> values) { //NOSONAR
+        this.values = values; //NOSONAR
     }
 
-    public void addRow(Object[] values){    
+    public void addRow(Object[] values){ //NOSONAR   
         String[] row = new String[fieldNames.length];
         for (int fieldIndex = 0; fieldIndex < this.fieldNames.length; fieldIndex++) {
             if (values[fieldIndex] == null){
