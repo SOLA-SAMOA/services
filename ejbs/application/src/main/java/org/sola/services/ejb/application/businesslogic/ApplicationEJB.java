@@ -542,9 +542,19 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     @RolesAllowed(RolesConstants.APPLICATION_SERVICE_START)
     public List<ValidationResult> serviceActionStart(
             String serviceId, String languageCode, int rowVersion) {
+                RoleVerifier validRole =
+                        getRoleVerifier(serviceId);
+        if (validRole == null) {
+            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);
+        }
+        if (!validRole.isRoleCheck()) {
+            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);
+            
+        }
         return this.takeActionAgainstService(
                 serviceId, ServiceActionType.START, languageCode, rowVersion);
     }
+
 
     /**
      * Updates the status of the service to the value indicated by the
@@ -922,7 +932,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         if (service == null) {
             throw new SOLAException(ServiceMessage.EJB_APPLICATION_SERVICE_NOT_FOUND);
         }
-
+  /**
+     * Checks to see if user has appropriate role
+*    RoleVerifier getRepository().getScalar(getRoleVerifier(String applicationNumber, String firstPart, String lastPart), validRole), role);
+     */
+                   
         ServiceActionType serviceActionType =
                 getRepository().getCode(ServiceActionType.class, actionCode, languageCode);
         List<ValidationResult> validationResultList = this.validateService(
@@ -1148,5 +1162,15 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
             }
         }
         return application;
+    }
+    public RoleVerifier getRoleVerifier(String serviceId) {
+        if (serviceId == null) {
+            serviceId = "";
+        }
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_QUERY, RoleVerifier.QUERY_VERIFY_SQL);
+        params.put(RoleVerifier.QUERY_PARAM_SERVICE_ID, serviceId);
+        params.put(RoleVerifier.QUERY_PARAM_USERNAME, getUserName());
+        return getRepository().getEntity(RoleVerifier.class, params);
     }
 }
