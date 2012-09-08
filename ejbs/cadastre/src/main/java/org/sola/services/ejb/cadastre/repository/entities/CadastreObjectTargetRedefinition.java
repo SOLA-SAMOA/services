@@ -25,10 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.ejb.cadastre.repository.entities;
 
 import javax.persistence.Column;
@@ -36,7 +32,7 @@ import javax.persistence.Table;
 import org.sola.services.common.repository.AccessFunctions;
 
 /**
- *
+ * Entity representing the cadastre.cadastre_object_target table.
  * @author Elton Manoku
  */
 @Table(name = "cadastre_object_target", schema = "cadastre")
@@ -56,8 +52,8 @@ public class CadastreObjectTargetRedefinition extends CadastreObjectTarget{
         return geomPolygon;
     }
 
-    public void setGeomPolygon(byte[] geomPolygon) {
-        this.geomPolygon = geomPolygon;
+    public void setGeomPolygon(byte[] geomPolygon) { //NOSONAR
+        this.geomPolygon = geomPolygon; //NOSONAR
     }
 
 //    public byte[] getGeomPolygonCurrent() {

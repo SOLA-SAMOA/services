@@ -203,7 +203,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
     }
 
     /**
-     * Updates the status of any cadastre objects associated with the transaction.
+     * Updates the status of any cadastre objects associated with the transaction. 
      *
      * @param requestType The type of service associated to the transaction
      * @param transactionId The transaction identifier
@@ -216,6 +216,12 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
      */
     private void changeStatusOfTransactionObjectsOnApproval(
             String requestType, String transactionId) {
+        if (requestType.equals(TransactionType.CADASTRE_CHANGE)) {
+            cadastreEJB.ChangeStatusOfCadastreObjects(
+                    transactionId,
+                    CadastreObjectStatusChanger.QUERY_WHERE_SEARCHBYTRANSACTION_TARGET,
+                    RegistrationStatusType.STATUS_HISTORIC);
+        }
         if (requestType.equals(TransactionType.CADASTRE_CHANGE)
                 || requestType.equals(TransactionType.NEW_APARTMENT)
                 || requestType.equals(TransactionType.NEW_DIGITAL_PROPERTY)
@@ -226,12 +232,6 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
                     transactionId,
                     CadastreObjectStatusChanger.QUERY_WHERE_SEARCHBYTRANSACTION_PENDING,
                     RegistrationStatusType.STATUS_CURRENT);
-        }
-        if (requestType.equals(TransactionType.CADASTRE_CHANGE)) {
-            cadastreEJB.ChangeStatusOfCadastreObjects(
-                    transactionId,
-                    CadastreObjectStatusChanger.QUERY_WHERE_SEARCHBYTRANSACTION_TARGET,
-                    RegistrationStatusType.STATUS_HISTORIC);
         }
         if (requestType.equals(TransactionType.REDEFINE_CADASTRE)) {
             cadastreEJB.approveCadastreRedefinition(transactionId);

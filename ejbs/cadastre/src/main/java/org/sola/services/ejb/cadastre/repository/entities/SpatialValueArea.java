@@ -25,10 +25,6 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.sola.services.ejb.cadastre.repository.entities;
 
 import java.math.BigDecimal;
@@ -38,12 +34,15 @@ import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
- *
+ * Entity representing cadastre.spatial_value_area code table.
  * @author manoku
  */
 @Table(name = "spatial_value_area", schema = "cadastre")
 public class SpatialValueArea extends AbstractVersionedEntity{
     
+    /**
+     * Returns all Spatial Value Areas based on the Spatial Unit Id
+     */
      public static final String QUERY_WHERE_SEARCHBYSPATIALUNIT = 
              "spatial_unit_id = #{spatial_unit_id}";
     

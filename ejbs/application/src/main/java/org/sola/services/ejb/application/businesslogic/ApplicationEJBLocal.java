@@ -41,13 +41,13 @@ import org.sola.services.ejb.application.repository.entities.ApplicationStatusTy
 import org.sola.services.ejb.application.repository.entities.LodgementTiming;
 import org.sola.services.ejb.application.repository.entities.LodgementView;
 import org.sola.services.ejb.application.repository.entities.LodgementViewParams;
-import org.sola.services.ejb.application.repository.entities.RequestCategoryType;
 import org.sola.services.ejb.application.repository.entities.RequestType;
+import org.sola.services.ejb.application.repository.entities.RequestCategoryType;
 import org.sola.services.ejb.application.repository.entities.TypeAction;
 import org.sola.services.ejb.application.repository.entities.Service;
 import org.sola.services.ejb.application.repository.entities.ServiceActionType;
 import org.sola.services.ejb.application.repository.entities.ServiceStatusType;
-
+import org.sola.services.ejb.application.repository.entities.RoleVerifier;
 /**
  * Local interface for the {@linkplain ApplicationEJB}.
  */
@@ -258,4 +258,11 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
      * Returns {@link Application} by the given transaction ID.
      */
     Application getApplicationByTransactionId(String transactionId);
+       /**
+     * See {@linkplain ApplicationEJB#getRoleVerifier(java.lang.String, java.lang.String, java.lang.String)
+     * ApplicationEJB.getRoleVerifier}.
+    *RoleVerifier getRoleVerifier(String serviceNumber, String firstPart, String lastPart);
+     */
+    RoleVerifier getRoleVerifier(String serviceId);
+  
 }

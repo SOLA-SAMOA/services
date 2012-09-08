@@ -220,6 +220,7 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
             Map<String, Object> params = new HashMap<String, Object>();
             params.put(CommonSqlProvider.PARAM_WHERE_PART, Source.QUERY_WHERE_BYTRANSACTIONID);
             params.put(Source.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+            params.put("username", getUserName());
             List<SourceStatusChanger> sourceList =
                     getRepository().getEntityList(SourceStatusChanger.class, params);
 
@@ -389,6 +390,7 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
                 this.systemEJB.getBrForValidatingTransaction("source", momentCode, null);
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", sourceId);
+        params.put("username", getUserName());
         //Run the validation
         return this.systemEJB.checkRulesGetValidation(
                 brValidationList, languageCode, params);

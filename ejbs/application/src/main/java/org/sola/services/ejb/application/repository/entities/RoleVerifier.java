@@ -25,60 +25,43 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
-package org.sola.services.ejb.cadastre.repository.entities;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.sola.services.ejb.application.repository.entities;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import org.sola.services.common.repository.AccessFunctions;
-import org.sola.services.common.repository.entities.AbstractVersionedEntity;
-
+import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 /**
- * Entity representing the cadastre.cadastre_object_target table.
- * @author Elton Manoku
+ *
+ * @author Pullar
  */
-@Table(name = "cadastre_object_target", schema = "cadastre")
-public class CadastreObjectTarget extends AbstractVersionedEntity{
+public class RoleVerifier extends AbstractReadOnlyEntity{
+    public static final String QUERY_PARAM_SERVICE_ID = "serviceId";
+    public static final String QUERY_PARAM_USERNAME = "userName";
+     public static final String QUERY_VERIFY_SQL =
+            "SELECT "
+            + "(SELECT COUNT(*) > 0 AS role_check FROM application.service sv "
+            + " INNER JOIN application.request_type rt ON (sv.request_type_code = rt.code)"
+            + " INNER JOIN system.approle_appgroup rg ON (rt.approle_code = rg.approle_code)"
+            + " INNER JOIN system.appuser_appgroup ug ON (rg.appgroup_id = ug.appgroup_id)"
+            + " INNER JOIN system.appuser au ON (ug.appuser_id = au.id)"
+            + " INNER JOIN system.appuser au ON (ug.appuser_id = au.id)"
+            + " WHERE sv.id = #{" + QUERY_PARAM_SERVICE_ID + "} "
+            + " AND au.username = #{" + QUERY_PARAM_USERNAME + "})"
+            + " ORDER BY 1"
+            + " LIMIT 1";
+ 
+    @Column(name = "role_check")
+    private boolean roleCheck;
 
-    /**
-     * WHERE clause to return the CO Target by transaction id
-     */
-     public static final String QUERY_WHERE_SEARCHBYTRANSACTION = 
-             "transaction_id = #{transaction_id}";
+    public boolean isRoleCheck() {
+        return roleCheck;
+    }
+
+    public void setRoleCheck(boolean roleCheck) {
+        this.roleCheck = roleCheck;
+    }
     
-    @Id
-    @Column(name = "cadastre_object_id")
-    private String cadastreObjectId;
-    @Id
-    @Column(name = "transaction_id")
-    private String transactionId;
-
-    @Column(name = "geom_polygon_current", updatable=false, insertable=false)
-    @AccessFunctions(onSelect = "(select st_asewkb(geom_polygon) from cadastre.cadastre_object"
-            + " where id = cadastre_object_id)")
-    private byte[] geomPolygonCurrent;
-
-    public byte[] getGeomPolygonCurrent() {
-        return geomPolygonCurrent;
-    }
-
-    public void setGeomPolygonCurrent(byte[] geomPolygonCurrent) { //NOSONAR
-        this.geomPolygonCurrent = geomPolygonCurrent; //NOSONAR
-    }
-
-    public String getCadastreObjectId() {
-        return cadastreObjectId;
-    }
-
-    public void setCadastreObjectId(String cadastreObjectId) {
-        this.cadastreObjectId = cadastreObjectId;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }    
 }
