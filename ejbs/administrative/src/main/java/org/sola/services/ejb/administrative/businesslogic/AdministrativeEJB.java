@@ -440,8 +440,6 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, 1);
         result = getRepository().getEntity(BaUnitArea.class, params);
         
-        
-        System.out.println("PARAMS QUERY: "+params);
         return result;
     }
     
@@ -464,6 +462,26 @@ public class AdministrativeEJB extends AbstractEJB
         }
         return getRepository().saveEntity(baUnitArea);
     }
+    
+  
+    
+    /**
+     * Locates a BA Unit and cadastre object's area size     *
+     * @param id The BA Unit id
+     * @param colist the list of cadastre object for the ba unit
+     * @return The BA Unit matching the name
+     */
+    @Override
+    public BaUnit getBaUnitWithCadObject(String nameFirstPart, String nameLastPart, String colist) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYPROPERTYCODE);
+        params.put(BaUnit.QUERY_PARAMETER_FIRSTPART, nameFirstPart);
+        params.put(BaUnit.QUERY_PARAMETER_LASTPART, nameLastPart);
+        params.put(BaUnit.QUERY_PARAMETER_COLIST, colist);
+        return getRepository().getEntity(BaUnit.class, params);
+    }
+
+    
     
     
 }
