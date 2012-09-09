@@ -540,16 +540,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_SERVICE_START)
-    public List<ValidationResult> serviceActionStart(
-            String serviceId, String languageCode, int rowVersion) {
-                RoleVerifier validRole =
-                        getRoleVerifier(serviceId);
-        if (validRole == null) {
-            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);
-        }
+   public List<ValidationResult> serviceActionStart(String serviceId, String languageCode, int rowVersion) {
+                RoleVerifier validRole = getRoleVerifier(serviceId);
+
         if (!validRole.isRoleCheck()) {
-            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);
-            
+            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);            
         }
         return this.takeActionAgainstService(
                 serviceId, ServiceActionType.START, languageCode, rowVersion);

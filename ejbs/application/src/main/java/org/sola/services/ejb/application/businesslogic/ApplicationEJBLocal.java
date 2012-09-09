@@ -1,26 +1,30 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
- * reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations
+ * (FAO). All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, are permitted
- * provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
- * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
- * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
- * contributors may be used to endorse or promote products derived from this software without
- * specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this
+ * list of conditions and the following disclaimer. 2. Redistributions in binary
+ * form must reproduce the above copyright notice,this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 /*
@@ -48,6 +52,7 @@ import org.sola.services.ejb.application.repository.entities.Service;
 import org.sola.services.ejb.application.repository.entities.ServiceActionType;
 import org.sola.services.ejb.application.repository.entities.ServiceStatusType;
 import org.sola.services.ejb.application.repository.entities.RoleVerifier;
+
 /**
  * Local interface for the {@linkplain ApplicationEJB}.
  */
@@ -162,6 +167,7 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
      * See {@linkplain ApplicationEJB#serviceActionStart(java.lang.String, java.lang.String, int)
      * ApplicationEJB.serviceActionStart}.
      */
+//    Service serviceActionStart(
     List<ValidationResult> serviceActionStart(
             String serviceId, String languageCode, int rowVersion);
 
@@ -248,21 +254,22 @@ public interface ApplicationEJBLocal extends AbstractEJBLocal {
      */
     List<ValidationResult> applicationActionResubmit(
             String applicationId, String languageCode, int rowVersion);
+
     /**
-     * See {@linkplain ApplicationEJB#saveInformationService(org.sola.services.ejb.application.repository.entities.Service, java.lang.String) 
+     * See {@linkplain ApplicationEJB#saveInformationService(org.sola.services.ejb.application.repository.entities.Service, java.lang.String)
      * ApplicationEJB.saveInformationService}.
      */
     Service saveInformationService(Service service, String languageCode);
-    
+
     /**
      * Returns {@link Application} by the given transaction ID.
      */
     Application getApplicationByTransactionId(String transactionId);
-       /**
+
+    /**
      * See {@linkplain ApplicationEJB#getRoleVerifier(java.lang.String, java.lang.String, java.lang.String)
-     * ApplicationEJB.getRoleVerifier}.
-    *RoleVerifier getRoleVerifier(String serviceNumber, String firstPart, String lastPart);
+     * ApplicationEJB.getRoleVerifier}. RoleVerifier getRoleVerifier(String
+     * serviceNumber, String firstPart, String lastPart);
      */
     RoleVerifier getRoleVerifier(String serviceId);
-  
 }
