@@ -36,6 +36,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.DefaultSorter;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
@@ -72,6 +73,9 @@ public class Service extends AbstractVersionedEntity {
     private BigDecimal areaFee;
     @Column(name = "value_fee")
     private BigDecimal valueFee;
+    @Column(insertable=false, updatable=false, name = "concatenated_name")
+    @AccessFunctions(onSelect = "application.get_concatenated_name(id)")
+    private String concatenatedName;
 
     public Service() {
         super();
@@ -172,6 +176,13 @@ public class Service extends AbstractVersionedEntity {
 
     public void setValueFee(BigDecimal valueFee) {
         this.valueFee = valueFee;
+    }
+    public String getConcatenatedName() {
+        return concatenatedName;
+    }
+
+    public void setConcatenatedName(String concatenatedName) {
+        this.concatenatedName = concatenatedName;
     }
     
 }
