@@ -89,6 +89,24 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         return getRepository().getEntityList(CadastreObject.class,
                 CadastreObject.QUERY_WHERE_SEARCHBYPARTS, params);
     }
+    
+     /**
+     * Returns a maximum of 10 cadastre objects with current and pending  status that have a name first part and/or name last part
+     * that matches the specified search string. This method supports partial matches and is case
+     * insensitive.
+     *
+     * @param searchString The search string to use
+     * @return The list of cadastre objects matching the search string
+     */
+    @Override
+    public List<CadastreObject> getCadastreObjectByAllParts(String searchString) {
+        Integer numberOfMaxRecordsReturned = 10;
+        HashMap params = new HashMap();
+        params.put("search_string", searchString);
+        params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
+        return getRepository().getEntityList(CadastreObject.class,
+                CadastreObject.QUERY_WHERE_SEARCHBYALLPARTS, params);
+    }
 
     /**
      * Returns the cadastre object that is located at the point specified or null if there is no
