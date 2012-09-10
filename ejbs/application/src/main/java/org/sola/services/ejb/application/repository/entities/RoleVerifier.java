@@ -42,8 +42,8 @@ public class RoleVerifier extends AbstractReadOnlyEntity{
     public static final String QUERY_PARAM_USERNAME = "userName";
      public static final String QUERY_VERIFY_SQL =
             "SELECT COUNT(*) > 0 AS role_check FROM application.service sv "
-            + " INNER JOIN application.request_type rt ON (sv.request_type_code = rt.code)"
-            + " INNER JOIN system.approle_appgroup rg ON (rt.approle_code = rg.approle_code)"
+//            + " INNER JOIN application.request_type rt ON (sv.request_type_code = rt.code)"
+            + " INNER JOIN system.approle_appgroup rg ON (sv.request_type_code = rg.approle_code)"
             + " INNER JOIN system.appuser_appgroup ug ON (rg.appgroup_id = ug.appgroup_id)"
             + " INNER JOIN system.appuser au ON (ug.appuser_id = au.id)"
             + " WHERE sv.id = #{" + QUERY_PARAM_SERVICE_ID + "} "
