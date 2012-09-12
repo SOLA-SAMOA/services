@@ -1,26 +1,30 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
- * reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations
+ * (FAO). All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, are permitted
- * provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
- * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
- * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
- * contributors may be used to endorse or promote products derived from this software without
- * specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this
+ * list of conditions and the following disclaimer. 2. Redistributions in binary
+ * form must reproduce the above copyright notice,this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 package org.sola.services.ejb.application.businesslogic;
@@ -49,9 +53,10 @@ import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusT
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 
 /**
- * EJB to manage data in the application schema. Supports retrieving and saving Applications and
- * Services as well as applying case management actions to applications. Also provides methods for
- * retrieving reference codes from the application schema.
+ * EJB to manage data in the application schema. Supports retrieving and saving
+ * Applications and Services as well as applying case management actions to
+ * applications. Also provides methods for retrieving reference codes from the
+ * application schema.
  */
 @Stateless
 @EJB(name = "java:global/SOLA/ApplicationEJBLocal", beanInterface = ApplicationEJBLocal.class)
@@ -67,11 +72,12 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     private AdministrativeEJBLocal administrativeEJB;
 
     /**
-     * Sets the entity package for the EJB to Application.class.getPackage().getName(). This is used
-     * to restrict the save and retrieval of Code Entities.
+     * Sets the entity package for the EJB to
+     * Application.class.getPackage().getName(). This is used to restrict the
+     * save and retrieval of Code Entities.
      *
-     * @see AbstractEJB#getCodeEntity(java.lang.Class, java.lang.String, java.lang.String)
-     * AbstractEJB.getCodeEntity
+     * @see AbstractEJB#getCodeEntity(java.lang.Class, java.lang.String,
+     * java.lang.String) AbstractEJB.getCodeEntity
      * @see AbstractEJB#getCodeEntityList(java.lang.Class, java.lang.String)
      * AbstractEJB.getCodeEntityList
      * @see
@@ -84,7 +90,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Clears the LaNr on all new source records associated with the application.
+     * Clears the LaNr on all new source records associated with the
+     * application.
      *
      * @param application The application to check.
      */
@@ -118,9 +125,9 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Creates a new application record and any new child objects. Sets the initial action for the
-     * application (e.g. lodged) using a business rule. Also sets the lodged date and expected
-     * completion date. <p>Requires the {@linkplain RolesConstants#APPLICATION_CREATE_APPS}
+     * Creates a new application record and any new child objects. Sets the
+     * initial action for the application (e.g. lodged) using a business rule.
+     * Also sets the lodged date and expected completion date. <p>Requires the {@linkplain RolesConstants#APPLICATION_CREATE_APPS}
      * role.</p>
      *
      * @param application The application to insert
@@ -151,10 +158,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Calculates the lodgement fees as well as the expected completions dates for each service as
-     * well as the application.
+     * Calculates the lodgement fees as well as the expected completions dates
+     * for each service as well as the application.
      *
-     * @param application The application to calculate fees and set completion dates.
+     * @param application The application to calculate fees and set completion
+     * dates.
      * @return The application with the fees and completion dates set
      * @see #calculateCompletionDates(Application) calculateCompletionDates
      * @see #calculateLodgementFees(Application) calculateLodgementFees
@@ -170,9 +178,9 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Determines the completion dates for each service based on the number of days to complete for
-     * the service type. Also determines the application complete date as the maximum of the service
-     * completion dates.
+     * Determines the completion dates for each service based on the number of
+     * days to complete for the service type. Also determines the application
+     * complete date as the maximum of the service completion dates.
      *
      * @param application
      */
@@ -196,8 +204,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Calculates the completion date for the service based using the days to complete for the
-     * service request type
+     * Calculates the completion date for the service based using the days to
+     * complete for the service request type
      *
      * @param requestTypes The list of request types
      * @param ser The service to calculate the completion date for
@@ -220,8 +228,9 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Calculates the fees applicable for lodgement based on the services that have been associated
-     * with the application. Values on the application are updated directly.
+     * Calculates the fees applicable for lodgement based on the services that
+     * have been associated with the application. Values on the application are
+     * updated directly.
      *
      * @param application
      */
@@ -289,8 +298,9 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Saves changes to the application and child objects. Will also update the completion dates and
-     * fees for the application if a new service as been added. <p>Requires the {@linkplain RolesConstants#APPLICATION_CREATE_APPS}
+     * Saves changes to the application and child objects. Will also update the
+     * completion dates and fees for the application if a new service as been
+     * added. <p>Requires the {@linkplain RolesConstants#APPLICATION_CREATE_APPS}
      * role.</p>
      *
      * @param application
@@ -302,7 +312,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         if (application == null) {
             return application;
         }
-        if(application.isNew() && !isInRole(RolesConstants.APPLICATION_CREATE_APPS)){
+        if (application.isNew() && !isInRole(RolesConstants.APPLICATION_CREATE_APPS)) {
             throw new SOLAAccessException();
         }
         Date now = DateUtility.now();
@@ -328,8 +338,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Retrieves the data required for the lodgement view report. <p>Requires the {@linkplain RolesConstants#REPORTS_VIEW}
-     * role.</p>
+     * Retrieves the data required for the lodgement view report. <p>Requires
+     * the {@linkplain RolesConstants#REPORTS_VIEW} role.</p>
      *
      * @param params The date parameters for the report.
      * @return THe data for the Lodgement View report
@@ -352,8 +362,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Retrieves the data required for the lodgement timing report. <p>Requires the {@linkplain RolesConstants#REPORTS_VIEW}
-     * role.</p>
+     * Retrieves the data required for the lodgement timing report. <p>Requires
+     * the {@linkplain RolesConstants#REPORTS_VIEW} role.</p>
      *
      * @param params The date parameters for the report.
      * @return The data for the Lodgement Timing report
@@ -376,11 +386,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Retrieves the application log for the specified application id. The log captures details to
-     * track when specific actions are performed against the application. <p>Requires the {@linkplain RolesConstants#REPORTS_VIEW}
+     * Retrieves the application log for the specified application id. The log
+     * captures details to track when specific actions are performed against the
+     * application. <p>Requires the {@linkplain RolesConstants#REPORTS_VIEW}
      * role.</p>
      *
-     * @param applicationId The identifier of the application to retrieve the log for
+     * @param applicationId The identifier of the application to retrieve the
+     * log for
      * @return The list of log entries for the application.
      */
     @Override
@@ -399,14 +411,15 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Retrieves the actions a specific user has performed against any application during a specific
-     * period.
+     * Retrieves the actions a specific user has performed against any
+     * application during a specific period.
      *
-     * @param username The username of the user to query the application log with
+     * @param username The username of the user to query the application log
+     * with
      * @param fromTime The start of the reporting period
      * @param toTime The end of the reporting period
-     * @return The list of actions the user has performed against any application during the
-     * reporting period.
+     * @return The list of actions the user has performed against any
+     * application during the reporting period.
      */
     @Override
     public List<ApplicationLog> getUserActions(String username, Date fromTime, Date toTime) {
@@ -423,7 +436,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.request_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<RequestType> getRequestTypes(String languageCode) {
@@ -433,7 +447,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.application_status_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<ApplicationStatusType> getApplicationStatusTypes(String languageCode) {
@@ -443,7 +458,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.application_action_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<ApplicationActionType> getApplicationActionTypes(String languageCode) {
@@ -453,7 +469,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.type_action code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<TypeAction> getTypeActions(String languageCode) {
@@ -463,7 +480,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.service_status_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<ServiceStatusType> getServiceStatusTypes(String languageCode) {
@@ -473,7 +491,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.service_action_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<ServiceActionType> getServiceActionTypes(String languageCode) {
@@ -488,11 +507,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param serviceId The service to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstService(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstService
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstService(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstService
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_SERVICE_COMPLETE)
@@ -510,11 +531,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param serviceId The service to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstService(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstService
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstService(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstService
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_SERVICE_REVERT)
@@ -532,24 +555,25 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param serviceId The service to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstService(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstService
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstService(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstService
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_SERVICE_START)
-   public List<ValidationResult> serviceActionStart(String serviceId, String languageCode, int rowVersion) {
-                RoleVerifier validRole = getRoleVerifier(serviceId);
+    public List<ValidationResult> serviceActionStart(String serviceId, String languageCode, int rowVersion) {
+        
+        RoleVerifier validRole = getRoleVerifier(serviceId);
 
         if (!validRole.isRoleCheck()) {
-            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);            
+            throw new SOLAException(ServiceMessage.EXCEPTION_INSUFFICIENT_RIGHTS);
         }
-        return this.takeActionAgainstService(
-                serviceId, ServiceActionType.START, languageCode, rowVersion);
+        return this.takeActionAgainstService(serviceId, ServiceActionType.START, languageCode, rowVersion);
     }
-
 
     /**
      * Updates the status of the service to the value indicated by the
@@ -559,11 +583,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param serviceId The service to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstService(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstService
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstService(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstService
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_SERVICE_CANCEL)
@@ -577,16 +603,19 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * Updates the status of the application to the value indicated by the
      * <code>status_to_set</code> in the
      * <code>application.application_action_type</code> table for the
-     * <code>withdraw</code> code. (i.e. anulled). Will also delete the transaction records for each
-     * service that is associated with the application.<p>Requires the {@linkplain RolesConstants#APPLICATION_WITHDRAW}
+     * <code>withdraw</code> code. (i.e. anulled). Will also delete the
+     * transaction records for each service that is associated with the
+     * application.<p>Requires the {@linkplain RolesConstants#APPLICATION_WITHDRAW}
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_WITHDRAW)
@@ -600,16 +629,19 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * Updates the status of the application to the value indicated by the
      * <code>status_to_set</code> in the
      * <code>application.application_action_type</code> table for the
-     * <code>cancel</code> code. (i.e. anulled). Will also delete the transaction records for each
-     * service that is associated with the application.<p>Requires the {@linkplain RolesConstants#APPLICATION_REJECT}
+     * <code>cancel</code> code. (i.e. anulled). Will also delete the
+     * transaction records for each service that is associated with the
+     * application.<p>Requires the {@linkplain RolesConstants#APPLICATION_REJECT}
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_REJECT)
@@ -627,11 +659,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_REQUISITE)
@@ -642,16 +676,18 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Triggers the validations for the application and updates the Application Action code to
-     * indicate if the validation succeed or fail. <p>Requires the {@linkplain RolesConstants#APPLICATION_VALIDATE}
-     * role.</p>
+     * Triggers the validations for the application and updates the Application
+     * Action code to indicate if the validation succeed or fail. <p>Requires
+     * the {@linkplain RolesConstants#APPLICATION_VALIDATE} role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_VALIDATE)
@@ -665,16 +701,19 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * Updates the status of the application to the value indicated by the
      * <code>status_to_set</code> in the
      * <code>application.application_action_type</code> table for the
-     * <code>approve</code> code. (i.e. approved) if validations are successful. Also updates the
-     * status of all services and BA Units and /or Cadastre Objects linked to those services.
-     * <p>Requires the {@linkplain RolesConstants#APPLICATION_APPROVE} role.</p>
+     * <code>approve</code> code. (i.e. approved) if validations are successful.
+     * Also updates the status of all services and BA Units and /or Cadastre
+     * Objects linked to those services. <p>Requires the {@linkplain RolesConstants#APPLICATION_APPROVE}
+     * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_APPROVE)
@@ -692,11 +731,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_ARCHIVE)
@@ -707,16 +748,18 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Sets the action code on the application to <cpde>dispatch</code> to indicate the application
-     * has been dispatched. <p>Requires the {@linkplain RolesConstants#APPLICATION_DISPATCH}
+     * Sets the action code on the application to <cpde>dispatch</code> to
+     * indicate the application has been dispatched. <p>Requires the {@linkplain RolesConstants#APPLICATION_DISPATCH}
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_DISPATCH)
@@ -730,16 +773,19 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * Updates the status of the application to the value indicated by the
      * <code>status_to_set</code> in the
      * <code>application.application_action_type</code> table for the
-     * <code>lapse</code> code. (i.e. anulled). Will also delete the transaction records for each
-     * service that is associated with the application.<p>Requires the {@linkplain RolesConstants#APPLICATION_LAPSE}
+     * <code>lapse</code> code. (i.e. anulled). Will also delete the transaction
+     * records for each service that is associated with the
+     * application.<p>Requires the {@linkplain RolesConstants#APPLICATION_LAPSE}
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_LAPSE)
@@ -750,16 +796,19 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Sets the assignee id on the application to the id of the user specified as well as setting
-     * the action code on the application to <cpde>assign</code> to indicate the application has
-     * been assigned. <p>Requires the {@linkplain RolesConstants#APPLICATION_ASSIGN_TO_OTHERS} or
-     * the {@linkplain RolesConstants#APPLICATION_ASSIGN_TO_YOURSELF} role.</p>
+     * Sets the assignee id on the application to the id of the user specified
+     * as well as setting the action code on the application to <cpde>assign</code>
+     * to indicate the application has been assigned. <p>Requires the {@linkplain RolesConstants#APPLICATION_ASSIGN_TO_OTHERS}
+     * or the {@linkplain RolesConstants#APPLICATION_ASSIGN_TO_YOURSELF}
+     * role.</p>
      *
      * @param applicationId The application to perform the action against
      * @param userId Identifier of the user to assign to the application
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
+     * @return The results of the validation performed as part of the service
+     * action.
      * @see
      * #takeActionAgainstApplication(org.sola.services.ejb.application.repository.entities.ApplicationActionTaker,
      * java.lang.String, java.lang.String, int) takeActionAgainstApplication
@@ -780,14 +829,18 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Clears the assignee id on the application and sets the action code on the application to <cpde>unAssign</code>
-     * to indicate the application has been unassigned. <p>Requires the {@linkplain RolesConstants#APPLICATION_UNASSIGN_FROM_OTHERS}
-     * or the {@linkplain RolesConstants#APPLICATION_UNASSIGN_FROM_YOURSELF} role.</p>
+     * Clears the assignee id on the application and sets the action code on the
+     * application to <cpde>unAssign</code> to indicate the application has been
+     * unassigned. <p>Requires the {@linkplain RolesConstants#APPLICATION_UNASSIGN_FROM_OTHERS}
+     * or the {@linkplain RolesConstants#APPLICATION_UNASSIGN_FROM_YOURSELF}
+     * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
+     * @return The results of the validation performed as part of the service
+     * action.
      * @see
      * #takeActionAgainstApplication(org.sola.services.ejb.application.repository.entities.ApplicationActionTaker,
      * java.lang.String, java.lang.String, int) takeActionAgainstApplication
@@ -815,11 +868,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * role.</p>
      *
      * @param applicationId The application to perform the action against
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String, java.lang.String, int)
-     * takeActionAgainstApplication
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #takeActionAgainstApplication(java.lang.String, java.lang.String,
+     * java.lang.String, int) takeActionAgainstApplication
      */
     @Override
     @RolesAllowed(RolesConstants.APPLICATION_RESUBMIT)
@@ -830,12 +885,14 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * It registers a service of category type informationServices. If it is of another kind of not
-     * specified it throws an exception. If the service exists, it is only logged an action of type
-     * completed, otherwise it is created.
+     * It registers a service of category type informationServices. If it is of
+     * another kind of not specified it throws an exception. If the service
+     * exists, it is only logged an action of type completed, otherwise it is
+     * created.
      *
      * @param service The service to be saved
-     * @param languageCode current language code. Used if business rules are invoked.
+     * @param languageCode current language code. Used if business rules are
+     * invoked.
      * @return The service after the save is completed
      */
     @Override
@@ -862,10 +919,11 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Retrieves a cut down version of the services on the application for the purpose of applying
-     * actions to the services.
+     * Retrieves a cut down version of the services on the application for the
+     * purpose of applying actions to the services.
      *
-     * @param applicationId The identifier of the application to retrieve the services for.
+     * @param applicationId The identifier of the application to retrieve the
+     * services for.
      * @return The list of cut down services.
      */
     private List<ServiceActionTaker> getServiceActionTakerList(String applicationId) {
@@ -876,14 +934,15 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * It validates a service. For the moment, it is called from the validate method. Perhaps in the
-     * future can be used directly to validate a single service.
+     * It validates a service. For the moment, it is called from the validate
+     * method. Perhaps in the future can be used directly to validate a single
+     * service.
      *
      * @param service the service
      * @param languageCode the language code to translate the feedback
      * @return
-     * @see #approveApplicationService(java.lang.String, java.lang.String, java.lang.String,
-     * java.lang.String, boolean) approveApplicationService
+     * @see #approveApplicationService(java.lang.String, java.lang.String,
+     * java.lang.String, java.lang.String, boolean) approveApplicationService
      */
     private List<ValidationResult> validateService(
             ServiceActionTaker service, String languageCode, ServiceActionType serviceActionType) {
@@ -899,7 +958,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
 
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", service.getId());
-        params.put("username",getUserName());
+        params.put("username", getUserName());
         //Run the validation
         resultList = this.systemEJB.checkRulesGetValidation(
                 brValidationList, languageCode, params);
@@ -916,10 +975,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * Updates the service with the appropriate action code and status
      *
      * @param serviceId The identifier of the service to action
-     * @param actionCode The action code to indicate the status change required to the service
-     * @param languageCode The language code to use for localizing any validation messages
+     * @param actionCode The action code to indicate the status change required
+     * to the service
+     * @param languageCode The language code to use for localizing any
+     * validation messages
      * @param rowVersion The current rowversion for the service
-     * @return The list of validation messages as a result of applying the action to the service.
+     * @return The list of validation messages as a result of applying the
+     * action to the service.
      */
     private List<ValidationResult> takeActionAgainstService(
             String serviceId, String actionCode, String languageCode, int rowVersion) {
@@ -927,18 +989,12 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         if (service == null) {
             throw new SOLAException(ServiceMessage.EJB_APPLICATION_SERVICE_NOT_FOUND);
         }
-  /**
-     * Checks to see if user has appropriate role
-*    RoleVerifier getRepository().getScalar(getRoleVerifier(String applicationNumber, String firstPart, String lastPart), validRole), role);
-     */
-                   
-        ServiceActionType serviceActionType =
-                getRepository().getCode(ServiceActionType.class, actionCode, languageCode);
-        List<ValidationResult> validationResultList = this.validateService(
-                service, languageCode, serviceActionType);
+
+        ServiceActionType serviceActionType = getRepository().getCode(ServiceActionType.class, actionCode, languageCode);
+        List<ValidationResult> validationResultList = this.validateService(service, languageCode, serviceActionType);
+        
         if (systemEJB.validationSucceeded(validationResultList)) {
-            transactionEJB.changeTransactionStatusFromService(
-                    serviceId, serviceActionType.getStatusToSet());
+            transactionEJB.changeTransactionStatusFromService(serviceId, serviceActionType.getStatusToSet());
             service.setStatusCode(serviceActionType.getStatusToSet());
             service.setActionCode(actionCode);
             service.setRowVersion(rowVersion);
@@ -950,15 +1006,18 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Wrapper method that uses the applicationId to load the application object before calling
+     * Wrapper method that uses the applicationId to load the application object
+     * before calling
      * {@linkplain #takeActionAgainstApplication(org.sola.services.ejb.application.repository.entities.ApplicationActionTaker,
      * java.lang.String, java.lang.String, int) takeActionAgainstApplication.
      *
      * @param applicationId The identifier of the application to perform the action against
      * @param actionCode The action to apply to the application
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
+     * @return The results of the validation performed as part of the service
+     * action.
      */
     private List<ValidationResult> takeActionAgainstApplication(
             String applicationId, String actionCode, String languageCode, int rowVersion) {
@@ -971,23 +1030,27 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Executes the specified action against the application. Typically this will require changing
-     * the status of the application based on the
+     * Executes the specified action against the application. Typically this
+     * will require changing the status of the application based on the
      * <code>status_to_set</code> value in the
-     * <code>application.application_action_type</code> table as well as setting the application
-     * action, but it can also involve updating the services and related transactions depending on
-     * the scope of the action (e.g. Approve will update the status of all services and related
-     * transactions). <p>Before applying an action, the validation rules for that action are
-     * executed against the application as well as the services and related transactions. If the
-     * validation rules fail, the action is aborted and no changes are applied.</p>
+     * <code>application.application_action_type</code> table as well as setting
+     * the application action, but it can also involve updating the services and
+     * related transactions depending on the scope of the action (e.g. Approve
+     * will update the status of all services and related transactions).
+     * <p>Before applying an action, the validation rules for that action are
+     * executed against the application as well as the services and related
+     * transactions. If the validation rules fail, the action is aborted and no
+     * changes are applied.</p>
      *
      * @param application The application to perform the action against
      * @param actionCode The action to apply to the application
-     * @param languageCode The language code to use for localization of validation messages.
+     * @param languageCode The language code to use for localization of
+     * validation messages.
      * @param rowVersion The current row version of the service
-     * @return The results of the validation performed as part of the service action.
-     * @see #approveApplicationService(java.lang.String, java.lang.String, java.lang.String,
-     * java.lang.String, boolean) approveApplicationService
+     * @return The results of the validation performed as part of the service
+     * action.
+     * @see #approveApplicationService(java.lang.String, java.lang.String,
+     * java.lang.String, java.lang.String, boolean) approveApplicationService
      */
     private List<ValidationResult> takeActionAgainstApplication(
             ApplicationActionTaker application, String actionCode,
@@ -1070,27 +1133,32 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     }
 
     /**
-     * Approves the service as well as the entities (e.g. BA Units, Sources, Cadastre Objects, etc)
-     * tied to the service through a transaction. Can also be used to cancel a service and reject
-     * (i.e. Delete) the transaction associated with the service or simply validate the service in
-     * preparation for approval.
+     * Approves the service as well as the entities (e.g. BA Units, Sources,
+     * Cadastre Objects, etc) tied to the service through a transaction. Can
+     * also be used to cancel a service and reject (i.e. Delete) the transaction
+     * associated with the service or simply validate the service in preparation
+     * for approval.
      *
      * @param serviceId Identifier of the service to approve
-     * @param serviceStatusCode The status code to update the service with. Either Approve or Cancel
+     * @param serviceStatusCode The status code to update the service with.
+     * Either Approve or Cancel
      * @param serviceRequestTypeCode The request type code of the service
-     * @param languageCode The language code to use for localization of validation messages
-     * @param validationOnly Flag to indicate that the services should only be validated and not
-     * updated.
+     * @param languageCode The language code to use for localization of
+     * validation messages
+     * @param validationOnly Flag to indicate that the services should only be
+     * validated and not updated.
      * @return The list of validation messages.
      * @see
      * org.sola.services.ejb.administrative.businesslogic.AdministrativeEJB#approveTransaction(java.lang.String,
-     * java.lang.String, boolean, java.lang.String) AdministrativeEJB.approveTransaction
+     * java.lang.String, boolean, java.lang.String)
+     * AdministrativeEJB.approveTransaction
      * @see
      * org.sola.services.ejb.source.businesslogic.SourceEJB#approveTransaction(java.lang.String,
      * java.lang.String, boolean, java.lang.String) SourceEJB.approveTransaction
      * @see
      * org.sola.services.ejb.transaction.businesslogic.TransactionEJB#approveTransaction(java.lang.String,
-     * java.lang.String, java.lang.String, boolean) TransactionEJB.approveTransaction
+     * java.lang.String, java.lang.String, boolean)
+     * TransactionEJB.approveTransaction
      * @see
      * org.sola.services.ejb.transaction.businesslogic.TransactionEJB#rejectTransaction(java.lang.String)
      * TransactionEJB.rejectTransaction
@@ -1139,7 +1207,8 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     /**
      * Retrieves all application.request_category_type code values.
      *
-     * @param languageCode The language code to use for localization of display values.
+     * @param languageCode The language code to use for localization of display
+     * values.
      */
     @Override
     public List<RequestCategoryType> getRequestCategoryTypes(String languageCode) {
@@ -1150,14 +1219,16 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
     public Application getApplicationByTransactionId(String transactionId) {
         Application application = null;
         TransactionBasic transaction = transactionEJB.getTransactionById(transactionId, TransactionBasic.class);
-        if(transaction!=null){
+        if (transaction != null) {
             Service service = getRepository().getEntity(Service.class, transaction.getFromServiceId());
-            if(service!=null){
+            if (service != null) {
                 application = getRepository().getEntity(Application.class, service.getApplicationId());
             }
         }
         return application;
     }
+
+    @Override
     public RoleVerifier getRoleVerifier(String serviceId) {
         if (serviceId == null) {
             serviceId = "";
