@@ -31,10 +31,7 @@ import java.util.*;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import org.sola.common.DateUtility;
-import org.sola.common.Money;
-import org.sola.common.RolesConstants;
-import org.sola.common.SOLAException;
+import org.sola.common.*;
 import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJB;
@@ -300,10 +297,13 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * @return The application after the save is completed.
      */
     @Override
-    @RolesAllowed(RolesConstants.APPLICATION_CREATE_APPS)
+    @RolesAllowed({RolesConstants.APPLICATION_CREATE_APPS, RolesConstants.APPLICATION_EDIT_APPS})
     public Application saveApplication(Application application) {
         if (application == null) {
             return application;
+        }
+        if(application.isNew() && !isInRole(RolesConstants.APPLICATION_CREATE_APPS)){
+            throw new SOLAAccessException();
         }
         Date now = DateUtility.now();
         if (application.getServiceList() != null) {
