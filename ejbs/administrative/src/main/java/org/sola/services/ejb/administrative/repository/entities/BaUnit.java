@@ -27,6 +27,7 @@ package org.sola.services.ejb.administrative.repository.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.Column;
@@ -116,6 +117,12 @@ public class BaUnit extends AbstractVersionedEntity {
     @Column(insertable = false, updatable = false, name = "district")
     @AccessFunctions(onSelect = "administrative.getDistrict(id)")
     private String district;
+    @Column(insertable = false, updatable = false, name = "priorTitle")
+    @AccessFunctions(onSelect = "administrative.getPriorTitle(id)")
+    private String priorTitle;
+    @Column(insertable = false, updatable = false, name = "folioRegDate")
+    @AccessFunctions(onSelect = "administrative.getFolioRegDate(id)")
+    private Date folioRegDate;
 
     public BigDecimal getCalculatedAreaSize() {
         return calculatedAreaSize;
@@ -275,6 +282,22 @@ public class BaUnit extends AbstractVersionedEntity {
 
     public void setDistrict(String district) {
         this.district = district;
+    }
+
+    public String getPriorTitle() {
+        return priorTitle;
+    }
+
+    public void setPriorTitle(String priorTitle) {
+        this.priorTitle = priorTitle;
+    }
+
+    public Date getFolioRegDate() {
+        return folioRegDate;
+    }
+
+    public void setFolioRegDate(Date folioRegDate) {
+        this.folioRegDate = folioRegDate;
     }
     
      public Boolean isLocked() {
