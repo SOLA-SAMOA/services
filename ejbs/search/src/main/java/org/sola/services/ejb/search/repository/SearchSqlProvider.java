@@ -42,8 +42,22 @@ public class SearchSqlProvider {
     private static final String APPLICATION_GROUP = "application";
     private static final String SERVICE_GROUP = "service";
     private static final String RRR_GROUP = "rrr";
+    private static final String PROPERTY_GROUP = "Property";
+    private static final String SOURCE_GROUP = "Source";
+    private static final String AGENT_GROUP = "Agent";
+    private static final String CONTACT_PERSON_GROUP = "Contact person";
+    
     private static final String CHANGE_ACTION = "changed";
+    private static final String ADDED_PROPERTY = "ADDED PROPERTY: ";
+    private static final String DELETED_PROPERTY = "DELETED PROPERTY: ";
+    private static final String ADDED_SOURCE = "ADDED DOCUMENT: Ref#";
+    private static final String DELETED_SOURCE = "REMOVED DOCUMENT: Ref#";
+    private static final String ADDED_AGENT = "ADDED AGENT: ";
+    private static final String DELETED_AGENT = "REMOVED AGENT: ";
+    private static final String ADDED_CONTACT_PERSON = "ADDED CONTACT PERSON: ";
+    private static final String DELETED_CONTACT_PERSON = "REMOVED CONTACT PERSON: ";
 
+    
     public static String buildApplicationLogSql() {
         String sql;
         int sortClassifier = 1;
@@ -168,7 +182,210 @@ public class SearchSqlProvider {
 //        WHERE("ser.application_id = #{" + PARAM_APPLICATION_ID + "}");
 //        WHERE("tran.from_service_id = ser.id");
 //        WHERE("rrr.transaction_id = tran.id");
+         
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
 
+        // Property
+        BEGIN();
+        SELECT("'" + PROPERTY_GROUP + "' AS record_group");
+        SELECT("'" + PROPERTY_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("prop1.id AS record_id");
+        SELECT("prop1.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("replace(prop1.change_action,'i','" + ADDED_PROPERTY + "')||prop1.name_firstpart||'/'||prop1.name_lastpart AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("prop1.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = prop1.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application_property prop1 ");
+        WHERE("prop1.application_id = #{" + PARAM_APPLICATION_ID + "}");
+        
+         sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+        // Application property History
+        BEGIN();
+        SELECT("'" + PROPERTY_GROUP + "' AS record_group");
+        SELECT("'" + PROPERTY_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("prop_hist.id AS record_id");
+        SELECT("prop_hist.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("CASE WHEN prop_hist.change_action = 'i' then replace(prop_hist.change_action,'i','" + ADDED_PROPERTY + "')||' - '|| prop_hist.name_firstpart|| '/'||prop_hist.name_lastpart"
+                + "  WHEN prop_hist.change_action = 'd' then replace(prop_hist.change_action,'d','" + DELETED_PROPERTY + "')||' - '|| prop_hist.name_firstpart|| '/'||prop_hist.name_lastpart"
+                + "  END AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("prop_hist.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = prop_hist.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application_property_historic prop_hist");
+        WHERE("prop_hist.application_id = #{" + PARAM_APPLICATION_ID + "}");
+        
+        
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+         // SOURCE
+        BEGIN();
+        SELECT("'" + SOURCE_GROUP + "' AS record_group");
+        SELECT("'" + SOURCE_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("source1.source_id AS record_id");
+        SELECT("source1.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("replace(source1.change_action,'i','" + ADDED_SOURCE + "')||coalesce(source.reference_nr,'')||' - '||coalesce(source.type_code,'')   AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("source1.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = source1.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application_uses_source source1  "
+                + " LEFT JOIN source.source source "
+                + " ON source1.source_id = source.id ");
+        WHERE("source1.application_id = #{" + PARAM_APPLICATION_ID + "}");
+        
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+        // Application Source History
+        BEGIN();
+        SELECT("'" + SOURCE_GROUP + "' AS record_group");
+        SELECT("'" + SOURCE_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("source1.source_id AS record_id");
+        SELECT("source1.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("CASE WHEN source1.change_action = 'i' then replace(source1.change_action,'i','" + ADDED_SOURCE + "')||coalesce(source.reference_nr,'')||' - '||coalesce(source.type_code,'') "
+                + "  WHEN source1.change_action = 'd' then replace(source1.change_action,'d','" + DELETED_SOURCE + "')||coalesce(source.reference_nr,'')||' - '||coalesce(source.type_code,'') "
+                + "  END AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("source1.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = source1.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application_uses_source_historic source1  "
+                + " LEFT JOIN source.source source "
+                + " ON source1.source_id = source.id ");
+        WHERE("source1.application_id = #{" + PARAM_APPLICATION_ID + "}");
+       
+        
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+        // AGENT 
+        BEGIN();
+        
+        SELECT("'" + AGENT_GROUP + "' AS record_group");
+        SELECT("'" + AGENT_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("app.agent_id AS record_id");
+        SELECT("app.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("replace(party.change_action,'i','" + ADDED_AGENT + "')||' - '||party.name||' '||coalesce(party.last_name,'') AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("app.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = app.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application app");
+        FROM("party.party party");
+        WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
+        WHERE("app.agent_id=party.id");
+        
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+        // AGENT History
+        BEGIN();
+        
+        SELECT("'" + AGENT_GROUP + "' AS record_group");
+        SELECT("'" + AGENT_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("app.agent_id AS record_id");
+        SELECT("app.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("CASE WHEN (app.change_action='i') then replace(party.change_action,'i','" + ADDED_AGENT + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
+        + " ELSE  replace(app.change_action,app.change_action,'" + DELETED_AGENT + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
+        + " END AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("app.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = app.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application new_app");
+        FROM("application.application_historic app"  
+                + " LEFT JOIN party.party party" 
+                + "  ON app.agent_id = party.id"); 
+        WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
+        WHERE("app.agent_id != new_app.agent_id");
+        WHERE("app.agent_id=party.id");
+        WHERE("((app.rowversion - 1) = new_app.rowversion OR (app.rowversion) = new_app.rowversion)");
+       
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+        
+        // contact_person 
+        BEGIN();
+        
+        SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_group");
+        SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("app.contact_person_id AS record_id");
+        SELECT("app.rowversion AS record_sequence");
+        SELECT("''::text AS nr");
+        SELECT("replace(party.change_action,app.change_action,'" + ADDED_CONTACT_PERSON + "')||' - '||party.name||' '||coalesce(party.last_name,'') AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("app.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = app.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application app");
+        FROM("party.party party");
+        WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
+        WHERE("app.contact_person_id=party.id");
+        
+        sql = sql + SQL() + " UNION ";
+        sortClassifier++;
+
+        // contact_person History
+        BEGIN();
+        
+        SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_group");
+        SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_type");
+        SELECT(sortClassifier + " as sort_classifier");
+        SELECT("app.contact_person_id AS record_id");
+        SELECT("app.rowversion AS record_sequence");
+        SELECT("''::text AS nr"); 
+        SELECT("CASE WHEN (app.change_action='i') then replace(party.change_action,'i','" + ADDED_CONTACT_PERSON + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
+        + " ELSE  replace(app.change_action,app.change_action,'" + DELETED_CONTACT_PERSON + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
+        + " END AS action_code");
+        SELECT("NULL::text AS notation");
+        SELECT("app.change_time");
+        SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
+                + " FROM system.appuser"
+                + " WHERE appuser.username::text = app.change_user::text)"
+                + " AS user_fullname");
+        FROM("application.application new_app");
+        FROM("application.application_historic app"  
+                + " LEFT JOIN party.party_historic party" 
+                + "  ON app.contact_person_id = party.id"); 
+        WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
+        WHERE("app.contact_person_id != new_app.contact_person_id");
+        WHERE("app.contact_person_id=party.id");
+        WHERE("((app.rowversion - 1) = new_app.rowversion OR (app.rowversion) = new_app.rowversion)");
+       
         ORDER_BY("change_time, sort_classifier, nr");
 
         sql = sql + SQL();
