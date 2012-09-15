@@ -6,12 +6,12 @@
     <parent>
         <artifactId>sola-ejbs</artifactId>
         <groupId>org.sola.services</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1.120915</version>
     </parent>
 
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-administrative</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.120915</version>
     <packaging>ejb</packaging>
     
     <name>EJB Administrative</name>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.sola.services</groupId>
             <artifactId>sola-services-common</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     
         <dependency>
