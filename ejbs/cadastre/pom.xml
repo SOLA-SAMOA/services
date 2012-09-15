@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.sola.services</groupId>
         <artifactId>sola-ejbs</artifactId>
-        <version>1.1.120915</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-cadastre</artifactId>
     <packaging>ejb</packaging>
-    <version>1.1.120915</version>
+    <version>1.2-SNAPSHOT</version>
     <name>EJB Cadastre</name>
 </project>

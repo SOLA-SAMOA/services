@@ -5,11 +5,11 @@
     <parent>
         <artifactId>sola-services</artifactId>
         <groupId>org.sola</groupId>
-        <version>1.1.120915</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <groupId>org.sola.services</groupId>
     <artifactId>sola-unit-tests</artifactId>
-    <version>1.1.120915</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Services Unit Tests</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
