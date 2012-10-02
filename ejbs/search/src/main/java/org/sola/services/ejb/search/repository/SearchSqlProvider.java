@@ -427,8 +427,8 @@ public class SearchSqlProvider {
             WHERE("rrr.status_code = 'current'");
             WHERE("pr.rrr_id = rrr.id");
             WHERE("p.id = pr.party_id");
-            WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_OWNER_NAME
-                    + "}, COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, ''))");
+            WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_OWNER_NAME + "}, "
+                    + "COALESCE(p.name, '') || ' ' || COALESCE(p.last_name, '') || ' ' || COALESCE(p.alias, ''))");
         }
         if (nameFirstPart != null) {
             WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_NAME_FIRSTPART
