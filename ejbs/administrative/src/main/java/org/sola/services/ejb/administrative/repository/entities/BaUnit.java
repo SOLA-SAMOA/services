@@ -72,7 +72,7 @@ public class BaUnit extends AbstractVersionedEntity {
             + "UNION "
             + "SELECT n.ba_unit_id FROM administrative.notation n "
             + "WHERE n.ba_unit_id IS NOT NULL AND n.transaction_id = #{"
-            + QUERY_PARAMETER_TRANSACTIONID + "})";
+            + QUERY_PARAMETER_TRANSACTIONID + "} AND n.rrr_id IS NULL) ";
     public static final String QUERY_WHERE_BYPROPERTYCODE =
             "name_firstpart = #{" + QUERY_PARAMETER_FIRSTPART + "} AND "
             + "name_lastpart = #{" + QUERY_PARAMETER_LASTPART + "}";
