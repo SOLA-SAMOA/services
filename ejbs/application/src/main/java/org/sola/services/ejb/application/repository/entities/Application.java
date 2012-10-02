@@ -222,8 +222,8 @@ public class Application extends AbstractVersionedEntity {
         return location;
     }
 
-    public void setLocation(byte[] location) {
-        this.location = location;
+    public void setLocation(byte[] location) { //NOSONAR
+        this.location = location; //NOSONAR
     }
 
     public Date getLodgingDatetime() {

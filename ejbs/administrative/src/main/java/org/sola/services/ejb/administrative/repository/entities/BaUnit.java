@@ -59,6 +59,8 @@ public class BaUnit extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
     public static final String QUERY_PARAMETER_FIRSTPART = "firstPart";
     public static final String QUERY_PARAMETER_LASTPART = "lastPart";
+    public static final String QUERY_PARAMETER_ID = "id";
+    public static final String QUERY_PARAMETER_COLIST = "colist";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "} or id in "
             + "(select ba_unit_id from administrative.ba_unit_target where "
@@ -74,6 +76,8 @@ public class BaUnit extends AbstractVersionedEntity {
     public static final String QUERY_WHERE_BYPROPERTYCODE =
             "name_firstpart = #{" + QUERY_PARAMETER_FIRSTPART + "} AND "
             + "name_lastpart = #{" + QUERY_PARAMETER_LASTPART + "}";
+    public static final String QUERY_WHERE_BYBAUNITID =
+            "id = #{" + QUERY_PARAMETER_ID + "}";
     @Id
     @Column(name = "id")
     private String id;
@@ -124,6 +128,10 @@ public class BaUnit extends AbstractVersionedEntity {
     @AccessFunctions(onSelect = "administrative.getFolioRegDate(id)")
     private Date folioRegDate;
 
+    @Column(insertable=false, updatable=false, name = "calculated_area_size")
+    @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(#{" + QUERY_PARAMETER_COLIST + "})")
+    private BigDecimal calculatedAreaSize;
+    
     public BigDecimal getCalculatedAreaSize() {
         return calculatedAreaSize;
     }
@@ -131,9 +139,6 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setCalculatedAreaSize(BigDecimal calculatedAreaSize) {
         this.calculatedAreaSize = calculatedAreaSize;
     }
-    @Column(insertable=false, updatable=false, name = "calculated_area_size")
-    @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(id)")
-    private BigDecimal calculatedAreaSize;
     
     public BaUnit() {
         super();

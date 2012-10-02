@@ -458,9 +458,9 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, PartySearchResult.SEARCH_QUERY);
-        params.put("name", searchParams.getName());
-        params.put("typeCode", searchParams.getTypeCode());
-        params.put("roleTypeCode", searchParams.getRoleTypeCode());
+        params.put(PartySearchResult.QUERY_PARAM_NAME, searchParams.getName());
+        params.put(PartySearchResult.QUERY_PARAM_TYPE_CODE, searchParams.getTypeCode());
+        params.put(PartySearchResult.QUERY_PARAM_ROLE_TYPE_CODE, searchParams.getRoleTypeCode());
         return getRepository().getEntityList(PartySearchResult.class, params);
     }
 

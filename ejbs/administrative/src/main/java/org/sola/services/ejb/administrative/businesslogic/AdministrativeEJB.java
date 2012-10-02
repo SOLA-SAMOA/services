@@ -253,6 +253,7 @@ public class AdministrativeEJB extends AbstractEJB
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYTRANSACTIONID);
         params.put(BaUnit.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        params.put("username", getUserName());
         List<BaUnitStatusChanger> baUnitList =
                 getRepository().getEntityList(BaUnitStatusChanger.class, params);
 
@@ -268,6 +269,7 @@ public class AdministrativeEJB extends AbstractEJB
         params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_WHERE_PART, Rrr.QUERY_WHERE_BYTRANSACTIONID);
         params.put(Rrr.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        params.put("username", getUserName());
         List<RrrStatusChanger> rrrStatusChangerList =
                 getRepository().getEntityList(RrrStatusChanger.class, params);
         for (RrrStatusChanger rrr : rrrStatusChangerList) {
@@ -281,6 +283,7 @@ public class AdministrativeEJB extends AbstractEJB
             params = new HashMap<String, Object>();
             params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitNotation.QUERY_WHERE_BYTRANSACTIONID);
             params.put(BaUnitNotation.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+            params.put("username", getUserName());
             params.put(CommonSqlProvider.PARAM_ORDER_BY_PART,  BaUnitNotation.QUERY_ORDER_BY);
         
             List<BaUnitNotationStatusChanger> baUnitNotationList =
@@ -324,6 +327,7 @@ public class AdministrativeEJB extends AbstractEJB
                 RegistrationStatusType.STATUS_CURRENT, rrr.getTypeCode());
         HashMap<String, Serializable> params = new HashMap<String, Serializable>();
         params.put("id", rrr.getId());
+        params.put("username", getUserName());
         //Run the validation
         return this.systemEJB.checkRulesGetValidation(brValidationList, languageCode, params);
     }
@@ -445,8 +449,6 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, 1);
         result = getRepository().getEntity(BaUnitArea.class, params);
         
-        
-        System.out.println("PARAMS QUERY: "+params);
         return result;
     }
     
@@ -469,6 +471,26 @@ public class AdministrativeEJB extends AbstractEJB
         }
         return getRepository().saveEntity(baUnitArea);
     }
+    
+  
+    
+    /**
+     * Locates a BA Unit and cadastre object's area size     *
+     * @param id The BA Unit id
+     * @param colist the list of cadastre object for the ba unit
+     * @return The BA Unit matching the name
+     */
+    @Override
+    public BaUnit getBaUnitWithCadObject(String nameFirstPart, String nameLastPart, String colist) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYPROPERTYCODE);
+        params.put(BaUnit.QUERY_PARAMETER_FIRSTPART, nameFirstPart);
+        params.put(BaUnit.QUERY_PARAMETER_LASTPART, nameLastPart);
+        params.put(BaUnit.QUERY_PARAMETER_COLIST, colist);
+        return getRepository().getEntity(BaUnit.class, params);
+    }
+
+    
     
     
 }

@@ -145,8 +145,8 @@ public class SharedFolderCleaner implements SharedFolderCleanerLocal {
 
                                 filesDeleted += 1;
                             }
-                        } catch (Throwable t) {
-                            LogUtility.log(t.getLocalizedMessage(), Level.SEVERE);
+                        } catch (Exception ex) {
+                            LogUtility.log(ex.getLocalizedMessage(), Level.SEVERE);
                         }
                     }
                 }
@@ -155,8 +155,8 @@ public class SharedFolderCleaner implements SharedFolderCleanerLocal {
             LogUtility.log(String.format("Finished folder cleaning at %s. Deleted %s file(s)",
                     Calendar.getInstance().getTime(), filesDeleted), Level.INFO);
 
-        } catch (Throwable t) {
-            LogUtility.log(t.getLocalizedMessage(), Level.SEVERE);
+        } catch (Exception ex) {
+            LogUtility.log(ex.getLocalizedMessage(), Level.SEVERE);
         }
     }
 }

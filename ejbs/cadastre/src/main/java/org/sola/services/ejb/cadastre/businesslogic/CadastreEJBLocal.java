@@ -61,6 +61,12 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
     List<CadastreObject> getCadastreObjectByParts(String searchString);
 
     /**
+     * See {@linkplain CadastreEJB#getCadastreObjectByAllParts(java.lang.String)
+     * CadastreEJB.getCadastreObjectByAllParts}.
+     */
+    List<CadastreObject> getCadastreObjectByAllParts(String searchString);
+
+    /**
      * See {@linkplain CadastreEJB#saveCadastreObject(org.sola.services.ejb.cadastre.repository.entities.CadastreObject)
      * CadastreEJB.saveCadastreObject}.
      */
