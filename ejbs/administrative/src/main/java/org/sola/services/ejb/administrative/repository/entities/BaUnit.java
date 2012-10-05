@@ -124,8 +124,7 @@ public class BaUnit extends AbstractVersionedEntity {
     @Column(insertable = false, updatable = false, name = "priorTitle")
     @AccessFunctions(onSelect = "administrative.getPriorTitle(id)")
     private String priorTitle;
-    @Column(insertable = false, updatable = false, name = "folioRegDate")
-    @AccessFunctions(onSelect = "administrative.getFolioRegDate(id)")
+    @Column(name = "creation_date", updatable = false)
     private Date folioRegDate;
 
     @Column(insertable=false, updatable=false, name = "calculated_area_size")
@@ -353,6 +352,7 @@ public class BaUnit extends AbstractVersionedEntity {
                 String[] numberParts = baUnitNumber.split("/");
                 setNameFirstpart(numberParts[0]);
                 setNameLastpart(numberParts[1]);
+                setName(baUnitNumber); 
             }
         }
 

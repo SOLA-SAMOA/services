@@ -75,7 +75,7 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     @Column(name = "notation_text")
     private String notationText;
     private Boolean locked = null;
-    @Column(name = "change_time")
+    @Column(name = "notation_date")
     private Date changeTime;
 
     public Date getChangeTime() {

@@ -31,6 +31,7 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
@@ -44,6 +45,12 @@ public class RrrStatusChanger extends AbstractStatusChangerEntity {
 
     @Column(name = "type_code", updatable = false, insertable = false)
     private String typeCode;
+    
+    @Column(name = "registration_date")
+    private Date registrationDate;
+    
+   @Column(name = "expiration_date")
+    private Date expirationDate;
 
     public RrrStatusChanger() {
         super();
@@ -55,5 +62,21 @@ public class RrrStatusChanger extends AbstractStatusChangerEntity {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
 }

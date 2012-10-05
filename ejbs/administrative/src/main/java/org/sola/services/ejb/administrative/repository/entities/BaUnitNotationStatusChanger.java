@@ -31,6 +31,8 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 
@@ -41,7 +43,19 @@ import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 @Table(name = "notation", schema = "administrative")
 public class BaUnitNotationStatusChanger extends AbstractStatusChangerEntity {
 
+    @Column(name = "notation_date")
+    private Date notationDate;
+     
     public BaUnitNotationStatusChanger() {
         super();
     }
+
+    public Date getNotationDate() {
+        return notationDate;
+    }
+
+    public void setNotationDate(Date notationDate) {
+        this.notationDate = notationDate;
+    }
+    
 }

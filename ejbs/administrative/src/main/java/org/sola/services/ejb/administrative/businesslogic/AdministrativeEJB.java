@@ -27,12 +27,14 @@ package org.sola.services.ejb.administrative.businesslogic;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.sola.common.DateUtility;
 import org.sola.common.RolesConstants;
 import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
@@ -208,7 +210,7 @@ public class AdministrativeEJB extends AbstractEJB
             // Samoa Customization. Creating a new Proprety with no reference to a parcel is not
             // valid if the NameFirstPart (i.e. Lot number) and NameLastPart (i.e. Plan number) are
             // not provided. 
-            throw new SOLAException(ServiceMessage.EJB_ADMINISTRATIVE_NO_PARCEL); 
+            throw new SOLAException(ServiceMessage.EJB_ADMINISTRATIVE_NO_PARCEL);
         }
         TransactionBasic transaction =
                 transactionEJB.getTransactionByServiceId(serviceId, true, TransactionBasic.class);
@@ -256,12 +258,21 @@ public class AdministrativeEJB extends AbstractEJB
         params.put("username", getUserName());
         List<BaUnitStatusChanger> baUnitList =
                 getRepository().getEntityList(BaUnitStatusChanger.class, params);
-
+        Date approvalDate = DateUtility.now();
         for (BaUnitStatusChanger baUnit : baUnitList) {
             validationResult.addAll(this.validateBaUnit(baUnit, languageCode));
             if (systemEJB.validationSucceeded(validationResult) && !validateOnly) {
                 baUnit.setStatusCode(approvedStatus);
                 baUnit.setTransactionId(transactionId);
+                if (RegistrationStatusType.STATUS_CURRENT.equals(approvedStatus)
+                        && baUnit.getFolioRegDate() == null) {
+                    // Set the registration date for the property. 
+                    baUnit.setFolioRegDate(approvalDate);
+                } else if (RegistrationStatusType.STATUS_HISTORIC.equals(approvedStatus)
+                        && baUnit.getCancellationDate() == null) {
+                    // Set the cancellation date for the property. 
+                    baUnit.setCancellationDate(approvalDate);
+                }
                 getRepository().saveEntity(baUnit);
             }
         }
@@ -276,6 +287,15 @@ public class AdministrativeEJB extends AbstractEJB
             validationResult.addAll(this.validateRrr(rrr, languageCode));
             if (systemEJB.validationSucceeded(validationResult) && !validateOnly) {
                 rrr.setStatusCode(approvedStatus);
+                 if (RegistrationStatusType.STATUS_CURRENT.equals(approvedStatus)
+                        && rrr.getRegistrationDate() == null) {
+                    // Set the registration date for the rrr. 
+                    rrr.setRegistrationDate(approvalDate);
+                } else if (RegistrationStatusType.STATUS_HISTORIC.equals(approvedStatus)
+                        && rrr.getExpirationDate() == null) {
+                    // Set the cancellation date for the rrr. 
+                    rrr.setExpirationDate(approvalDate);
+                }
                 getRepository().saveEntity(rrr);
             }
         }
@@ -284,12 +304,15 @@ public class AdministrativeEJB extends AbstractEJB
             params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnitNotation.QUERY_WHERE_BYTRANSACTIONID);
             params.put(BaUnitNotation.QUERY_PARAMETER_TRANSACTIONID, transactionId);
             params.put("username", getUserName());
-            params.put(CommonSqlProvider.PARAM_ORDER_BY_PART,  BaUnitNotation.QUERY_ORDER_BY);
-        
+            params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, BaUnitNotation.QUERY_ORDER_BY);
+
             List<BaUnitNotationStatusChanger> baUnitNotationList =
                     getRepository().getEntityList(BaUnitNotationStatusChanger.class, params);
             for (BaUnitNotationStatusChanger baUnitNotation : baUnitNotationList) {
                 baUnitNotation.setStatusCode(RegistrationStatusType.STATUS_CURRENT);
+                if (baUnitNotation.getNotationDate() == null) {
+                    baUnitNotation.setNotationDate(approvalDate); 
+                }
                 getRepository().saveEntity(baUnitNotation);
             }
         }
@@ -431,8 +454,8 @@ public class AdministrativeEJB extends AbstractEJB
 
         return getBaUnitById(baUnitId);
     }
-    
-      /**
+
+    /**
      * Retrieves the actions a specific user has performed against any application during a specific
      * period.
      *
@@ -448,14 +471,13 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, BaUnitArea.QUERY_ORDER_BYCHANGETIME);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, 1);
         result = getRepository().getEntity(BaUnitArea.class, params);
-        
+
         return result;
     }
-    
-    
+
     /**
-     * Creates a new BA Unit Area 
-     * <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE} role.</p>
+     * Creates a new BA Unit Area <p>Requires the {@linkplain RolesConstants#ADMINISTRATIVE_BA_UNIT_SAVE}
+     * role.</p>
      *
      * @param baUnitId The identifier of the area the BA Unit is being created as part of
      * @param baUnitAreaTO The details of the BA Unit to create
@@ -471,11 +493,11 @@ public class AdministrativeEJB extends AbstractEJB
         }
         return getRepository().saveEntity(baUnitArea);
     }
-    
-  
-    
+
     /**
-     * Locates a BA Unit and cadastre object's area size     *
+     * Locates a BA Unit and cadastre object's area size
+     *
+     *
      * @param id The BA Unit id
      * @param colist the list of cadastre object for the ba unit
      * @return The BA Unit matching the name
@@ -489,8 +511,4 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(BaUnit.QUERY_PARAMETER_COLIST, colist);
         return getRepository().getEntity(BaUnit.class, params);
     }
-
-    
-    
-    
 }

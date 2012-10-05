@@ -45,7 +45,10 @@ public class UserSearchResult extends AbstractReadOnlyEntity {
             + "FROM system.appuser u LEFT JOIN system.appuser_appgroup ug ON u.id = ug.appuser_id ";
     
     public static final String QUERY_ACTIVE_USERS = UserSearchResult.SELECT_QUERY 
-            + "WHERE active = 't' ORDER BY u.last_name";
+            + "WHERE active = 't' "
+            + "AND   ug.appgroup_id IN (SELECT arg.appgroup_id FROM system.approle_appgroup arg "
+            + "                         WHERE arg.approle_code = 'ApplnAssignSelf')"
+            + "ORDER BY u.first_name, u.last_name";
     
     public static final String QUERY_ADVANCED_USER_SEARCH = UserSearchResult.SELECT_QUERY
             + "WHERE POSITION(LOWER(COALESCE(#{userName}, '')) IN LOWER(COALESCE(username, ''))) > 0 "

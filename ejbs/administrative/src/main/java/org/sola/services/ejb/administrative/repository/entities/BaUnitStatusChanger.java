@@ -31,6 +31,8 @@
  */
 package org.sola.services.ejb.administrative.repository.entities;
 
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Table;
 import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
 
@@ -40,8 +42,30 @@ import org.sola.services.common.repository.entities.AbstractStatusChangerEntity;
  */
 @Table(schema = "administrative", name = "ba_unit")
 public class BaUnitStatusChanger extends AbstractStatusChangerEntity {
+    
+    @Column(name = "creation_date")
+    private Date folioRegDate;
+    @Column(name = "expiration_date")
+    private Date cancellationDate;
 
     public BaUnitStatusChanger() {
         super();
     }
+
+    public Date getCancellationDate() {
+        return cancellationDate;
+    }
+
+    public void setCancellationDate(Date cancellationDate) {
+        this.cancellationDate = cancellationDate;
+    }
+
+    public Date getFolioRegDate() {
+        return folioRegDate;
+    }
+
+    public void setFolioRegDate(Date folioRegDate) {
+        this.folioRegDate = folioRegDate;
+    }    
+    
 }
