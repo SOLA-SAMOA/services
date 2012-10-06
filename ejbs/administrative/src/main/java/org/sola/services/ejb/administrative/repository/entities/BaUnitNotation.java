@@ -42,6 +42,7 @@ import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
+import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
 import org.sola.services.ejb.transaction.repository.entities.TransactionStatusType;
 
@@ -66,7 +67,8 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     private String baUnitId;
     @Column(name = "status_code", insertable = false, updatable = false)
     private String statusCode;
-    @Column(name = "transaction_id", updatable = false)
+    //@Column(name = "transaction_id",  updatable = false)
+    @Column(name = "transaction_id")
     private String transactionId;
     @Column(name = "rrr_id")
     private String rrrId;
@@ -186,7 +188,8 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     @Override
     public void preSave() {
 
-        if (this.isNew()) {
+        if (this.isNew() || (getStatusCode().equals(RegistrationStatusType.STATUS_PENDING) &&
+                (getTransactionId() == null || "adm-transaction".equals(getTransactionId())))) {
             setTransactionId(LocalInfo.getTransactionId());
         }
 

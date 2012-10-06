@@ -47,6 +47,7 @@ import org.sola.services.ejb.source.repository.entities.Source;
 import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
+import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
 import org.sola.services.ejb.transaction.repository.entities.TransactionStatusType;
@@ -79,7 +80,8 @@ public class Rrr extends AbstractVersionedEntity {
     private boolean primary;
     @Column(name = "registration_date")
     private Date registrationDate;
-    @Column(name = "transaction_id", updatable = false)
+   // @Column(name = "transaction_id", updatable = false)
+    @Column(name = "transaction_id")
     private String transactionId;
     @Column(name = "expiration_date")
     private Date expirationDate;
@@ -312,10 +314,11 @@ public class Rrr extends AbstractVersionedEntity {
 
     @Override
     public void preSave() {
-        if (this.isNew()) {
+        if (this.isNew() || (getStatusCode().equals(RegistrationStatusType.STATUS_PENDING) &&
+                (getTransactionId() == null || "adm-transaction".equals(getTransactionId())))) {
             setTransactionId(LocalInfo.getTransactionId());
         }
-
+        
         if (isNew() && getNr() == null) {
             // Assign a generated number to the Rrr if it is not currently set. 
             setNr(generateRrrNumber());
