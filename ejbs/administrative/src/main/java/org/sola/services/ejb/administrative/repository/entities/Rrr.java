@@ -109,8 +109,9 @@ public class Rrr extends AbstractVersionedEntity {
     @ChildEntityList(parentIdField = "rrrId", childIdField = "partyId",
     manyToManyClass = PartyForRrr.class, readOnly = true)
     private List<Party> rightHolderList;
-    @Column(insertable=false, updatable=false, name = "concatenated_name")
-    @AccessFunctions(onSelect = "administrative.get_concatenated_name(ba_unit_id)")
+    // Samoa customiztaion - don't bother with concatenated name as it is not overly useful. 
+    // @Column(insertable=false, updatable=false, name = "concatenated_name")
+    // @AccessFunctions(onSelect = "administrative.get_concatenated_name(ba_unit_id)")
     private String concatenatedName;
 
     public String getConcatenatedName() {
