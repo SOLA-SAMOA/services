@@ -66,11 +66,13 @@ public class PartyEJBIT extends AbstractEJBTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        login("test", "test"); 
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        logout(); 
     }
 
     /**
