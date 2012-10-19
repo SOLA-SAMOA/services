@@ -114,7 +114,6 @@ public abstract class AbstractVersionedEntity extends AbstractEntity {
         super.postSave();
         if (!noAction() && !isForceRefresh()) {
             rowVersion++;
-
         }
     }
 

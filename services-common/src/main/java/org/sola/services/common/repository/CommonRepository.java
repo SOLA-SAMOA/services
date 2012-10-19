@@ -102,4 +102,6 @@ public interface CommonRepository {
     <T extends AbstractReadOnlyEntity> List<T> executeFunction(Map params, Class<T> entityClass);
 
     ArrayList<HashMap> executeSql(Map params);
+    
+    int bulkUpdate(Map params); 
 }

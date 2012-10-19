@@ -38,6 +38,7 @@ package org.sola.services.ejb.transaction.repository.entities;
 public class TransactionType {
     public static final String CADASTRE_CHANGE = "cadastreChange"; 
     public static final String REDEFINE_CADASTRE = "redefineCadastre"; 
+    public static final String RECORD_UNIT_PLAN = "unitPlan"; 
     public static final String NEW_DIGITAL_TITLE = "newDigitalTitle"; 
     public static final String NEW_DIGITAL_PROPERTY = "newDigitalProperty"; 
     public static final String NEW_APARTMENT = "newApartment"; 

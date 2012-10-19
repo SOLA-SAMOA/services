@@ -209,7 +209,7 @@ public class CommonRepositoryImpl implements CommonRepository {
 
         // This is a one to one child. Check if the parent entity has customized join criteria
         // for the child. 
-        Map params = parentEntity.getChildJoinSqlParams(childEntityClass);
+        Map params = parentEntity.getChildJoinSqlParams(childInfo);
         V child = null;
         boolean loadChild = true;
         if (params == null) {
@@ -673,6 +673,25 @@ public class CommonRepositoryImpl implements CommonRepository {
                         // not have been able to translate into the entity retrieved from the 
                         // database.
                         saveChild = child.isNew();
+                    } else {
+                        // The many to many association already exists for this child, but it may
+                        // have some additional attributes that need to be saved. Check the number of
+                        // columns on the many to many. If it is an Versioned Entity and has more than
+                        // 5 columns, then it should be updated. If its not a Versioned Entity, but has
+                        // more than 2 columns, then it should be updated as well. 
+                        // (e.g. spatial_unit_in_parcel)
+                        AbstractEntity manyToManyTmp = createManyToManyEntity(childInfo, entity, child);
+                        if (manyToManyTmp.getColumns().size() > 5
+                                || (!AbstractVersionedEntity.class.isAssignableFrom(manyToManyTmp.getClass())
+                                && manyToManyTmp.getColumns().size() > 2)) {
+                            {
+                                manyToMany = refreshEntity(manyToManyTmp, mapper);
+                                // The refresh would ensure the rowVersion is correc, as well as reset
+                                // the extra many to many fields. Re-intialize the many to many to
+                                // ensure the necessary data is configured.
+                                manyToMany = entity.initializeManyToMany(manyToMany, child);
+                            }
+                        }
                     }
 
                     // Determine if the child entity should be saved. Do not save if the child
@@ -1216,7 +1235,7 @@ public class CommonRepositoryImpl implements CommonRepository {
             T parentEntity, Class<V> childEntityClass, ChildEntityInfo childInfo, U mapper) {
 
         // Determine if the parent has customized join criteria for the child list. 
-        Map<String, Object> params = parentEntity.getChildJoinSqlParams(childEntityClass);
+        Map<String, Object> params = parentEntity.getChildJoinSqlParams(childInfo);
         if (params == null) {
             // Use the default child join critiera (i.e. where FK column = parentId)
             params = new HashMap<String, Object>();
@@ -1408,6 +1427,31 @@ public class CommonRepositoryImpl implements CommonRepository {
         SqlSession session = getSqlSession();
         try {
             result = getMapper(session).executeSql(params);
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    /**
+     * Executes a dynamic bulk update command using the specified parameters.
+     *
+     * @param params {@link CommonSqlProvider#PARAM_QUERY} must be supplied with the template for
+     * the bulk update statement. Values for the update can be provided as additional parameters.
+     * @return the number of rows updated.
+     */
+    @Override
+    public int bulkUpdate(Map params) {
+        if (params == null || !params.containsKey(CommonSqlProvider.PARAM_QUERY)) {
+            throw new SOLAException(ServiceMessage.GENERAL_UNEXPECTED, new Object[]{
+                        "No dynamic SQL to execute!", "params=" + params
+                    });
+        }
+
+        int result = 0;
+        SqlSession session = getSqlSession();
+        try {
+            result = getMapper(session).bulkUpdate(params);
         } finally {
             session.close();
         }

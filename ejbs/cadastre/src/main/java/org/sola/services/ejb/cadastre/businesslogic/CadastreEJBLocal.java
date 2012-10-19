@@ -158,4 +158,28 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
      * CadastreEJB.getSpatialUnitChangeByTransaction}.
      */
     List<SpatialUnitChange> getSpatialUnitChangeByTransaction(String transactionId);
+
+    /**
+     * See {@linkplain CadastreEJB#getUnitParcelGroup(java.lang.String)
+     * CadastreEJB.getUnitParcelGroup}.
+     */
+    UnitParcelGroup getUnitParcelGroup(String spatialUnitGroupId);
+
+    /**
+     * See {@linkplain CadastreEJB#getUnitParcelGroupByParcelId(java.lang.String)
+     * CadastreEJB.getUnitParcelGroupByParcelId}.
+     */
+    UnitParcelGroup getUnitParcelGroupByParcelId(String spatialUnitId);
+
+    /**
+     * See {@linkplain CadastreEJB#saveUnitParcelGroup(org.sola.services.ejb.cadastre.repository.entities.UnitParcelGroup)
+     * CadastreEJB.saveUnitParcelGroup}.
+     */
+    UnitParcelGroup saveUnitParcelGroup(UnitParcelGroup group);
+
+    /**
+     * See {@linkplain CadastreEJB#applyUnitParcelChanges(java.lang.String, java.lang.String)
+     * CadastreEJB.applyUnitParcelChanges}.
+     */
+    void applyUnitParcelChanges(String unitParcelGroupId, String transactionId);
 }

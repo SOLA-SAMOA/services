@@ -126,11 +126,10 @@ public class BaUnit extends AbstractVersionedEntity {
     private String priorTitle;
     @Column(name = "creation_date", updatable = false)
     private Date folioRegDate;
-
-    @Column(insertable=false, updatable=false, name = "calculated_area_size")
+    @Column(insertable = false, updatable = false, name = "calculated_area_size")
     @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(#{" + QUERY_PARAMETER_COLIST + "})")
     private BigDecimal calculatedAreaSize;
-    
+
     public BigDecimal getCalculatedAreaSize() {
         return calculatedAreaSize;
     }
@@ -138,7 +137,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setCalculatedAreaSize(BigDecimal calculatedAreaSize) {
         this.calculatedAreaSize = calculatedAreaSize;
     }
-    
+
     public BaUnit() {
         super();
     }
@@ -303,8 +302,8 @@ public class BaUnit extends AbstractVersionedEntity {
     public void setFolioRegDate(Date folioRegDate) {
         this.folioRegDate = folioRegDate;
     }
-    
-     public Boolean isLocked() {
+
+    public Boolean isLocked() {
         if (locked == null) {
             locked = false;
             Transaction transaction = getTransaction();
@@ -328,9 +327,11 @@ public class BaUnit extends AbstractVersionedEntity {
                 // Set the default number as the parcel may not yet exist in the database if it 
                 // has been created as part of the property. Make sure any not numeric characters
                 // on the first part are removed. 
-                result = this.getCadastreObjectList().get(0).getNameFirstpart().
-                        replaceAll("[^0-9]", "") + "/"
-                        + this.getCadastreObjectList().get(0).getNameLastpart();
+                if (this.getCadastreObjectList().get(0).getTypeCode().equals("parcel")) {
+                    result = this.getCadastreObjectList().get(0).getNameFirstpart().
+                            replaceAll("[^0-9]", "") + "/"
+                            + this.getCadastreObjectList().get(0).getNameLastpart();
+                }
             }
             Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-baunit-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {
@@ -352,7 +353,7 @@ public class BaUnit extends AbstractVersionedEntity {
                 String[] numberParts = baUnitNumber.split("/");
                 setNameFirstpart(numberParts[0]);
                 setNameLastpart(numberParts[1]);
-                setName(baUnitNumber); 
+                setName(baUnitNumber);
             }
         }
 

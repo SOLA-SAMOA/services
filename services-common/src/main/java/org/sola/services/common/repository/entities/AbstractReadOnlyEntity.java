@@ -228,15 +228,11 @@ public abstract class AbstractReadOnlyEntity implements Serializable {
      * <p> Override this method in the parent entity and populate the parameter map with the 
      * appropriate SQL parts (e.g. {@linkplain CommonSqlProvider#PARAM_WHERE_PART}) for the join. 
      * </p>
-     * @param <T> The generic type of the child entity. Must be a descendent of 
-     *            {@linkplain AbstractReadOnlyEntity}.
-     * @param childEntityClass The class of the child entity to load. This can be used to 
-     * differentiate between multiple child entities if the parent overrides the join criteria for
-     * more than one child. 
+     * @param childInfo The ChildEntityInfo for the child being loaded. Can be used to help
+     * differentiate different children of the parent class. 
      * @return The SQL Parameter Map to use for retrieving the child entities.
      */
-    public <T extends AbstractReadOnlyEntity> Map<String, Object> getChildJoinSqlParams(
-            Class<T> childEntityClass) {
+    public Map<String, Object> getChildJoinSqlParams(ChildEntityInfo childInfo) {
         return null;
     }
 

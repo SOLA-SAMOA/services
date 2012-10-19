@@ -1,30 +1,26 @@
 /**
  * ******************************************************************************************
- * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations
- * (FAO). All rights reserved.
+ * Copyright (C) 2012 - Food and Agriculture Organization of the United Nations (FAO). All rights
+ * reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,this
- * list of conditions and the following disclaimer. 2. Redistributions in binary
- * form must reproduce the above copyright notice,this list of conditions and
- * the following disclaimer in the documentation and/or other materials provided
- * with the distribution. 3. Neither the name of FAO nor the names of its
- * contributors may be used to endorse or promote products derived from this
- * software without specific prior written permission.
+ * 1. Redistributions of source code must retain the above copyright notice,this list of conditions
+ * and the following disclaimer. 2. Redistributions in binary form must reproduce the above
+ * copyright notice,this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution. 3. Neither the name of FAO nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO,PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT,STRICT LIABILITY,OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+ * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * *********************************************************************************************
  */
 /*
@@ -131,12 +127,23 @@ public class Application extends AbstractVersionedEntity {
         String result = "";
         SystemEJBLocal systemEJB = RepositoryUtility.tryGetEJB(SystemEJBLocal.class);
         if (systemEJB != null) {
-            String requestCategoryType = RequestCategoryType.INFORMATION_SERVICES;
+            // Samoa Customization - send through the request type code and the ba unit id. The
+            // Ba Unit id is required to determine the correct application number for unit plans. 
+            String requestTypeCode = "unknown";
+            String baUnitId = "notspecified"; 
             if (getServiceList() != null && getServiceList().size() > 0) {
-                requestCategoryType = getServiceList().get(0).getRequestTypeCode();
+                requestTypeCode = getServiceList().get(0).getRequestTypeCode();
+            }
+            if (getPropertyList() != null && getPropertyList().size() > 0) {
+                for (ApplicationProperty property : getPropertyList()) {
+                    if (property.getBaUnitId() != null) {
+                        baUnitId = property.getBaUnitId(); 
+                    }
+                }
             }
             HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-            params.put("requestCategoryType", requestCategoryType);
+            params.put("requestTypeCode", requestTypeCode);
+            params.put("baUnitId", baUnitId);
             Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-application-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {
                 result = newNumberResult.getValue().toString();
@@ -249,7 +256,7 @@ public class Application extends AbstractVersionedEntity {
     public void setNewLots(int newLots) {
         this.newLots = newLots;
     }
-    
+
     public BigDecimal getServicesFee() {
         return servicesFee;
     }
@@ -296,7 +303,7 @@ public class Application extends AbstractVersionedEntity {
 
     public void setReceiptRef(String receiptRef) {
         this.receiptRef = receiptRef;
-    }   
+    }
 
     public Party getAgent() {
         return agent;
@@ -353,7 +360,7 @@ public class Application extends AbstractVersionedEntity {
         if (isNew() && getNr() == null) {
             setNr(generateApplicationNumber());
         }
-        
+
         // Set the reference id on the source so that it is possible to 
         // generate a number for the source that uses the Application number
         if (getSourceList() != null && getSourceList().size() > 0) {

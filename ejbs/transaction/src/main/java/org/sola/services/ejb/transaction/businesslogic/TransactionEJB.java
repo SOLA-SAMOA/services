@@ -36,12 +36,14 @@ import org.sola.common.DateUtility;
 import org.sola.common.SOLAException;
 import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.EntityAction;
+import org.sola.services.common.LocalInfo;
 import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.faults.SOLAValidationException;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.cadastre.businesslogic.CadastreEJBLocal;
 import org.sola.services.ejb.cadastre.repository.entities.CadastreObjectStatusChanger;
+import org.sola.services.ejb.cadastre.repository.entities.UnitParcelGroup;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.repository.entities.*;
@@ -195,7 +197,6 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
         validationOnly = validationOnly || !systemEJB.validationSucceeded(validationResultList);
         if (!validationOnly) {
             this.changeStatusOfTransactionObjectsOnApproval(requestType, transaction.getId());
-            cadastreEJB.applySpatialUnitChanges(transaction.getId());
             transaction.setStatusCode(TransactionStatusType.APPROVED);
             transaction.setApprovalDatetime(DateUtility.now());
             getRepository().saveEntity(transaction);
@@ -204,7 +205,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
     }
 
     /**
-     * Updates the status of any cadastre objects associated with the transaction. 
+     * Updates the status of any cadastre objects associated with the transaction.
      *
      * @param requestType The type of service associated to the transaction
      * @param transactionId The transaction identifier
@@ -236,6 +237,21 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
         }
         if (requestType.equals(TransactionType.REDEFINE_CADASTRE)) {
             cadastreEJB.approveCadastreRedefinition(transactionId);
+        }
+        if (requestType.equals(TransactionType.RECORD_UNIT_PLAN)) {
+            // Get the unit parcel group id from the transaction and apply the appropriate changes
+            // to the unit parcels that are part of the group. 
+            Map params = new HashMap<String, Object>();
+            params.put(CommonSqlProvider.PARAM_QUERY, TransactionUnitParcels.QUERY_SCALAR_GETSPATIALUNITGROUPID);
+            params.put(TransactionUnitParcels.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+            String unitParcelGroupId = getRepository().getScalar(String.class, params);
+            if (unitParcelGroupId != null) {
+                cadastreEJB.applyUnitParcelChanges(unitParcelGroupId, transactionId);
+            }
+        } else {
+            // Update any road or hydro spatial units that may have been modified by the
+            // Cadastre Change (Record Plan) or Redefine Cadastre (Change Map)
+            cadastreEJB.applySpatialUnitChanges(transactionId);
         }
     }
 
@@ -287,6 +303,7 @@ public class TransactionEJB extends AbstractEJB implements TransactionEJBLocal {
             T transaction, String requestType, String languageCode) {
 
         //Saves the transaction
+        LocalInfo.setTransactionId(transaction.getId());
         transaction = this.saveEntity(transaction);
 
         //It runs the validation

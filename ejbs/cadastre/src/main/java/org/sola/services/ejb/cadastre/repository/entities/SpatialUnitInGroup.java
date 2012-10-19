@@ -25,27 +25,62 @@
  */
 package org.sola.services.ejb.cadastre.repository.entities;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Table;
-import org.sola.services.common.repository.DefaultSorter;
-import org.sola.services.common.repository.entities.AbstractCodeEntity;
+import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 /**
- * Entity representing cadastre.cadastre_object_type code table.
- *
- * @author soladev
+ * Entity representing the cadastre.spatial_unit_in_group table. Used as the many to many
+ * entity between Unit Parcel Group and Unit Parcel.  
  */
-@Table(name = "cadastre_object_type", schema = "cadastre")
-@DefaultSorter(sortString = "display_value")
-public class CadastreObjectType extends AbstractCodeEntity {
+@Table(name = "spatial_unit_in_group", schema = "cadastre")
+public class SpatialUnitInGroup extends AbstractVersionedEntity {
 
-    public static final String CODE_PARCEL = "parcel";
-    public static final String CODE_BUILDING = "buildingUnit";
-    public static final String CODE_UTILITY_NETWORK = "utilityNetwork";
-    public static final String CODE_PRINCIPAL_UNIT = "principalUnit";
-    public static final String CODE_COMMON_PROPERTY = "commonProperty";
-    public static final String CODE_ACCESSORY_UNIT = "accessoryUnit";
+    @Id
+    @Column(name = "spatial_unit_id")
+    private String spatialUnitId;
+    @Id
+    @Column(name = "spatial_unit_group_id")
+    private String spatialUnitGroupId;
+    @Column(name = "delete_on_approval")
+    private boolean deleteOnApproval;
+    @Column(name = "unit_parcel_status_code")
+    private String statusCode; 
 
-    public CadastreObjectType() {
+    public SpatialUnitInGroup() {
         super();
+    }
+
+    public boolean isDeleteOnApproval() {
+        return deleteOnApproval;
+    }
+
+    public void setDeleteOnApproval(boolean deleteOnApproval) {
+        this.deleteOnApproval = deleteOnApproval;
+    }
+
+    public String getSpatialUnitGroupId() {
+        return spatialUnitGroupId;
+    }
+
+    public void setSpatialUnitGroupId(String spatialUnitGroupId) {
+        this.spatialUnitGroupId = spatialUnitGroupId;
+    }
+
+    public String getSpatialUnitId() {
+        return spatialUnitId;
+    }
+
+    public void setSpatialUnitId(String spatialUnitId) {
+        this.spatialUnitId = spatialUnitId;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 }

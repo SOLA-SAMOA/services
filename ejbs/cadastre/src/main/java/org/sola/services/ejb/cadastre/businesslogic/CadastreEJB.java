@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.sola.services.common.EntityAction;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.cadastre.repository.entities.*;
@@ -85,17 +86,17 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         Integer numberOfMaxRecordsReturned = 10;
         HashMap params = new HashMap();
         // Replace / and \ with space to improve the search
-        searchString = searchString.replaceAll("\\\\|\\/", " "); 
+        searchString = searchString.replaceAll("\\\\|\\/", " ");
         params.put("search_string", searchString);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
         return getRepository().getEntityList(CadastreObject.class,
                 CadastreObject.QUERY_WHERE_SEARCHBYPARTS, params);
     }
-    
-     /**
-     * Returns a maximum of 10 cadastre objects with current and pending  status that have a name first part and/or name last part
-     * that matches the specified search string. This method supports partial matches and is case
-     * insensitive.
+
+    /**
+     * Returns a maximum of 10 cadastre objects with current and pending status that have a name
+     * first part and/or name last part that matches the specified search string. This method
+     * supports partial matches and is case insensitive.
      *
      * @param searchString The search string to use
      * @return The list of cadastre objects matching the search string
@@ -259,7 +260,7 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      */
     @Override
     public CadastreObjectNode getCadastreObjectNode(
-            double xMin, double yMin, double xMax, double yMax, int srid, 
+            double xMin, double yMin, double xMax, double yMax, int srid,
             String cadastreObjectType) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART,
@@ -396,7 +397,7 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
                 if (spUnit == null) {
                     // Create a new sp unit and set its level
                     spUnit = new SpatialUnit();
-                    spUnit.setId(change.getId()); 
+                    spUnit.setId(change.getId());
                     spUnit.setLevelId(change.getLevelId());
                 }
                 if (change.isDeleteOnApproval()) {
@@ -432,5 +433,111 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
                 SpatialUnitChange.QUERY_WHERE_BYTRANSACTIONID);
         params.put(SpatialUnitChange.QUERY_PARAMETER_TRANSACTIONID, transactionId);
         return getRepository().getEntityList(SpatialUnitChange.class, params);
+    }
+
+    /**
+     * Retrieves the Unit Parcel Group by id.
+     *
+     * @param unitParcelGroupId The identifier of the Unit Parcel Group
+     */
+    @Override
+    public UnitParcelGroup getUnitParcelGroup(String unitParcelGroupId) {
+        return getRepository().getEntity(UnitParcelGroup.class, unitParcelGroupId);
+    }
+
+    /**
+     * Retrieves the Unit Parcel Group for the given spatial unit. Note that spatial unit group is
+     * used by SOLA Samoa to group parcels created for a Unit Plan Development.
+     *
+     * @param spatialUnitId The identifier of one of the spatial units that is part of the group.
+     */
+    @Override
+    public UnitParcelGroup getUnitParcelGroupByParcelId(String spatialUnitId) {
+        UnitParcelGroup result = null;
+        if (spatialUnitId != null && !spatialUnitId.isEmpty()) {
+            Map params = new HashMap<String, Object>();
+            params.put(CommonSqlProvider.PARAM_WHERE_PART, UnitParcelGroup.QUERY_WHERE_BYSPATIALUNITID);
+            params.put(UnitParcelGroup.QUERY_PARAMETER_SPATIALUNITID, spatialUnitId);
+            result = getRepository().getEntity(UnitParcelGroup.class, params);
+        }
+        return result;
+    }
+
+    /**
+     * Saves the Unit Parcel Group and any changes to the database. This method also does a bulk
+     * update to set the spatial unit level id for any new unit parcels that are created.
+     *
+     * @param group The UnitParcelGroup to save
+     * @return The saved UnitParcelGroup
+     */
+    @Override
+    public UnitParcelGroup saveUnitParcelGroup(UnitParcelGroup group) {
+        UnitParcelGroup result = getRepository().saveEntity(group);
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_QUERY, UnitParcelGroup.QUERY_UPDATE_SPATIALUNITLEVEL);
+        params.put(UnitParcelGroup.QUERY_PARAMETER_UNITPARCELGROUPID, result.getId());
+        getRepository().bulkUpdate(params);
+        return result;
+    }
+
+    /**
+     * Used to perform the approval action for the specified Unit Parcel Group.
+     *
+     * @param unitParcelGroupId The unit parcel group to process
+     * @param transactionId The identifier for the current transaction. 
+     */
+    @Override
+    public void applyUnitParcelChanges(String unitParcelGroupId, String transactionId) {
+
+        // Update all of the pending unit parcels to have a current status. This includes
+        // updating the status of the spatial_unit_in_group entity. 
+        Map params = new HashMap<String, Object>();
+        params.put(UnitParcel.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        List<CadastreObjectStatusChanger> unitParcels =
+                getRepository().getEntityList(CadastreObjectStatusChanger.class,
+                UnitParcel.QUERY_WHERE_BYTRANSACTIONID, params);
+
+        for (CadastreObjectStatusChanger unitParcel : unitParcels) {
+
+            // Update the cadastre object to be current
+            unitParcel.setStatusCode(CadastreObjectStatusChanger.STATUS_CURRENT);
+            getRepository().saveEntity(unitParcel);
+
+            // Update the status of the spatial_unit_in_group entity. 
+            SpatialUnitInGroup sug = new SpatialUnitInGroup();
+            sug.setSpatialUnitGroupId(unitParcelGroupId);
+            sug.setSpatialUnitId(unitParcel.getId());
+            getRepository().refreshEntity(sug);
+            sug.setStatusCode(CadastreObjectStatusChanger.STATUS_CURRENT);
+            getRepository().saveEntity(sug);
+        }
+
+        params.clear();
+        unitParcels.clear();
+
+        // Update the unit parcels removed from the Unit Plan to have a status of historic. Also
+        // delete any spatial_unit_in_group associations (including those for underlying parcels) that
+        // are flagged Delete On Approval. 
+        params.put(UnitParcel.QUERY_PARAMETER_UNITPARCELGROUPID, unitParcelGroupId);
+        getRepository().getEntityList(CadastreObjectStatusChanger.class,
+                UnitParcel.QUERY_WHERE_BYDELETEONAPPROVAL, params);
+
+        for (CadastreObjectStatusChanger parcel : unitParcels) {
+
+            // Update the cadastre object to be historic if this is a unit parcel
+            if (!CadastreObjectType.CODE_PARCEL.equals(parcel.getTypeCode())) {
+                parcel.setStatusCode(CadastreObjectStatusChanger.STATUS_HISTORIC);
+                getRepository().saveEntity(parcel);
+            }
+
+            // Remove the Spaital Unit In Group entity as the parcel is no longer part of the 
+            // unit development. 
+            SpatialUnitInGroup sug = new SpatialUnitInGroup();
+            sug.setSpatialUnitGroupId(unitParcelGroupId);
+            sug.setSpatialUnitId(parcel.getId());
+            getRepository().refreshEntity(sug);
+            sug.setEntityAction(EntityAction.DELETE);
+            getRepository().saveEntity(sug);
+        }
     }
 }

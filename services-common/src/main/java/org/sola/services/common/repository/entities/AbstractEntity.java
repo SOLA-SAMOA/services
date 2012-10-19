@@ -105,6 +105,8 @@ public abstract class AbstractEntity extends AbstractReadOnlyEntity {
                     result = true;
                 }
                 if (result) {
+                    // DEBUG: Uncomment this section to find out the fields that are causing an entity
+                    // to be updated. 
 //                    System.err.println("Change detected on " + this.getTableName()
 //                            + ", column=" + columnInfo.getFieldName()
 //                            + ", old val=" + originalValue + ", new val="

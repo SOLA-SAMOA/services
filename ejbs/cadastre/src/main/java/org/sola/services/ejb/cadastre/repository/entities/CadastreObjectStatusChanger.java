@@ -57,6 +57,8 @@ public class CadastreObjectStatusChanger extends AbstractStatusChangerEntity {
     @AccessFunctions(onSelect = "st_asewkb(geom_polygon)",
     onChange = "get_geometry_with_srid(#{geomPolygon})")
     private byte[] geomPolygon;
+    @Column(name = "type_code")
+    private String typeCode;
 
     public Date getApprovalDatetime() {
         return approvalDatetime;
@@ -82,6 +84,14 @@ public class CadastreObjectStatusChanger extends AbstractStatusChangerEntity {
         this.geomPolygon = geomPolygon; //NOSONAR
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+    
     /**
      * Sets the approved date or historic date depending on the status of the CO prior to saving it.
      */
