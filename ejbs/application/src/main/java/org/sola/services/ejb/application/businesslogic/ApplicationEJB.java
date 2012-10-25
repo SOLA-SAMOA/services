@@ -165,7 +165,7 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         if (application == null) {
             return application;
         }
-        calculateCompletionDates(application);
+        calculateCompletionDates(application, application.getLodgingDatetime());
         calculateLodgementFees(application);
         return application;
     }
@@ -176,12 +176,12 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
      * completion dates.
      *
      * @param application
+     * @param baseDate The date to use as the base date for calculating the service completion dates
      */
-    private void calculateCompletionDates(Application application) {
+    private void calculateCompletionDates(Application application, Date baseDate) {
 
         //Elton: Not important in which language the request types are asked
         List<RequestType> requestTypes = this.getRequestTypes("en");
-        Date baseDate = application.getLodgingDatetime();
         if (baseDate == null) {
             baseDate = DateUtility.now();
         }
@@ -1093,6 +1093,15 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         } else {
             throw new SOLAValidationException(resultList);
         }
+        
+        if (ApplicationActionType.RESUBMIT.equals(actionCode)) {
+            // Samoa Customization - Reset the expected completion dates as the
+            // application is being resubmitted following requisition. 
+            Application resubmittedApp = getRepository().getEntity(Application.class, application.getId()); 
+            calculateCompletionDates(resubmittedApp, DateUtility.now());
+            getRepository().saveEntity(resubmittedApp);
+        }
+        
         return resultList;
     }
 
@@ -1196,5 +1205,25 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
         params.put(RoleVerifier.QUERY_PARAM_SERVICE_ID, serviceId);
         params.put(RoleVerifier.QUERY_PARAM_USERNAME, getUserName());
         return getRepository().getEntity(RoleVerifier.class, params);
+    }
+
+    /**
+     * Retrieves a summary of the work performed during the specified reporting period.
+     *
+     * @param fromDate The start of the reporting period
+     * @param toDate The end of the reporting period
+     */
+    @Override
+    @RolesAllowed(RolesConstants.REPORTS_VIEW)
+    public List<WorkSummary> getWorkSummary(Date fromDate, Date toDate) {
+
+        List<WorkSummary> result;
+        Map queryParams = new HashMap<String, Object>();
+        queryParams.put(CommonSqlProvider.PARAM_FROM_PART, WorkSummary.QUERY_FROM_WORK_SUMMARY);
+        queryParams.put(WorkSummary.PARAMETER_FROM, fromDate);
+        queryParams.put(WorkSummary.PARAMETER_TO, toDate);
+
+        result = getRepository().getEntityList(WorkSummary.class, queryParams);
+        return result;
     }
 }
