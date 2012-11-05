@@ -58,7 +58,7 @@ import org.sola.services.ejb.transaction.repository.entities.TransactionStatusTy
  * @author soladev
  */
 @Table(name = "rrr", schema = "administrative")
-@DefaultSorter(sortString="status_code, nr")
+@DefaultSorter(sortString = "status_code, nr")
 public class Rrr extends AbstractVersionedEntity {
 
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
@@ -80,7 +80,7 @@ public class Rrr extends AbstractVersionedEntity {
     private boolean primary;
     @Column(name = "registration_date")
     private Date registrationDate;
-   // @Column(name = "transaction_id", updatable = false)
+    // @Column(name = "transaction_id", updatable = false)
     @Column(name = "transaction_id")
     private String transactionId;
     @Column(name = "expiration_date")
@@ -121,8 +121,6 @@ public class Rrr extends AbstractVersionedEntity {
     public void setConcatenatedName(String concatenatedName) {
         this.concatenatedName = concatenatedName;
     }
-    
-    
     // Other fields
     private Boolean locked = null;
 
@@ -315,11 +313,11 @@ public class Rrr extends AbstractVersionedEntity {
 
     @Override
     public void preSave() {
-        if (this.isNew() || (getStatusCode().equals(RegistrationStatusType.STATUS_PENDING) &&
-                (getTransactionId() == null || "adm-transaction".equals(getTransactionId())))) {
+        if (this.isNew() || (getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)
+                && (getTransactionId() == null || "adm-transaction".equals(getTransactionId())))) {
             setTransactionId(LocalInfo.getTransactionId());
         }
-        
+
         if (isNew() && getNr() == null) {
             // Assign a generated number to the Rrr if it is not currently set. 
             setNr(generateRrrNumber());
@@ -333,5 +331,14 @@ public class Rrr extends AbstractVersionedEntity {
             }
         }
         super.preSave();
+    }
+
+    @Override
+    public void makeCloneable() {
+        transactionId = null;
+        nr = null;
+        statusCode = RegistrationStatusType.STATUS_PENDING;
+        registrationDate = null; 
+        super.makeCloneable();
     }
 }

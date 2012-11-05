@@ -114,7 +114,7 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
      * SearchEJB.searchSources}.
      */
     List<SourceSearchResult> searchSources(SourceSearchParams searchParams);
-    
+
     /**
      * See {@linkplain SearchEJB#searchPowerOfAttorney(org.sola.services.ejb.search.repository.entities.PowerOfAttorneySearchParams)
      * SearchEJB.searchPowerOfAttorney}.
@@ -168,4 +168,16 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
      * SearchEJB.searchSpatialObjects}.
      */
     List<SpatialSearchResult> searchSpatialObjects(String queryName, String searchString);
+
+    /**
+     * See {@linkplain SearchEJB#getUnitDevelopmentNr(java.lang.String, java.util.List)
+     * SearchEJB.getUnitDevelopmentNr}.
+     */
+    String getUnitDevelopmentNr(String serviceId, List<String> baUnitIds);
+
+    /**
+     * See {@linkplain SearchEJB#getStrataProperties(java.lang.String, java.util.List)
+     * SearchEJB.getStrataProperties}.
+     */
+    List<StrataProperty> getStrataProperties(String unitParcelGroupName, List<String> baUnitIds);
 }

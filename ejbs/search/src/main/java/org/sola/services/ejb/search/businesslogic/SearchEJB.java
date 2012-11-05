@@ -276,7 +276,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         return getRepository().getEntityList(SourceSearchResult.class, params);
     }
 
-    private Map<String, Object> processSourceSearchParams(SourceSearchParams searchParams){
+    private Map<String, Object> processSourceSearchParams(SourceSearchParams searchParams) {
         Map params = new HashMap<String, Object>();
         params.put(SourceSearchResult.QUERY_PARAM_FROM_RECORDATION_DATE,
                 searchParams.getFromRecordationDate() == null
@@ -310,10 +310,10 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
                 searchParams.getVersion() == null ? "" : searchParams.getVersion());
         return params;
     }
-    
+
     /**
-     * Executes a search across all power of attorney using the search criteria provided. 
-     * Partial matches are supported for the document number and the document reference number criteria.
+     * Executes a search across all power of attorney using the search criteria provided. Partial
+     * matches are supported for the document number and the document reference number criteria.
      *
      * <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      *
@@ -322,7 +322,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
      */
     @Override
     @RolesAllowed(RolesConstants.SOURCE_SEARCH)
-    public List<PowerOfAttorneySearchResult> searchPowerOfAttorney(PowerOfAttorneySearchParams searchParams){
+    public List<PowerOfAttorneySearchResult> searchPowerOfAttorney(PowerOfAttorneySearchParams searchParams) {
         Map params = processSourceSearchParams(searchParams);
         params.put(PowerOfAttorneySearchResult.QUERY_PARAM_PERSON_NAME,
                 searchParams.getPersonName() == null ? "" : searchParams.getPersonName());
@@ -331,7 +331,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         params.put(CommonSqlProvider.PARAM_QUERY, PowerOfAttorneySearchResult.SEARCH_POWER_OF_ATTORNEY_QUERY);
         return getRepository().getEntityList(PowerOfAttorneySearchResult.class, params);
     }
-    
+
     /**
      * Executes a search across all users using the search criteria provided. Partial matches are
      * supported for the username, first name and last name criteria.
@@ -683,5 +683,60 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         Map params = new HashMap<String, Object>();
         params.put(SpatialSearchResult.PARAM_SEARCH_STRING, searchString);
         return executeDynamicQuery(SpatialSearchResult.class, queryName, params);
+    }
+
+    /**
+     * Samoa Customization - Retrieves a number for the Unit Development linked to the specified
+     * service or to one or more of the specified BA Units.
+     *
+     * @param serviceId
+     * @param baUnitIds
+     * @return
+     */
+    @Override
+    public String getUnitDevelopmentNr(String serviceId, List<String> baUnitIds) {
+        String result = null;
+        int baUnitIdsCount = 0;
+        Map params = new HashMap<String, Object>();
+        params.put(SearchSqlProvider.PARAM_SERVICE_ID, serviceId);
+        if (baUnitIds != null && baUnitIds.size() > 0) {
+            baUnitIdsCount = baUnitIds.size();
+            for (int i = 0; i < baUnitIdsCount; i++) {
+                params.put(SearchSqlProvider.PARAM_ID_LIST + i, baUnitIds.get(i));
+            }
+        }
+        params.put(CommonSqlProvider.PARAM_QUERY, SearchSqlProvider.buildGetUnitDevNrSql(serviceId, baUnitIdsCount));
+        List<String> groupNames = getRepository().getScalarList(String.class, params);
+        if (groupNames != null) {
+            result = groupNames.get(0);
+        }
+        return result;
+    }
+
+    /**
+     * Samoa Customization - retrieves a summary of the properties that are part of the specified
+     * unit parcel group. Also retrieves a summary of the properties noted in the baUnitIds list.
+     * Typically this list will represent the underlying properties of the unit development and is
+     * included as a parameter in case the underlying property is not linked to a cadastre_object.
+     *
+     * @param unitParcelGroupName
+     * @param baUnitIds
+     * @return
+     */
+    @Override
+    public List<StrataProperty> getStrataProperties(String unitParcelGroupName, List<String> baUnitIds) {
+        List<StrataProperty> result = null;
+        int baUnitIdsCount = 0;
+        Map params = new HashMap<String, Object>();
+        params.put(SearchSqlProvider.PARAM_UNIT_PARCEL_GROUP_NAME, unitParcelGroupName);
+        if (baUnitIds != null && baUnitIds.size() > 0) {
+            baUnitIdsCount = baUnitIds.size();
+            for (int i = 0; i < baUnitIdsCount; i++) {
+                params.put(SearchSqlProvider.PARAM_ID_LIST + i, baUnitIds.get(i));
+            }
+        }
+        params.put(CommonSqlProvider.PARAM_QUERY, SearchSqlProvider.buildGetStrataPropsSql(unitParcelGroupName, baUnitIdsCount));
+        result = getRepository().getEntityList(StrataProperty.class, params);
+        return result;
     }
 }

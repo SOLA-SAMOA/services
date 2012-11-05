@@ -52,14 +52,13 @@ import org.sola.services.ejb.transaction.repository.entities.TransactionStatusTy
  * @author soladev
  */
 @Table(name = "notation", schema = "administrative")
-@DefaultSorter(sortString="status_code, reference_nr")
+@DefaultSorter(sortString = "status_code, reference_nr")
 public class BaUnitNotation extends AbstractVersionedEntity {
 
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
     public static final String QUERY_ORDER_BY = " status_code, reference_nr";
-    
     @Id
     @Column(name = "id")
     private String id;
@@ -87,7 +86,7 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     public void setChangeTime(Date changeTime) {
         this.changeTime = changeTime;
     }
-    
+
     public BaUnitNotation() {
         super();
     }
@@ -188,8 +187,8 @@ public class BaUnitNotation extends AbstractVersionedEntity {
     @Override
     public void preSave() {
 
-        if (this.isNew() || (getStatusCode().equals(RegistrationStatusType.STATUS_PENDING) &&
-                (getTransactionId() == null || "adm-transaction".equals(getTransactionId())))) {
+        if (this.isNew() || (getStatusCode().equals(RegistrationStatusType.STATUS_PENDING)
+                && (getTransactionId() == null || "adm-transaction".equals(getTransactionId())))) {
             setTransactionId(LocalInfo.getTransactionId());
         }
 
@@ -199,5 +198,15 @@ public class BaUnitNotation extends AbstractVersionedEntity {
         }
 
         super.preSave();
+    }
+
+    @Override
+    public void makeCloneable() {
+        transactionId = null;
+        rrrId = null;
+        statusCode = RegistrationStatusType.STATUS_PENDING;
+        baUnitId = null;
+        referenceNr = null;
+        super.makeCloneable();
     }
 }

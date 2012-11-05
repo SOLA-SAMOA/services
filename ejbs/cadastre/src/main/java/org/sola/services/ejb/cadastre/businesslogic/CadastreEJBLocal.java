@@ -172,6 +172,12 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
     UnitParcelGroup getUnitParcelGroupByParcelId(String spatialUnitId);
 
     /**
+     * See {@linkplain CadastreEJB#getUnitParcelGroupByName(java.lang.String)
+     * CadastreEJB.getUnitParcelGroupByName}.
+     */
+    UnitParcelGroup getUnitParcelGroupByName(String groupName);
+
+    /**
      * See {@linkplain CadastreEJB#saveUnitParcelGroup(org.sola.services.ejb.cadastre.repository.entities.UnitParcelGroup)
      * CadastreEJB.saveUnitParcelGroup}.
      */
