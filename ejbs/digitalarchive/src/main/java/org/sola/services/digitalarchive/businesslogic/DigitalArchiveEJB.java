@@ -107,7 +107,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      * @param documentId Identifier of the document to retrieve
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
+    @RolesAllowed(RolesConstants.SOURCE_VIEW)
     public Document getDocument(String documentId) {
         Document result = null;
         if (documentId != null) {
@@ -125,7 +125,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      * @see
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
+    @RolesAllowed(RolesConstants.SOURCE_VIEW)
     public Document getDocumentInfo(String documentId) {
         Document result = null;
         if (documentId != null) {
@@ -253,7 +253,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      * @return The binary file along with some attributes of the file
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
+    @RolesAllowed(RolesConstants.SOURCE_VIEW)
     public FileInfo getFileBinary(String fileName) {
         if (fileName == null || fileName.equals("")) {
             return null;
@@ -295,7 +295,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      * FileUtility.createImageThumbnail
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
+    @RolesAllowed(RolesConstants.SOURCE_VIEW)
     public FileBinary getFileThumbnail(String fileName) {
         if (fileName == null || fileName.equals("")) {
             return null;
@@ -392,7 +392,7 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      * data across the network. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
+    @RolesAllowed(RolesConstants.SOURCE_VIEW)
     public List<FileInfo> getAllFiles() {
         List<FileInfo> fileInfoList = new ArrayList<FileInfo>();
         // Read folder

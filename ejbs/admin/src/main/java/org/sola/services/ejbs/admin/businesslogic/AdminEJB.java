@@ -66,11 +66,11 @@ public class AdminEJB extends AbstractEJB implements AdminEJBLocal {
     /**
      * Returns the details of the user with the specified user name.
      *
-     * <p>Requires the {@linkplain RolesConstants#ADMIN_MANAGE_SECURITY} role.</p>
+     * <p>Requires the {@linkplain RolesConstants#ADMIN_MANAGE_USER_PASSWORD} role.</p>
      *
      * @param userName The user name of the user to search for.
      */
-    @RolesAllowed(RolesConstants.ADMIN_MANAGE_SECURITY)
+    @RolesAllowed(RolesConstants.ADMIN_MANAGE_USER_PASSWORD)
     @Override
     public User getUser(String userName) {
         Map params = new HashMap<String, Object>();
@@ -97,12 +97,12 @@ public class AdminEJB extends AbstractEJB implements AdminEJBLocal {
      * Can be used to create a new user or save any updates to the details of an existing user.
      * Cannot be used to change the users password. This can only be done using the
      * {@linkplain #changePassword(java.lang.String, java.lang.String) changePassword} method. <p>
-     * Requires the {@linkplain RolesConstants#ADMIN_MANAGE_SECURITY} role. </p>
+     * Requires the {@linkplain RolesConstants#ADMIN_MANAGE_USER_PASSWORD} role. </p>
      *
      * @param user The details of the user to save
      * @return The user details after the save is completed
      */
-    @RolesAllowed(RolesConstants.ADMIN_MANAGE_SECURITY)
+    @RolesAllowed(RolesConstants.ADMIN_MANAGE_USER_PASSWORD)
     @Override
     public User saveUser(User user) {
         return getRepository().saveEntity(user);
@@ -195,14 +195,14 @@ public class AdminEJB extends AbstractEJB implements AdminEJBLocal {
     }
 
     /**
-     * Allows the users password to be changed <p> Requires the {@linkplain RolesConstants#ADMIN_CHANGE_PASSWORD}
+     * Allows the users password to be changed <p> Requires the {@linkplain RolesConstants#ADMIN_MANAGE_USER_PASSWORD}
      * role. </p>
      *
      * @param userName The username to change the password for
      * @param password The users new password
      * @return true if the change is successful.
      */
-    @RolesAllowed(RolesConstants.ADMIN_MANAGE_SECURITY)
+    @RolesAllowed(RolesConstants.ADMIN_MANAGE_USER_PASSWORD)
     @Override
     public boolean changePassword(String userName, String password) {
         Map params = new HashMap<String, Object>();
