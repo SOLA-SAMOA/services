@@ -510,10 +510,10 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         // Update all of the pending unit parcels to have a current status. This includes
         // updating the status of the spatial_unit_in_group entity. 
         Map params = new HashMap<String, Object>();
-        params.put(UnitParcel.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        params.put(UnitParcel.QUERY_PARAMETER_UNITPARCELGROUPID, unitParcelGroupId);
         List<CadastreObjectStatusChanger> unitParcels =
                 getRepository().getEntityList(CadastreObjectStatusChanger.class,
-                UnitParcel.QUERY_WHERE_BYTRANSACTIONID, params);
+                UnitParcel.QUERY_WHERE_BYPENDINGUNIT, params);
 
         for (CadastreObjectStatusChanger unitParcel : unitParcels) {
 

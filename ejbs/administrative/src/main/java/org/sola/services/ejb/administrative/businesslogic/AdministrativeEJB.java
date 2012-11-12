@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -46,12 +47,15 @@ import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.administrative.repository.entities.*;
 import org.sola.services.ejb.cadastre.repository.entities.*;
+import org.sola.services.ejb.party.businesslogic.PartyEJBLocal;
+import org.sola.services.ejb.party.repository.entities.Party;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
+import org.sola.services.ejb.transaction.repository.entities.TransactionUnitParcels;
 
 /**
  * EJB to manage data in the administrative schema. Supports retrieving and saving BA Units and RRR.
@@ -66,6 +70,10 @@ public class AdministrativeEJB extends AbstractEJB
     private SystemEJBLocal systemEJB;
     @EJB
     private TransactionEJBLocal transactionEJB;
+    @EJB
+    private PartyEJBLocal partyEJB;
+    private static final String CREATE_STRATA_TITLE = "newUnitTitle";
+    private static final String CANCEL_STRATA_TITLE = "cancelUnitPlan";
 
     /**
      * Sets the entity package for the EJB to BaUnit.class.getPackage().getName(). This is used to
@@ -249,7 +257,7 @@ public class AdministrativeEJB extends AbstractEJB
      */
     @Override
     public List<ValidationResult> approveTransaction(
-            String transactionId, String approvedStatus,
+            String transactionId, String approvedStatus, String requestType,
             boolean validateOnly, String languageCode) {
         List<ValidationResult> validationResult = new ArrayList<ValidationResult>();
 
@@ -317,8 +325,14 @@ public class AdministrativeEJB extends AbstractEJB
                 }
                 getRepository().saveEntity(baUnitNotation);
             }
-        }
 
+            // Manage the Strata Title approval/cancellation process
+            if (CREATE_STRATA_TITLE.equals(requestType)) {
+                approveStrataProperties(transactionId);
+            } else if (CANCEL_STRATA_TITLE.equals(requestType)) {
+                cancelStrataProperties(transactionId);
+            }
+        }
         return validationResult;
     }
 
@@ -531,6 +545,7 @@ public class AdministrativeEJB extends AbstractEJB
     public void createStrataProperties(String serviceId, UnitParcelGroup group, List<String> baUnitIds) {
         if (group != null && group.getUnitParcelList() != null && group.getUnitParcelList().size() > 0) {
 
+            boolean updateTransaction = false;
             List<BaUnit> underlyingProperties = null;
 
             // Check the Common Property has an associated BA Unit. If not, create the Common Property
@@ -544,6 +559,7 @@ public class AdministrativeEJB extends AbstractEJB
                         BigDecimal officialArea = commonProperty.getCalculatedAreaSize();
                         commonProperty = saveBaUnit(serviceId, commonProperty);
                         createBaUnitArea(commonProperty.getId(), officialArea, SpatialValueArea.OFFICIAL_AREA_TYPE);
+                        updateTransaction = true;
                     } else {
                         // The common Property exists. Include the prior title references from the common
                         // property when determining the underlying properties. 
@@ -584,7 +600,16 @@ public class AdministrativeEJB extends AbstractEJB
                         BigDecimal officialArea = unit.getCalculatedAreaSize();
                         unit = saveBaUnit(serviceId, unit);
                         createBaUnitArea(unit.getId(), officialArea, SpatialValueArea.OFFICIAL_AREA_TYPE);
+                        updateTransaction = true;
                     }
+                }
+
+                // Update the new transaction to reference the unit parcel group
+                if (updateTransaction) {
+                    TransactionUnitParcels trans = transactionEJB.getTransactionByServiceId(serviceId,
+                            false, TransactionUnitParcels.class);
+                    trans.setUnitParcelGroupId(group.getId());
+                    transactionEJB.saveEntity(trans);
                 }
             }
         }
@@ -635,13 +660,14 @@ public class AdministrativeEJB extends AbstractEJB
         BaUnitNotation note1 = new BaUnitNotation();
         note1.setNotationText("Body Corporate Rules");
         bodyCorpRules.setNotation(note1);
+        bodyCorpRules.setPrimary(true);
         rrrList.add(bodyCorpRules);
 
         Rrr serviceAddress = new Rrr();
         serviceAddress.setTypeCode(RrrType.ADDRESS_FOR_SERVICE_TYPE);
         BaUnitNotation note2 = new BaUnitNotation();
         note2.setNotationText("Address for Service <address>");
-        bodyCorpRules.setNotation(note2);
+        serviceAddress.setNotation(note2);
         rrrList.add(serviceAddress);
 
         result.setRrrList(rrrList);
@@ -812,10 +838,41 @@ public class AdministrativeEJB extends AbstractEJB
             Rrr rrr = getRepository().getEntity(Rrr.class, rrrId);
             if (rrr != null) {
                 rrr.makeCloneable();
+                // Parties are readonly on the RRR, so it is necessary to iterate over each 
+                // party and explicitly save the cloned parties
+                if (rrr.getRrrShareList() != null && rrr.getRrrShareList().size() > 0) {
+                    for (RrrShare share : rrr.getRrrShareList()) {
+                        saveParties(share.getRightHolderList());
+                    }
+                    // The Rrr Rightholders List also lists the parties from the shares, so 
+                    // clear this list to avoid trying to insert duplicates. 
+                    rrr.setRightHolderList(null);
+                } else {
+                    // No shares for the RRR, but there might be right holders linked directly
+                    // to the RRR
+                    saveParties(rrr.getRightHolderList());
+                }
                 result.add(rrr);
             }
         }
         return result;
+    }
+
+    /**
+     * Creates new parties for cloned Rrr's.
+     *
+     * @param parties
+     */
+    private void saveParties(List<Party> parties) {
+        if (parties != null && parties.size() > 0) {
+            ListIterator<Party> it = parties.listIterator();
+            while (it.hasNext()) {
+                Party party = it.next();
+                it.remove();
+                party = partyEJB.saveParty(party);
+                it.add(party);
+            }
+        }
     }
 
     /**
@@ -851,5 +908,36 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(BaUnit.QUERY_PARAMETER_SPATIAL_UNIT_ID, spatialUnitId);
         result = getRepository().getEntityList(BaUnit.class, params);
         return result;
+    }
+
+    /**
+     * Checks for the freehold properties and updates them to have a status of Dormant.
+     *
+     * @param transactionId
+     */
+    private void approveStrataProperties(String transactionId) {
+        TransactionUnitParcels trans = transactionEJB.getTransactionById(transactionId,
+                TransactionUnitParcels.class);
+        if (trans.getUnitParcelGroup() != null) {
+            List<BaUnit> underlyingProps = getUnderlyingProperties(trans.getUnitParcelGroup(), null);
+            for (BaUnit prop : underlyingProps) {
+                if (prop.getRrrList() != null && prop.getRrrList().size() > 0) {
+                    for (Rrr rrr : prop.getRrrList()) {
+                        if (RegistrationStatusType.STATUS_CURRENT.equals(rrr.getStatusCode())
+                                && rrr.isPrimary()
+                                && RrrType.FREEHOLD_TYPE.equals(rrr.getTypeCode())) {
+                            BaUnitStatusChanger baUnitToUpdate = new BaUnitStatusChanger();
+                            baUnitToUpdate.setId(prop.getId());
+                            getRepository().refreshEntity(baUnitToUpdate);
+                            baUnitToUpdate.setStatusCode(RegistrationStatusType.STATUS_DORMANT);
+                            getRepository().saveEntity(baUnitToUpdate);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void cancelStrataProperties(String transactionId) {
     }
 }

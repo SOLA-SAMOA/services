@@ -81,7 +81,7 @@ public class BaUnit extends AbstractVersionedEntity {
             "id = #{" + QUERY_PARAMETER_ID + "}";
     public static final String QUERY_WHERE_BYBSPATIALUNITID =
             " id IN (SELECT ba_unit_id FROM administrative.ba_unit_contains_spatial_unit"
-            + "  WHERE spatial_unit_id =  #{" + QUERY_PARAMETER_SPATIAL_UNIT_ID + "}";
+            + "  WHERE spatial_unit_id =  #{" + QUERY_PARAMETER_SPATIAL_UNIT_ID + "})";
     @Id
     @Column(name = "id")
     private String id;

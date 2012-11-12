@@ -1155,17 +1155,20 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                 List<ValidationResult> approvalResult = null;
 
                 approvalResult = administrativeEJB.approveTransaction(
-                        transaction.getId(), statusOnApproval, validationOnly, languageCode);
+                        transaction.getId(), statusOnApproval, serviceRequestTypeCode,
+                        validationOnly, languageCode);
                 validationResultList.addAll(approvalResult);
                 validationOnly = validationOnly || !systemEJB.validationSucceeded(approvalResult);
 
                 approvalResult = sourceEJB.approveTransaction(
-                        transaction.getId(), statusOnApproval, validationOnly, languageCode);
+                        transaction.getId(), statusOnApproval, serviceRequestTypeCode,
+                        validationOnly, languageCode);
                 validationResultList.addAll(approvalResult);
                 validationOnly = validationOnly || !systemEJB.validationSucceeded(approvalResult);
 
                 approvalResult = transactionEJB.approveTransaction(
-                        serviceRequestTypeCode, serviceId, languageCode, validationOnly);
+                        serviceRequestTypeCode, serviceId,
+                        languageCode, validationOnly);
                 validationResultList.addAll(approvalResult);
             }
         }

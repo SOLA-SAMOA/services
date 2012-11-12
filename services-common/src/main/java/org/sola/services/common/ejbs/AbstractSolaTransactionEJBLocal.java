@@ -52,6 +52,6 @@ public interface AbstractSolaTransactionEJBLocal extends AbstractEJBLocal {
      * @return the list of business rules validations
      */
     List<ValidationResult> approveTransaction(
-                String transactionId, String approvedStatus,
+                String transactionId, String approvedStatus, String requestType,
                 boolean validateOnly, String languageCode);    
 }

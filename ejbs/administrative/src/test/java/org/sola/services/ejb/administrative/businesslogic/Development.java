@@ -114,7 +114,7 @@ public class Development extends AbstractEJBTest {
             System.out.println("Approve transaction of the first rrr");
             String transactionId = result.getRrrList().get(0).getTransactionId();
             instance.approveTransaction(transactionId, 
-                    RegistrationStatusType.STATUS_CURRENT, false, "en");
+                    RegistrationStatusType.STATUS_CURRENT, "", false, "en");
             System.out.println("Succeeded.");
             
             tx.commit();
