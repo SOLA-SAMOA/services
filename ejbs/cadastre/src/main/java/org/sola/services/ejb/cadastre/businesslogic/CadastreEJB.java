@@ -464,6 +464,24 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
     }
 
     /**
+     * Retrieves the Unit Parcel Group using the group name. Note that spatial unit group is
+     * used by SOLA Samoa to group parcels created for a Unit Plan Development.
+     *
+     * @param groupName The name given to the Unit Parcel Group.
+     */
+    @Override
+    public UnitParcelGroup getUnitParcelGroupByName(String groupName) {
+        UnitParcelGroup result = null;
+        if (groupName != null && !groupName.isEmpty()) {
+            Map params = new HashMap<String, Object>();
+            params.put(CommonSqlProvider.PARAM_WHERE_PART, UnitParcelGroup.QUERY_WHERE_BYNAME);
+            params.put(UnitParcelGroup.QUERY_PARAMETER_NAME, groupName);
+            result = getRepository().getEntity(UnitParcelGroup.class, params);
+        }
+        return result;
+    }
+
+    /**
      * Saves the Unit Parcel Group and any changes to the database. This method also does a bulk
      * update to set the spatial unit level id for any new unit parcels that are created.
      *
@@ -484,7 +502,7 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      * Used to perform the approval action for the specified Unit Parcel Group.
      *
      * @param unitParcelGroupId The unit parcel group to process
-     * @param transactionId The identifier for the current transaction. 
+     * @param transactionId The identifier for the current transaction.
      */
     @Override
     public void applyUnitParcelChanges(String unitParcelGroupId, String transactionId) {
@@ -492,10 +510,10 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         // Update all of the pending unit parcels to have a current status. This includes
         // updating the status of the spatial_unit_in_group entity. 
         Map params = new HashMap<String, Object>();
-        params.put(UnitParcel.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        params.put(UnitParcel.QUERY_PARAMETER_UNITPARCELGROUPID, unitParcelGroupId);
         List<CadastreObjectStatusChanger> unitParcels =
                 getRepository().getEntityList(CadastreObjectStatusChanger.class,
-                UnitParcel.QUERY_WHERE_BYTRANSACTIONID, params);
+                UnitParcel.QUERY_WHERE_BYPENDINGUNIT, params);
 
         for (CadastreObjectStatusChanger unitParcel : unitParcels) {
 

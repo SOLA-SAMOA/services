@@ -62,6 +62,7 @@ public class Development extends AbstractEJBTest {
     }
 
     @Test
+    @Ignore
     public void testSearchOthers() throws Exception {
         if (skipIntegrationTest()) {
             return;
@@ -132,6 +133,6 @@ public class Development extends AbstractEJBTest {
     @Test
     @Ignore
     public void testApplicationLogSql() throws Exception {
-        System.out.println(SearchSqlProvider.buildApplicationLogSql());
+        System.out.println(SearchSqlProvider.buildGetUnitDevNrSql(" ", 1));
     }
 }

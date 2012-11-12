@@ -54,11 +54,19 @@ public class UnitParcelGroup extends AbstractVersionedEntity {
      */
     public static final String QUERY_PARAMETER_UNITPARCELGROUPID = "unitParcelGroupId";
     /**
+     * Parameter name used for the unit parcel group name value.
+     */
+    public static final String QUERY_PARAMETER_NAME = "name";
+    /**
      * WHERE clause to use when selecting group by a parcel in the group
      */
     public static final String QUERY_WHERE_BYSPATIALUNITID = "EXISTS (SELECT spatial_unit_group_id "
             + " FROM cadastre.spatial_unit_in_group WHERE spatial_unit_id = #{" + QUERY_PARAMETER_SPATIALUNITID + "} "
             + " AND spatial_unit_group_id = cadastre.spatial_unit_group.id)";
+    /**
+     * WHERE clause to use when selecting group by the name of the unit parcel group
+     */
+    public static final String QUERY_WHERE_BYNAME = "name = #{" + QUERY_PARAMETER_NAME + "} ";
     /**
      * Bulk update statement to set the level_id on spatial_unit once the UnitParcelGroup is saved.
      */

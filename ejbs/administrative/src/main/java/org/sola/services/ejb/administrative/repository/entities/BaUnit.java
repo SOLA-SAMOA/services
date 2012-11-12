@@ -60,6 +60,7 @@ public class BaUnit extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_FIRSTPART = "firstPart";
     public static final String QUERY_PARAMETER_LASTPART = "lastPart";
     public static final String QUERY_PARAMETER_ID = "id";
+    public static final String QUERY_PARAMETER_SPATIAL_UNIT_ID = "spatialUnitId";
     public static final String QUERY_PARAMETER_COLIST = "colist";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "} or id in "
@@ -78,6 +79,9 @@ public class BaUnit extends AbstractVersionedEntity {
             + "name_lastpart = #{" + QUERY_PARAMETER_LASTPART + "}";
     public static final String QUERY_WHERE_BYBAUNITID =
             "id = #{" + QUERY_PARAMETER_ID + "}";
+    public static final String QUERY_WHERE_BYBSPATIALUNITID =
+            " id IN (SELECT ba_unit_id FROM administrative.ba_unit_contains_spatial_unit"
+            + "  WHERE spatial_unit_id =  #{" + QUERY_PARAMETER_SPATIAL_UNIT_ID + "})";
     @Id
     @Column(name = "id")
     private String id;

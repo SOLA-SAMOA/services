@@ -26,10 +26,12 @@
 package org.sola.services.ejb.administrative.businesslogic;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -44,12 +46,16 @@ import org.sola.services.common.br.ValidationResult;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.ejb.administrative.repository.entities.*;
+import org.sola.services.ejb.cadastre.repository.entities.*;
+import org.sola.services.ejb.party.businesslogic.PartyEJBLocal;
+import org.sola.services.ejb.party.repository.entities.Party;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.transaction.businesslogic.TransactionEJBLocal;
 import org.sola.services.ejb.transaction.repository.entities.RegistrationStatusType;
 import org.sola.services.ejb.transaction.repository.entities.Transaction;
 import org.sola.services.ejb.transaction.repository.entities.TransactionBasic;
+import org.sola.services.ejb.transaction.repository.entities.TransactionUnitParcels;
 
 /**
  * EJB to manage data in the administrative schema. Supports retrieving and saving BA Units and RRR.
@@ -64,6 +70,10 @@ public class AdministrativeEJB extends AbstractEJB
     private SystemEJBLocal systemEJB;
     @EJB
     private TransactionEJBLocal transactionEJB;
+    @EJB
+    private PartyEJBLocal partyEJB;
+    private static final String CREATE_STRATA_TITLE = "newUnitTitle";
+    private static final String CANCEL_STRATA_TITLE = "cancelUnitPlan";
 
     /**
      * Sets the entity package for the EJB to BaUnit.class.getPackage().getName(). This is used to
@@ -247,7 +257,7 @@ public class AdministrativeEJB extends AbstractEJB
      */
     @Override
     public List<ValidationResult> approveTransaction(
-            String transactionId, String approvedStatus,
+            String transactionId, String approvedStatus, String requestType,
             boolean validateOnly, String languageCode) {
         List<ValidationResult> validationResult = new ArrayList<ValidationResult>();
 
@@ -287,7 +297,7 @@ public class AdministrativeEJB extends AbstractEJB
             validationResult.addAll(this.validateRrr(rrr, languageCode));
             if (systemEJB.validationSucceeded(validationResult) && !validateOnly) {
                 rrr.setStatusCode(approvedStatus);
-                 if (RegistrationStatusType.STATUS_CURRENT.equals(approvedStatus)
+                if (RegistrationStatusType.STATUS_CURRENT.equals(approvedStatus)
                         && rrr.getRegistrationDate() == null) {
                     // Set the registration date for the rrr. 
                     rrr.setRegistrationDate(approvalDate);
@@ -311,12 +321,18 @@ public class AdministrativeEJB extends AbstractEJB
             for (BaUnitNotationStatusChanger baUnitNotation : baUnitNotationList) {
                 baUnitNotation.setStatusCode(RegistrationStatusType.STATUS_CURRENT);
                 if (baUnitNotation.getNotationDate() == null) {
-                    baUnitNotation.setNotationDate(approvalDate); 
+                    baUnitNotation.setNotationDate(approvalDate);
                 }
                 getRepository().saveEntity(baUnitNotation);
             }
-        }
 
+            // Manage the Strata Title approval/cancellation process
+            if (CREATE_STRATA_TITLE.equals(requestType)) {
+                approveStrataProperties(transactionId);
+            } else if (CANCEL_STRATA_TITLE.equals(requestType)) {
+                cancelStrataProperties(transactionId);
+            }
+        }
         return validationResult;
     }
 
@@ -510,5 +526,418 @@ public class AdministrativeEJB extends AbstractEJB
         params.put(BaUnit.QUERY_PARAMETER_LASTPART, nameLastPart);
         params.put(BaUnit.QUERY_PARAMETER_COLIST, colist);
         return getRepository().getEntity(BaUnit.class, params);
+    }
+
+    /**
+     * Creates the Strata Properties required for a Unit Development. This method can be used to
+     * create the initial set of properties based on a UnitParcelGroup as well as to create any
+     * additional properties when the Unit Parcel Group is changed.
+     *
+     * @param serviceId The identifier for the Create Unit Title Service
+     * @param group The Unit Parcel Group
+     * @param baUnitIds The list of BA Units representing the underlying properties for the Unit
+     * Development (Typically the list of BA Units linked to the application as Application
+     * Properties). This list of BA Units is checked to ensure only valid properties are linked as
+     * the underlying properties for the unit development.
+     */
+    @Override
+    @RolesAllowed(RolesConstants.ADMINISTRATIVE_STRATA_UNIT_CREATE)
+    public void createStrataProperties(String serviceId, UnitParcelGroup group, List<String> baUnitIds) {
+        if (group != null && group.getUnitParcelList() != null && group.getUnitParcelList().size() > 0) {
+
+            boolean updateTransaction = false;
+            List<BaUnit> underlyingProperties = null;
+
+            // Check the Common Property has an associated BA Unit. If not, create the Common Property
+            BaUnit commonProperty = null;
+            for (UnitParcel unitParcel : group.getUnitParcelList()) {
+                if (CadastreObjectType.CODE_COMMON_PROPERTY.equals(unitParcel.getTypeCode())) {
+                    commonProperty = getBaUnitByCode(unitParcel.getNameFirstpart(), unitParcel.getNameLastpart());
+                    if (commonProperty == null) {
+                        underlyingProperties = getUnderlyingProperties(group, baUnitIds);
+                        commonProperty = createCommonProperty(unitParcel, underlyingProperties);
+                        BigDecimal officialArea = commonProperty.getCalculatedAreaSize();
+                        commonProperty = saveBaUnit(serviceId, commonProperty);
+                        createBaUnitArea(commonProperty.getId(), officialArea, SpatialValueArea.OFFICIAL_AREA_TYPE);
+                        updateTransaction = true;
+                    } else {
+                        // The common Property exists. Include the prior title references from the common
+                        // property when determining the underlying properties. 
+                        if (baUnitIds == null) {
+                            baUnitIds = new ArrayList<String>();
+                        }
+                        if (commonProperty.getParentBaUnits() != null) {
+                            for (ParentBaUnitInfo priorTitle : commonProperty.getParentBaUnits()) {
+                                if (BaUnitRelType.PRIOR_TITLE_TYPE.equals(priorTitle.getRelationCode())) {
+                                    baUnitIds.add(priorTitle.getRelatedBaUnitId());
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+
+            List<String> underlyingRrrIds = null;
+
+            for (UnitParcel unitParcel : group.getUnitParcelList()) {
+                if (CadastreObjectType.CODE_PRINCIPAL_UNIT.equals(unitParcel.getTypeCode())) {
+                    // Check for a BA Unit that matches the principal unit parcel appellation
+                    BaUnit unit = getBaUnitByCode(unitParcel.getNameFirstpart(), unitParcel.getNameLastpart());
+                    if (unit == null) {
+                        // Clone the RRRs from the underlying properties and add them to the
+                        // new Principal Unit. 
+                        if (underlyingProperties == null) {
+                            underlyingProperties = getUnderlyingProperties(group, baUnitIds);
+                        }
+                        if (underlyingRrrIds == null) {
+                            underlyingRrrIds = getUnderlyingRrrIds(underlyingProperties);
+                        }
+                        List<Rrr> rrrList = cloneRrrs(underlyingRrrIds);
+
+                        // Create the principal Unit
+                        unit = createPrincipalUnit(unitParcel, commonProperty, rrrList);
+                        BigDecimal officialArea = unit.getCalculatedAreaSize();
+                        unit = saveBaUnit(serviceId, unit);
+                        createBaUnitArea(unit.getId(), officialArea, SpatialValueArea.OFFICIAL_AREA_TYPE);
+                        updateTransaction = true;
+                    }
+                }
+
+                // Update the new transaction to reference the unit parcel group
+                if (updateTransaction) {
+                    TransactionUnitParcels trans = transactionEJB.getTransactionByServiceId(serviceId,
+                            false, TransactionUnitParcels.class);
+                    trans.setUnitParcelGroupId(group.getId());
+                    transactionEJB.saveEntity(trans);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates the Common Property for a new Unit Development. This includes creating a Body
+     * Corporate Rules RRR as well as a Address for Service RRR.
+     *
+     * @param commonPropParcel The Common Property Parcel to link to the Common Property
+     * @param underlyingProperties The list of underlying properties for the Unit Development. These
+     * properties are linked to the Common Property as Prior Titles.
+     */
+    private BaUnit createCommonProperty(UnitParcel commonPropParcel, List<BaUnit> underlyingProperties) {
+        BaUnit result = createStrataUnit(commonPropParcel);
+
+        if (underlyingProperties != null && underlyingProperties.size() > 0) {
+            List<ParentBaUnitInfo> parentList = new ArrayList<ParentBaUnitInfo>();
+            // Setup a prior title reference from the common Property to the underlying properties
+            for (BaUnit underlyingProp : underlyingProperties) {
+                ParentBaUnitInfo priorTitle = new ParentBaUnitInfo();
+                priorTitle.setRelatedBaUnitId(underlyingProp.getId());
+                priorTitle.setRelationCode(BaUnitRelType.PRIOR_TITLE_TYPE);
+                parentList.add(priorTitle);
+            }
+
+            // Find the village linked to the first underlying parcel and associate that
+            // to the common property as the village
+            if (underlyingProperties.get(0).getParentBaUnits() != null) {
+                for (ParentBaUnitInfo parentProp : underlyingProperties.get(0).getParentBaUnits()) {
+                    if (BaUnitRelType.VILLAGE_TYPE.equals(parentProp.getRelationCode())) {
+                        ParentBaUnitInfo village = new ParentBaUnitInfo();
+                        village.setRelatedBaUnitId(parentProp.getRelatedBaUnitId());
+                        village.setRelationCode(parentProp.getRelationCode());
+                        parentList.add(village);
+                        break;
+                    }
+                }
+            }
+            result.setParentBaUnits(parentList);
+        }
+
+        // Add the Body Corporate Rules and Address for Service RRRs
+        List<Rrr> rrrList = new ArrayList<Rrr>();
+
+        Rrr bodyCorpRules = new Rrr();
+        bodyCorpRules.setTypeCode(RrrType.BODY_CORPORATE_RULES_TYPE);
+        BaUnitNotation note1 = new BaUnitNotation();
+        note1.setNotationText("Body Corporate Rules");
+        bodyCorpRules.setNotation(note1);
+        bodyCorpRules.setPrimary(true);
+        rrrList.add(bodyCorpRules);
+
+        Rrr serviceAddress = new Rrr();
+        serviceAddress.setTypeCode(RrrType.ADDRESS_FOR_SERVICE_TYPE);
+        BaUnitNotation note2 = new BaUnitNotation();
+        note2.setNotationText("Address for Service <address>");
+        serviceAddress.setNotation(note2);
+        rrrList.add(serviceAddress);
+
+        result.setRrrList(rrrList);
+
+        return result;
+    }
+
+    /**
+     * Creates a new Principal Unit based on the Unit Parcel and common property details. Also adds
+     * an Unit Entitlement RRR to the new Principal Unit.
+     *
+     * @param parcel The Principal Unit parcel to create the Principal Unit property for
+     * @param commonProperty The Common Property the Unit Development
+     * @param rrrList The list of Rrrs from the underlying properties that need to be added to the
+     * new principal unit.
+     */
+    private BaUnit createPrincipalUnit(UnitParcel parcel, BaUnit commonProperty, List<Rrr> rrrList) {
+        BaUnit result = createStrataUnit(parcel);
+        if (commonProperty != null) {
+
+            // Link the commonProperty to the new principal unit
+            ParentBaUnitInfo commProp = new ParentBaUnitInfo();
+            commProp.setRelatedBaUnitId(commonProperty.getId());
+            commProp.setRelationCode(BaUnitRelType.COMMON_PROPERTY_TYPE);
+            List<ParentBaUnitInfo> parentList = new ArrayList<ParentBaUnitInfo>();
+            parentList.add(commProp);
+
+            // Link the village of the common property to the new principal unit
+            if (commonProperty.getParentBaUnits() != null) {
+                for (ParentBaUnitInfo parentProp : commonProperty.getParentBaUnits()) {
+                    if (BaUnitRelType.VILLAGE_TYPE.equals(parentProp.getRelationCode())) {
+                        ParentBaUnitInfo village = new ParentBaUnitInfo();
+                        village.setRelatedBaUnitId(parentProp.getRelatedBaUnitId());
+                        village.setRelationCode(parentProp.getRelationCode());
+                        parentList.add(village);
+                        break;
+                    }
+                }
+            }
+            result.setParentBaUnits(parentList);
+
+            if (rrrList == null) {
+                rrrList = new ArrayList<Rrr>();
+            }
+            // Add an entitlement RRR to the Principal Unit
+            Rrr entitlement = new Rrr();
+            entitlement.setTypeCode(RrrType.UNIT_ENTITLEMENT_TYPE);
+            BaUnitNotation note = new BaUnitNotation();
+            note.setNotationText("Unit entitlement <entitlement>");
+            entitlement.setNotation(note);
+            rrrList.add(entitlement);
+
+            result.setRrrList(rrrList);
+        }
+        return result;
+    }
+
+    /**
+     * Creates a BA Unit representing a Strata (a.k.a. Unit Title) property (e.g. Principal Unit or
+     * Common Property) based on the details included in the UnitParcel.
+     *
+     * @param parcel The Unit Parcel to create the Strata Unit Property for.
+     */
+    private BaUnit createStrataUnit(UnitParcel parcel) {
+        BaUnit result = new BaUnit();
+        result.setNameFirstpart(parcel.getNameFirstpart());
+        result.setNameLastpart(parcel.getNameLastpart());
+        result.setName(parcel.getNameFirstpart() + "/" + parcel.getNameLastpart());
+        result.setTypeCode(BaUnitType.STRATA_UNIT_TYPE);
+
+        // Link the unit parcel to the property
+        List<CadastreObject> unitParcels = new ArrayList<CadastreObject>();
+        unitParcels.add(parcel);
+        result.setCadastreObjectList(unitParcels);
+
+        BigDecimal officalArea = BigDecimal.ZERO;
+
+        // Set the official area for the new unit based on the official area(s) for the parcel. 
+        if (parcel.getSpatialValueAreaList() != null && parcel.getSpatialValueAreaList().size() > 0) {
+            for (SpatialValueArea area : parcel.getSpatialValueAreaList()) {
+                if (SpatialValueArea.OFFICIAL_AREA_TYPE.equals(area.getTypeCode())) {
+                    if (area.getSize() != null) {
+                        officalArea = officalArea.add(area.getSize());
+                    }
+                }
+            }
+        }
+
+        if (officalArea.compareTo(BigDecimal.ZERO) > 0) {
+            // Tempoarially store the official area in the calcualted area field. 
+            result.setCalculatedAreaSize(officalArea);
+        }
+        return result;
+    }
+
+    /**
+     * Determines the underlying properties for the Unit Development based on the Unit Parcel Group
+     * as well as any additional list of BA Units. Typically this additional list will be the list
+     * of Application Properties from the Application.
+     *
+     * @param group The Unit Parcel Group
+     * @param baUnitIds The list of additional BA Units (i.e. The Application Properties)
+     */
+    private List<BaUnit> getUnderlyingProperties(UnitParcelGroup group, List<String> baUnitIds) {
+        List<BaUnit> result = new ArrayList<BaUnit>();
+        // Get all underlying properties based on the underlying parcels set in the Unit Parcel Group
+        if (group.getParcelList() != null) {
+            for (UnitParcel parcel : group.getParcelList()) {
+                List<BaUnit> tmpList = getBaUnitBySpatialUnitId(parcel.getId());
+                if (tmpList != null) {
+                    for (BaUnit baUnit : tmpList) {
+                        // Make sure the BA Unit is a current or dormant basic property unit that
+                        // is not already part of the underlying parcels list
+                        if ((RegistrationStatusType.STATUS_CURRENT.equals(baUnit.getStatusCode())
+                                || RegistrationStatusType.STATUS_DORMANT.equals(baUnit.getStatusCode()))
+                                && !BaUnitType.STRATA_UNIT_TYPE.equals(baUnit.getTypeCode())
+                                && !result.contains(baUnit)) {
+                            result.add(baUnit);
+                        }
+                    }
+                }
+            }
+        }
+        // Get all of the underlying properties based on the list of ba unit 
+        // ids supplied (i.e. some BA Units may not be linked to parcels. 
+        if (baUnitIds != null) {
+            for (String baUnitId : baUnitIds) {
+                BaUnit tmpBaUnit = getBaUnitById(baUnitId);
+                if (tmpBaUnit != null && (RegistrationStatusType.STATUS_CURRENT.equals(tmpBaUnit.getStatusCode())
+                        || RegistrationStatusType.STATUS_DORMANT.equals(tmpBaUnit.getStatusCode()))
+                        && !BaUnitType.STRATA_UNIT_TYPE.equals(tmpBaUnit.getTypeCode())
+                        && !result.contains(tmpBaUnit)) {
+                    result.add(tmpBaUnit);
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<String> getUnderlyingRrrIds(List<BaUnit> underlyingParcels) {
+        List<String> result = new ArrayList<String>();
+        boolean hasPrimaryRrr = false;
+        for (BaUnit underlyingProp : underlyingParcels) {
+            if (underlyingProp.getRrrList() != null && underlyingProp.getRrrList().size() > 0) {
+                for (Rrr rrr : underlyingProp.getRrrList()) {
+                    if (RegistrationStatusType.STATUS_CURRENT.equals(rrr.getStatusCode())) {
+                        if (rrr.isPrimary() && !hasPrimaryRrr) {
+                            // Only add one primary RRR to the Principal Units
+                            hasPrimaryRrr = true;
+                        }
+                        result.add(rrr.getId());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Generates clone copy of all Rrrs based on the list of Rrr ids provided.
+     *
+     * @param rrrIdList
+     * @return
+     */
+    private List<Rrr> cloneRrrs(List<String> rrrIdList) {
+        List<Rrr> result = new ArrayList<Rrr>();
+        for (String rrrId : rrrIdList) {
+            Rrr rrr = getRepository().getEntity(Rrr.class, rrrId);
+            if (rrr != null) {
+                rrr.makeCloneable();
+                // Parties are readonly on the RRR, so it is necessary to iterate over each 
+                // party and explicitly save the cloned parties
+                if (rrr.getRrrShareList() != null && rrr.getRrrShareList().size() > 0) {
+                    for (RrrShare share : rrr.getRrrShareList()) {
+                        saveParties(share.getRightHolderList());
+                    }
+                    // The Rrr Rightholders List also lists the parties from the shares, so 
+                    // clear this list to avoid trying to insert duplicates. 
+                    rrr.setRightHolderList(null);
+                } else {
+                    // No shares for the RRR, but there might be right holders linked directly
+                    // to the RRR
+                    saveParties(rrr.getRightHolderList());
+                }
+                result.add(rrr);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Creates new parties for cloned Rrr's.
+     *
+     * @param parties
+     */
+    private void saveParties(List<Party> parties) {
+        if (parties != null && parties.size() > 0) {
+            ListIterator<Party> it = parties.listIterator();
+            while (it.hasNext()) {
+                Party party = it.next();
+                it.remove();
+                party = partyEJB.saveParty(party);
+                it.add(party);
+            }
+        }
+    }
+
+    /**
+     * Creates a Ba Unit Area entity using the information provided.
+     *
+     * @param baUnitId The BA Unit to link the area record to
+     * @param size The size of the area. If the size is NULL, no BaUnitArea entity will be created.
+     * @param areaType THe type of area (official, calculated, etc)
+     */
+    private BaUnitArea createBaUnitArea(String baUnitId, BigDecimal size, String areaType) {
+        BaUnitArea result = null;
+        if (size != null) {
+            BaUnitArea area = new BaUnitArea();
+            area.setBaUnitId(baUnitId);
+            area.setTypeCode(areaType);
+            area.setSize(size);
+            result = getRepository().saveEntity(area);
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves all of the BA Units associated to a specific Spatial Unit Id. This includes any
+     * historic BA Units.
+     *
+     * @param spatialUnitId The identifier of the Spatial Unit
+     * @return The BA Units linked to the spatial unit or null.
+     */
+    private List<BaUnit> getBaUnitBySpatialUnitId(String spatialUnitId) {
+        List<BaUnit> result = null;
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYBSPATIALUNITID);
+        params.put(BaUnit.QUERY_PARAMETER_SPATIAL_UNIT_ID, spatialUnitId);
+        result = getRepository().getEntityList(BaUnit.class, params);
+        return result;
+    }
+
+    /**
+     * Checks for the freehold properties and updates them to have a status of Dormant.
+     *
+     * @param transactionId
+     */
+    private void approveStrataProperties(String transactionId) {
+        TransactionUnitParcels trans = transactionEJB.getTransactionById(transactionId,
+                TransactionUnitParcels.class);
+        if (trans.getUnitParcelGroup() != null) {
+            List<BaUnit> underlyingProps = getUnderlyingProperties(trans.getUnitParcelGroup(), null);
+            for (BaUnit prop : underlyingProps) {
+                if (prop.getRrrList() != null && prop.getRrrList().size() > 0) {
+                    for (Rrr rrr : prop.getRrrList()) {
+                        if (RegistrationStatusType.STATUS_CURRENT.equals(rrr.getStatusCode())
+                                && rrr.isPrimary()
+                                && RrrType.FREEHOLD_TYPE.equals(rrr.getTypeCode())) {
+                            BaUnitStatusChanger baUnitToUpdate = new BaUnitStatusChanger();
+                            baUnitToUpdate.setId(prop.getId());
+                            getRepository().refreshEntity(baUnitToUpdate);
+                            baUnitToUpdate.setStatusCode(RegistrationStatusType.STATUS_DORMANT);
+                            getRepository().saveEntity(baUnitToUpdate);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void cancelStrataProperties(String transactionId) {
     }
 }

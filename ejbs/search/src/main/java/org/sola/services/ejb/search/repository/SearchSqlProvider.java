@@ -29,6 +29,7 @@
  */
 package org.sola.services.ejb.search.repository;
 
+import java.util.List;
 import static org.apache.ibatis.jdbc.SqlBuilder.*;
 import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
 
@@ -39,6 +40,9 @@ import org.sola.services.ejb.search.repository.entities.BaUnitSearchResult;
 public class SearchSqlProvider {
 
     public static final String PARAM_APPLICATION_ID = "applicationId";
+    public static final String PARAM_ID_LIST = "idVal";
+    public static final String PARAM_SERVICE_ID = "serviceId";
+    public static final String PARAM_UNIT_PARCEL_GROUP_NAME = "unitParcelGroupName";
     private static final String APPLICATION_GROUP = "application";
     private static final String SERVICE_GROUP = "service";
     private static final String RRR_GROUP = "rrr";
@@ -46,7 +50,6 @@ public class SearchSqlProvider {
     private static final String SOURCE_GROUP = "Source";
     private static final String AGENT_GROUP = "Agent";
     private static final String CONTACT_PERSON_GROUP = "Contact person";
-    
     private static final String CHANGE_ACTION = "changed";
     private static final String ADDED_PROPERTY = "ADDED PROPERTY: ";
     private static final String DELETED_PROPERTY = "DELETED PROPERTY: ";
@@ -57,7 +60,6 @@ public class SearchSqlProvider {
     private static final String ADDED_CONTACT_PERSON = "ADDED CONTACT PERSON: ";
     private static final String DELETED_CONTACT_PERSON = "REMOVED CONTACT PERSON: ";
 
-    
     public static String buildApplicationLogSql() {
         String sql;
         int sortClassifier = 1;
@@ -182,7 +184,7 @@ public class SearchSqlProvider {
 //        WHERE("ser.application_id = #{" + PARAM_APPLICATION_ID + "}");
 //        WHERE("tran.from_service_id = ser.id");
 //        WHERE("rrr.transaction_id = tran.id");
-         
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
@@ -203,8 +205,8 @@ public class SearchSqlProvider {
                 + " AS user_fullname");
         FROM("application.application_property prop1 ");
         WHERE("prop1.application_id = #{" + PARAM_APPLICATION_ID + "}");
-        
-         sql = sql + SQL() + " UNION ";
+
+        sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
         // Application property History
@@ -226,12 +228,12 @@ public class SearchSqlProvider {
                 + " AS user_fullname");
         FROM("application.application_property_historic prop_hist");
         WHERE("prop_hist.application_id = #{" + PARAM_APPLICATION_ID + "}");
-        
-        
+
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
-         // SOURCE
+        // SOURCE
         BEGIN();
         SELECT("'" + SOURCE_GROUP + "' AS record_group");
         SELECT("'" + SOURCE_GROUP + "' AS record_type");
@@ -250,7 +252,7 @@ public class SearchSqlProvider {
                 + " LEFT JOIN source.source source "
                 + " ON source1.source_id = source.id ");
         WHERE("source1.application_id = #{" + PARAM_APPLICATION_ID + "}");
-        
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
@@ -275,14 +277,14 @@ public class SearchSqlProvider {
                 + " LEFT JOIN source.source source "
                 + " ON source1.source_id = source.id ");
         WHERE("source1.application_id = #{" + PARAM_APPLICATION_ID + "}");
-       
-        
+
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
         // AGENT 
         BEGIN();
-        
+
         SELECT("'" + AGENT_GROUP + "' AS record_group");
         SELECT("'" + AGENT_GROUP + "' AS record_type");
         SELECT(sortClassifier + " as sort_classifier");
@@ -300,13 +302,13 @@ public class SearchSqlProvider {
         FROM("party.party party");
         WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
         WHERE("app.agent_id=party.id");
-        
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
         // AGENT History
         BEGIN();
-        
+
         SELECT("'" + AGENT_GROUP + "' AS record_group");
         SELECT("'" + AGENT_GROUP + "' AS record_type");
         SELECT(sortClassifier + " as sort_classifier");
@@ -314,8 +316,8 @@ public class SearchSqlProvider {
         SELECT("app.rowversion AS record_sequence");
         SELECT("''::text AS nr");
         SELECT("CASE WHEN (app.change_action='i') then replace(party.change_action,'i','" + ADDED_AGENT + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
-        + " ELSE  replace(app.change_action,app.change_action,'" + DELETED_AGENT + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
-        + " END AS action_code");
+                + " ELSE  replace(app.change_action,app.change_action,'" + DELETED_AGENT + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
+                + " END AS action_code");
         SELECT("NULL::text AS notation");
         SELECT("app.change_time");
         SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
@@ -323,21 +325,21 @@ public class SearchSqlProvider {
                 + " WHERE appuser.username::text = app.change_user::text)"
                 + " AS user_fullname");
         FROM("application.application new_app");
-        FROM("application.application_historic app"  
-                + " LEFT JOIN party.party party" 
-                + "  ON app.agent_id = party.id"); 
+        FROM("application.application_historic app"
+                + " LEFT JOIN party.party party"
+                + "  ON app.agent_id = party.id");
         WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
         WHERE("app.agent_id != new_app.agent_id");
         WHERE("app.agent_id=party.id");
         WHERE("((app.rowversion - 1) = new_app.rowversion OR (app.rowversion) = new_app.rowversion)");
-       
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
-        
+
         // contact_person 
         BEGIN();
-        
+
         SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_group");
         SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_type");
         SELECT(sortClassifier + " as sort_classifier");
@@ -355,22 +357,22 @@ public class SearchSqlProvider {
         FROM("party.party party");
         WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
         WHERE("app.contact_person_id=party.id");
-        
+
         sql = sql + SQL() + " UNION ";
         sortClassifier++;
 
         // contact_person History
         BEGIN();
-        
+
         SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_group");
         SELECT("'" + CONTACT_PERSON_GROUP + "' AS record_type");
         SELECT(sortClassifier + " as sort_classifier");
         SELECT("app.contact_person_id AS record_id");
         SELECT("app.rowversion AS record_sequence");
-        SELECT("''::text AS nr"); 
+        SELECT("''::text AS nr");
         SELECT("CASE WHEN (app.change_action='i') then replace(party.change_action,'i','" + ADDED_CONTACT_PERSON + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
-        + " ELSE  replace(app.change_action,app.change_action,'" + DELETED_CONTACT_PERSON + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
-        + " END AS action_code");
+                + " ELSE  replace(app.change_action,app.change_action,'" + DELETED_CONTACT_PERSON + "')||' - '||coalesce(party.name,'')||' '||coalesce(party.last_name,'')"
+                + " END AS action_code");
         SELECT("NULL::text AS notation");
         SELECT("app.change_time");
         SELECT("(SELECT (appuser.first_name::text || ' '::text) || appuser.last_name::text"
@@ -378,14 +380,14 @@ public class SearchSqlProvider {
                 + " WHERE appuser.username::text = app.change_user::text)"
                 + " AS user_fullname");
         FROM("application.application new_app");
-        FROM("application.application_historic app"  
-                + " LEFT JOIN party.party_historic party" 
-                + "  ON app.contact_person_id = party.id"); 
+        FROM("application.application_historic app"
+                + " LEFT JOIN party.party_historic party"
+                + "  ON app.contact_person_id = party.id");
         WHERE("app.id = #{" + PARAM_APPLICATION_ID + "}");
         WHERE("app.contact_person_id != new_app.contact_person_id");
         WHERE("app.contact_person_id=party.id");
         WHERE("((app.rowversion - 1) = new_app.rowversion OR (app.rowversion) = new_app.rowversion)");
-       
+
         ORDER_BY("change_time, sort_classifier, nr");
 
         sql = sql + SQL();
@@ -439,6 +441,179 @@ public class SearchSqlProvider {
                     + "}, COALESCE(prop.name_lastpart, ''))");
         }
         ORDER_BY(BaUnitSearchResult.QUERY_ORDER_BY + " LIMIT 100");
+        sql = SQL();
+        return sql;
+    }
+
+    /**
+     * Samoa Customization - Creates the query to determine the Unit Development Number for the
+     * Spatial Unit Group linked to the service or one of the BA Units in the BA Unit id list. Uses
+     * an IN clause to check all of the BA Unit ids.
+     *
+     * @param serviceId The id of the service. Can be NULL
+     * @param baUnitIdListCount The number of ba unit ids to check. Can be NULL or empty.
+     * @return
+     */
+    public static String buildGetUnitDevNrSql(String serviceId, int baUnitIdListCount) {
+        String sql;
+        BEGIN();
+        SELECT("sg.name");
+        FROM("cadastre.spatial_unit_group sg");
+        if (serviceId != null) {
+            // Check if any BA Unit associated to the service is part of a Unit Development
+            WHERE("sg.id IN (SELECT sig.spatial_unit_group_id "
+                    + "      FROM   administrative.ba_unit_contains_spatial_unit baco, "
+                    + "             administrative.ba_unit ba, "
+                    + "             transaction.transaction t,"
+                    + "             cadastre.spatial_unit_in_group sig "
+                    + "      WHERE  t.from_service_id = #{" + PARAM_SERVICE_ID + "} "
+                    + "      AND    ba.transaction_id = t.id "
+                    + "      AND    baco.ba_unit_id = ba.id "
+                    + "      AND    sig.spatial_unit_id = baco.spatial_unit_id) ");
+            OR();
+            // Check if the service transction is directly linked to a Unit Development
+            WHERE("sg.id IN (SELECT t.spatial_unit_group_id "
+                    + "      FROM   transaction.transaction t "
+                    + "      WHERE  t.from_service_id = #{" + PARAM_SERVICE_ID + "}) ");
+        }
+
+        if (baUnitIdListCount > 0) {
+            // Check if any of the BA Units are part of a Unit Development via thier parcels
+            String whereClause = "sg.id IN (SELECT sig.spatial_unit_group_id "
+                    + "      FROM   cadastre.spatial_unit_in_group sig, "
+                    + "             administrative.ba_unit_contains_spatial_unit baco "
+                    + "      WHERE  sig.spatial_unit_id = baco.spatial_unit_id "
+                    + "      AND    baco.ba_unit_id IN (";
+
+            // Build the IN clause with parameter values rather than hard coded ids to 
+            // ensure the generated SQL can be treated as a prepared statement. 
+            for (int i = 0; i < baUnitIdListCount; i++) {
+                whereClause = whereClause + "#{" + PARAM_ID_LIST + i + "}, ";
+            }
+
+            whereClause = whereClause.substring(0, whereClause.length() - 2) + "))";
+            if (serviceId != null) {
+                OR();
+            }
+            WHERE(whereClause);
+
+            // Check if any of the BA Units are linked to a Common Property of a Unit Development 
+            // through their prior title reference (i.e. where the BA Unit is the prior title for
+            // the Common Property
+            whereClause = "sg.id IN (SELECT sig.spatial_unit_group_id "
+                    + "      FROM   cadastre.spatial_unit_in_group sig, "
+                    + "             administrative.required_relationship_baunit rel,"
+                    + "             administrative.ba_unit_contains_spatial_unit baco,"
+                    + "             cadastre.cadastre_object co "
+                    + "      WHERE  sig.spatial_unit_id = co.id"
+                    + "      AND    co.type_code = 'commonProperty' "
+                    + "      AND    baco.spatial_unit_id = co.id "
+                    + "      AND    rel.to_ba_unit_id = baco.ba_unit_id "
+                    + "      AND    rel.relation_code = 'priorTitle' "
+                    + "      AND    rel.from_ba_unit_id IN (";
+
+            for (int i = 0; i < baUnitIdListCount; i++) {
+                whereClause = whereClause + "#{" + PARAM_ID_LIST + i + "}, ";
+            }
+
+            whereClause = whereClause.substring(0, whereClause.length() - 2) + "))";
+            OR();
+            WHERE(whereClause);
+        }
+
+        sql = SQL();
+        return sql;
+    }
+
+    public static String buildGetStrataPropsSql(String unitParcelGroupName, int baUnitIdListCount) {
+        String sql;
+        BEGIN();
+        SELECT("ba.id AS ba_id");
+        SELECT("ba.type_code AS ba_type_code");
+        SELECT("ba.name AS ba_name");
+        SELECT("ba.name_firstpart AS ba_name_firstpart");
+        SELECT("ba.name_lastpart AS ba_name_lastpart");
+        SELECT("ba.status_code AS ba_status_code");
+        SELECT("ba.transaction_id AS ba_transaction_id");
+        SELECT("ba.creation_date AS ba_registration_date");
+        SELECT("   (SELECT CAST(SUM(size) AS integer) "
+                + " FROM   administrative.ba_unit_area "
+                + " WHERE  ba.id = ba_unit_id"
+                + " AND    type_code = 'officialArea' ) AS official_area");
+        SELECT("CAST(COALESCE(rrr_curr.share, rrr_pend.share) AS integer) AS unit_entitlement");
+        SELECT("co.type_code AS unit_parcel_type");
+        SELECT(" (CASE co.type_code WHEN 'commonProperty' THEN '2' "
+                + " WHEN 'principalUnit' THEN '3'  || lpad(regexp_replace(ba.name_firstpart, '\\D*',  ''), 5, '0') "
+                + " ELSE '1'  || ba.name END) AS sort_key "); 
+        FROM("administrative.ba_unit ba");
+        LEFT_OUTER_JOIN("administrative.rrr rrr_curr "
+                + " ON ba.id = rrr_curr.ba_unit_id AND rrr_curr.type_code = 'unitEntitlement' "
+                + " AND rrr_curr.status_code = 'current'");
+        LEFT_OUTER_JOIN("administrative.rrr rrr_pend "
+                + " ON ba.id = rrr_pend.ba_unit_id AND rrr_pend.type_code = 'unitEntitlement' "
+                + " AND rrr_pend.status_code = 'pending'");
+        LEFT_OUTER_JOIN("administrative.ba_unit_contains_spatial_unit basp "
+                + " ON ba.id = basp.ba_unit_id "
+                + " INNER JOIN cadastre.cadastre_object co "
+                + "   ON basp.spatial_unit_id = co.id AND co.type_code != 'accessoryUnit'");
+        if (unitParcelGroupName != null) {
+            // Get all ba units linked to the spatial unit group as well as all BA Units
+            // linked to the Common Property as Prior titles or principal units
+            WHERE("ba.id IN (SELECT baco.ba_unit_id"
+                    + "      FROM   cadastre.spatial_unit_group sg, "
+                    + "             cadastre.spatial_unit_in_group sig, "
+                    + "             administrative.ba_unit_contains_spatial_unit baco "
+                    + "      WHERE  sg.name = #{" + PARAM_UNIT_PARCEL_GROUP_NAME + "} "
+                    + "      AND    sig.spatial_unit_group_id = sg.id "
+                    + "      AND    baco.spatial_unit_id = sig.spatial_unit_id "
+                    + "      UNION "
+                    + "      SELECT rel.from_ba_unit_id"
+                    + "      FROM   cadastre.spatial_unit_group sg, "
+                    + "             cadastre.spatial_unit_in_group sig, "
+                    + "             cadastre.cadastre_object co, "
+                    + "             administrative.ba_unit_contains_spatial_unit baco, "
+                    + "             administrative.required_relationship_baunit rel"
+                    + "      WHERE  sg.name = #{" + PARAM_UNIT_PARCEL_GROUP_NAME + "} "
+                    + "      AND    sig.spatial_unit_group_id = sg.id "
+                    + "      AND    co.id = sig.spatial_unit_id "
+                    + "      AND    co.type_code = 'commonProperty' "
+                    + "      AND    baco.spatial_unit_id = co.id "
+                    + "      AND    rel.to_ba_unit_id = baco.ba_unit_id"
+                    + "      AND    rel.relation_code = 'priorTitle' "
+                    + "      UNION "
+                    + "      SELECT rel.to_ba_unit_id"
+                    + "      FROM   cadastre.spatial_unit_group sg, "
+                    + "             cadastre.spatial_unit_in_group sig, "
+                    + "             cadastre.cadastre_object co, "
+                    + "             administrative.ba_unit_contains_spatial_unit baco, "
+                    + "             administrative.required_relationship_baunit rel"
+                    + "      WHERE  sg.name = #{" + PARAM_UNIT_PARCEL_GROUP_NAME + "} "
+                    + "      AND    sig.spatial_unit_group_id = sg.id "
+                    + "      AND    co.id = sig.spatial_unit_id "
+                    + "      AND    co.type_code = 'commonProperty' "
+                    + "      AND    baco.spatial_unit_id = co.id "
+                    + "      AND    rel.from_ba_unit_id = baco.ba_unit_id"
+                    + "      AND    rel.relation_code = 'commonProperty') ");
+        }
+
+        if (baUnitIdListCount > 0) {
+            // Add the BA Units from the BA Unit Id List
+            String whereClause = "ba.id IN (";
+
+            // Build the IN clause with parameter values rather than hard coded ids to 
+            // ensure the generated SQL can be treated as a prepared statement. 
+            for (int i = 0; i < baUnitIdListCount; i++) {
+                whereClause = whereClause + "#{" + PARAM_ID_LIST + i + "}, ";
+            }
+
+            whereClause = whereClause.substring(0, whereClause.length() - 2) + ")";
+            if (unitParcelGroupName != null) {
+                OR();
+            }
+            WHERE(whereClause);
+        }
+        ORDER_BY("sort_key"); 
+
         sql = SQL();
         return sql;
     }

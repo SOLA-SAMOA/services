@@ -46,6 +46,7 @@ public class RegistrationStatusType extends AbstractCodeEntity {
     public static String STATUS_CURRENT = "current";
     public static String STATUS_HISTORIC = "historic";
     public static String STATUS_PENDING = "pending";
+    public static String STATUS_DORMANT = "dormant";
 
     public RegistrationStatusType() {
         super();

@@ -60,6 +60,14 @@ public class UnitParcel extends CadastreObject {
     public static final String QUERY_WHERE_BYTRANSACTIONID =
             " transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "}";
     /**
+     * Locates pending unit parcels.
+     */
+    public static final String QUERY_WHERE_BYPENDINGUNIT =
+            " id IN (SELECT sug.spatial_unit_id FROM cadastre.spatial_unit_in_group sug "
+            + " WHERE sug.spatial_unit_id = cadastre.cadastre_object.id "
+            + " AND sug.unit_parcel_status_code = 'pending'"
+            + " AND sug.spatial_unit_group_id = #{" + QUERY_PARAMETER_UNITPARCELGROUPID + "})";
+    /**
      * Locates unit parcels that are marked for delete when the associated application is approved.
      */
     public static final String QUERY_WHERE_BYDELETEONAPPROVAL =

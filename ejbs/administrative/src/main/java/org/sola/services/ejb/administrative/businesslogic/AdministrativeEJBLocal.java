@@ -29,6 +29,7 @@ import java.util.List;
 import javax.ejb.Local;
 import org.sola.services.common.ejbs.AbstractSolaTransactionEJBLocal;
 import org.sola.services.ejb.administrative.repository.entities.*;
+import org.sola.services.ejb.cadastre.repository.entities.UnitParcelGroup;
 
 /**
  * Provides local interface for the {@linkplain AdministrativeEJB}
@@ -121,13 +122,13 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
      * AdministrativeEJB.cancelBaUnitTermination}
      */
     BaUnit cancelBaUnitTermination(String baUnitId);
-    
-      /**
+
+    /**
      * see {@linkplain AdministrativeEJB#getBaUnitAreas(java.lang.String)
      * AdministrativeEJB.getBaUnitAreas}
      */
     BaUnitArea getBaUnitAreas(String baUnitId);
-    
+
     /**
      * see {@linkplain AdministrativeEJB#createBaUnitArea(java.lang.String,
      * org.sola.services.ejb.administrative.repository.entities.BaUnitArea)
@@ -135,10 +136,15 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
      */
     BaUnitArea createBaUnitArea(String baUnitId, BaUnitArea baUnitArea);
 
-      /**
+    /**
      * see {@linkplain AdministrativeEJB#getBaUnitWithCadObject(java.lang.String)
      * AdministrativeEJB.getBaUnitWithCadObject}
      */
     BaUnit getBaUnitWithCadObject(String nameFirstPart, String nameLastPart, String colist);
-    
+
+    /**
+     * see {@linkplain AdministrativeEJB#createStrataProperties(java.lang.String, org.sola.services.ejb.cadastre.repository.entities.UnitParcelGroup, java.util.List)
+     * AdministrativeEJB.createStrataProperties}
+     */
+    void createStrataProperties(String serviceId, UnitParcelGroup group, List<String> baUnitIds);
 }
