@@ -180,4 +180,10 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
      * SearchEJB.getStrataProperties}.
      */
     List<StrataProperty> getStrataProperties(String unitParcelGroupName, List<String> baUnitIds);
+
+    /**
+     * See {@linkplain SearchEJB#getUnregisteredDealings(java.lang.String)
+     * SearchEJB.getUnregisteredDealings}.
+     */
+    List<UnregisteredDealing> getUnregisteredDealings(String baUnitId);
 }

@@ -739,4 +739,20 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         result = getRepository().getEntityList(StrataProperty.class, params);
         return result;
     }
+
+    /**
+     * Returns the applications (a.k.a. dealings) that are linked to the property but have yet to
+     * be approved or canceled. Used by the Computer Folio Certificate to list the Unregistered 
+     * Dealings for the property.
+     * @param baUnitId The ba unit to check
+     */
+    @Override
+    public List<UnregisteredDealing> getUnregisteredDealings(String baUnitId) {
+        List<UnregisteredDealing> result;
+        Map params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_QUERY, UnregisteredDealing.PARAM_QUERY_GET_UNREGISTERED_DEALINGS);
+        params.put(UnregisteredDealing.PARAM_BA_UNIT_ID, baUnitId);
+        result = getRepository().getEntityList(UnregisteredDealing.class, params);
+        return result;
+    }
 }
