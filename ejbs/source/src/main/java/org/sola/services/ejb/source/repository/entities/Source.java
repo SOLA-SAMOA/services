@@ -35,6 +35,7 @@ import java.util.HashMap;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.sola.services.common.LocalInfo;
 import org.sola.services.common.repository.ChildEntity;
 import org.sola.services.common.repository.ExternalEJB;
 import org.sola.services.common.repository.RepositoryUtility;
@@ -110,6 +111,7 @@ public class Source extends AbstractVersionedEntity {
         if (systemEJB != null) {
             HashMap<String, Serializable> params = new HashMap<String, Serializable>();
             params.put("refId", getLaNrReferenceId());
+            params.put("transactionId", LocalInfo.getTransactionId());
             Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-source-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {
                 result = newNumberResult.getValue().toString();

@@ -4,11 +4,11 @@
     <parent>
         <artifactId>sola-ejbs</artifactId>
         <groupId>org.sola.services</groupId>
-        <version>1.2-20121106</version>
+        <version>1.2-20121114</version>
     </parent>
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-source</artifactId>
-    <version>1.2-20121106</version>
+    <version>1.2-20121114</version>
     <packaging>ejb</packaging>
     <name>EJB Source</name>
     <dependencies>

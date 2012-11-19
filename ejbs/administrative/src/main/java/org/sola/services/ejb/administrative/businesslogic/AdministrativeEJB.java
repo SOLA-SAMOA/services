@@ -547,6 +547,7 @@ public class AdministrativeEJB extends AbstractEJB
 
             boolean updateTransaction = false;
             List<BaUnit> underlyingProperties = null;
+            List<String> underlyingRrrIds = null;
 
             // Check the Common Property has an associated BA Unit. If not, create the Common Property
             BaUnit commonProperty = null;
@@ -555,7 +556,9 @@ public class AdministrativeEJB extends AbstractEJB
                     commonProperty = getBaUnitByCode(unitParcel.getNameFirstpart(), unitParcel.getNameLastpart());
                     if (commonProperty == null) {
                         underlyingProperties = getUnderlyingProperties(group, baUnitIds);
-                        commonProperty = createCommonProperty(unitParcel, underlyingProperties);
+                        underlyingRrrIds = getUnderlyingRrrIds(underlyingProperties);
+                        String estateType = getUnderlyingEstateType(underlyingRrrIds);
+                        commonProperty = createCommonProperty(unitParcel, estateType, underlyingProperties);
                         BigDecimal officialArea = commonProperty.getCalculatedAreaSize();
                         commonProperty = saveBaUnit(serviceId, commonProperty);
                         createBaUnitArea(commonProperty.getId(), officialArea, SpatialValueArea.OFFICIAL_AREA_TYPE);
@@ -577,8 +580,6 @@ public class AdministrativeEJB extends AbstractEJB
                     break;
                 }
             }
-
-            List<String> underlyingRrrIds = null;
 
             for (UnitParcel unitParcel : group.getUnitParcelList()) {
                 if (CadastreObjectType.CODE_PRINCIPAL_UNIT.equals(unitParcel.getTypeCode())) {
@@ -620,10 +621,12 @@ public class AdministrativeEJB extends AbstractEJB
      * Corporate Rules RRR as well as a Address for Service RRR.
      *
      * @param commonPropParcel The Common Property Parcel to link to the Common Property
+     * @param estateType The estate type for the Common Property
      * @param underlyingProperties The list of underlying properties for the Unit Development. These
      * properties are linked to the Common Property as Prior Titles.
      */
-    private BaUnit createCommonProperty(UnitParcel commonPropParcel, List<BaUnit> underlyingProperties) {
+    private BaUnit createCommonProperty(UnitParcel commonPropParcel, String estateType,
+            List<BaUnit> underlyingProperties) {
         BaUnit result = createStrataUnit(commonPropParcel);
 
         if (underlyingProperties != null && underlyingProperties.size() > 0) {
@@ -655,12 +658,32 @@ public class AdministrativeEJB extends AbstractEJB
         // Add the Body Corporate Rules and Address for Service RRRs
         List<Rrr> rrrList = new ArrayList<Rrr>();
 
+        // Create the primary Rrr for the Common Property in the name of the Body Corporate
+        Rrr estateRrr = new Rrr();
+        estateRrr.setTypeCode(estateType);
+        BaUnitNotation note = new BaUnitNotation();
+        note.setNotationText("Body Corporate of " + commonPropParcel.getNameLastpart());
+        Party party = new Party();
+        party.setName(note.getNotationText());
+        party.setTypeCode(Party.TYPE_CODE_NON_NATURAL_PERSON);
+        RrrShare share = new RrrShare();
+        share.setRightHolderList(new ArrayList<Party>());
+        share.getRightHolderList().add(party);
+        //Save the new party record as it will not be created by the Ba Unit Save. 
+        saveParties(share.getRightHolderList());
+        share.setDenominator(new Short("1"));
+        share.setNominator(new Short("1"));
+        estateRrr.setRrrShareList(new ArrayList<RrrShare>());
+        estateRrr.getRrrShareList().add(share);
+        estateRrr.setPrimary(true);
+        estateRrr.setNotation(note);
+        rrrList.add(estateRrr);
+
         Rrr bodyCorpRules = new Rrr();
         bodyCorpRules.setTypeCode(RrrType.BODY_CORPORATE_RULES_TYPE);
         BaUnitNotation note1 = new BaUnitNotation();
         note1.setNotationText("Body Corporate Rules");
         bodyCorpRules.setNotation(note1);
-        bodyCorpRules.setPrimary(true);
         rrrList.add(bodyCorpRules);
 
         Rrr serviceAddress = new Rrr();
@@ -817,10 +840,32 @@ public class AdministrativeEJB extends AbstractEJB
                         if (rrr.isPrimary() && !hasPrimaryRrr) {
                             // Only add one primary RRR to the Principal Units
                             hasPrimaryRrr = true;
+                            result.add(rrr.getId());
                         }
-                        result.add(rrr.getId());
+                        if (!rrr.isPrimary()) {
+                            result.add(rrr.getId());
+                        }
                     }
                 }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Determines the estate type of the underlying parcel. For Strata Properties, this should
+     * either be Freehold or LeaseHold.
+     *
+     * @param rrrIdList The list of RRRs to check. .
+     */
+    private String getUnderlyingEstateType(List<String> rrrIdList) {
+        String result = RrrType.FREEHOLD_TYPE;
+        for (String rrrId : rrrIdList) {
+            Rrr rrr = getRepository().getEntity(Rrr.class, rrrId);
+            if (rrr != null && rrr.isPrimary()) {
+                // Don't check any more Rrrs as the primary right has been found
+                result = rrr.getTypeCode();
+                break;
             }
         }
         return result;

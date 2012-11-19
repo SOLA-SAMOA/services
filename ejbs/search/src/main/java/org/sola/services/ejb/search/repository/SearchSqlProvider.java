@@ -418,7 +418,7 @@ public class SearchSqlProvider {
                 + "FROM administrative.rrr rrr1, administrative.party_for_rrr pr1, party.party p1 "
                 + "WHERE rrr1.ba_unit_id = prop.id "
                 + "AND rrr1.status_code = 'current' "
-                + "AND pr1.rrr_id = rrr1.id "
+                + "AND pr1.rrr_id = rrr1.id AND rrr1.is_primary "
                 + "AND p1.id = pr1.party_id ) AS rightholders");
         FROM("administrative.ba_unit prop");
         if (owernName != null) {
@@ -427,6 +427,7 @@ public class SearchSqlProvider {
             FROM("party.party p");
             WHERE("rrr.ba_unit_id = prop.id");
             WHERE("rrr.status_code = 'current'");
+            WHERE("rrr.is_primary");
             WHERE("pr.rrr_id = rrr.id");
             WHERE("p.id = pr.party_id");
             WHERE("compare_strings(#{" + BaUnitSearchResult.QUERY_PARAM_OWNER_NAME + "}, "

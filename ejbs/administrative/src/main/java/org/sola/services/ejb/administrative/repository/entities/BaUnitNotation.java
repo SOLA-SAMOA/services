@@ -107,6 +107,7 @@ public class BaUnitNotation extends AbstractVersionedEntity {
             // Samoa customization. Base the rrr reference on the application number
             HashMap<String, Serializable> params = new HashMap<String, Serializable>();
             params.put("transactionId", this.getTransactionId());
+            params.put("rrrId", this.getRrrId());
             Result newNumberResult = systemEJB.checkRuleGetResultSingle("generate-notation-reference-nr", params);
             if (newNumberResult != null && newNumberResult.getValue() != null) {
                 result = newNumberResult.getValue().toString();

@@ -211,7 +211,6 @@ public class SourceEJB extends AbstractEJB implements SourceEJBLocal {
      * always empty.
      */
     @Override
-    @RolesAllowed(RolesConstants.APPLICATION_APPROVE)
     public List<ValidationResult> approveTransaction(
             String transactionId, String approvedStatus, String requestType,
             boolean validateOnly, String languageCode) {
