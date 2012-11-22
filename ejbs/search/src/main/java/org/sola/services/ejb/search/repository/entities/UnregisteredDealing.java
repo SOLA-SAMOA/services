@@ -37,7 +37,7 @@ public class UnregisteredDealing extends AbstractReadOnlyEntity {
     public static final String PARAM_BA_UNIT_ID = "baUnitId";
     public static final String PARAM_QUERY_GET_UNREGISTERED_DEALINGS =
             " SELECT app.id, app.nr, appProp.ba_unit_id, "
-            + " string_agg(COALESCE(req.description, req.display_value), ', ') AS pending_services "
+            + " COALESCE(req.description, req.display_value)  AS pending_services "
             + " FROM application.application app, "
             + "      application.application_property appProp,"
             + "      application.service ser,"
@@ -47,7 +47,6 @@ public class UnregisteredDealing extends AbstractReadOnlyEntity {
             + " AND  app.status_code IN ('lodged', 'requisitioned') "
             + " AND  ser.application_id = app.id "
             + " AND  ser.request_type_code = req.code "
-            + " GROUP BY app.id, app.nr, appProp.ba_unit_id "
             + " ORDER BY app.lodging_datetime ";
     @Column(name = "ba_unit_id")
     private String baUnitId;
