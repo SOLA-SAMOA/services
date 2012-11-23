@@ -414,12 +414,13 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
 
         if (isInRole(RolesConstants.APPLICATION_UNASSIGN_FROM_OTHERS)) {
             params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED_ALL);
+            params.put(ApplicationSearchResult.QUERY_PARAM_USER_NAME, getUserName());
         } else {
             params.put(ApplicationSearchResult.QUERY_PARAM_USER_NAME, getUserName());
             params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED);
         }
 
-        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ApplicationSearchResult.QUERY_ORDER_BY);
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ApplicationSearchResult.QUERY_ORDER_BY_ASSIGNED);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, "100");
 
         return getRepository().getEntityList(ApplicationSearchResult.class, params);

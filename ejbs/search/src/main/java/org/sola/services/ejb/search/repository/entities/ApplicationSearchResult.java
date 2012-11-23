@@ -58,7 +58,8 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + "LEFT JOIN system.appuser u ON a.assignee_id = u.id "
             + "LEFT JOIN party.party p ON a.contact_person_id = p.id "
             + "LEFT JOIN party.party p2 ON a.agent_id = p2.id ";
-    public static final String QUERY_WHERE_GET_ASSIGNED = "u.username = #{" + QUERY_PARAM_USER_NAME + "} "
+    public static final String QUERY_WHERE_GET_ASSIGNED = "u.username IN (#{" + QUERY_PARAM_USER_NAME + "}, "
+            + "#{" + QUERY_PARAM_USER_NAME + "} || '2', #{" + QUERY_PARAM_USER_NAME + "} || '3')"
             + " AND a.status_code in ('lodged', 'approved')";
     public static final String QUERY_WHERE_GET_ASSIGNED_ALL = "u.username IS NOT NULL AND a.status_code in ('lodged', 'approved')";
     public static final String QUERY_WHERE_GET_UNASSIGNED = "u.username IS NULL "
@@ -87,6 +88,8 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + "AND (CASE WHEN #{" + QUERY_PARAM_DOCUMENT_REFERENCE + "} = '' THEN true ELSE "
             + "compare_strings(#{" + QUERY_PARAM_DOCUMENT_REFERENCE + "}, COALESCE(src.reference_nr, '')) END))END)";
     public static final String QUERY_ORDER_BY = "a.lodging_datetime desc";
+    public static final String QUERY_ORDER_BY_ASSIGNED = "(CASE WHEN u.username IN(#{" + QUERY_PARAM_USER_NAME + "}, "
+            + " #{" + QUERY_PARAM_USER_NAME + "} || '2', #{" + QUERY_PARAM_USER_NAME + "} || '3') THEN 0 ELSE 1 END), a.lodging_datetime DESC";
     @Id
     @Column(name = "id")
     @AccessFunctions(onSelect = "a.id")
@@ -120,7 +123,7 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
     @AccessFunctions(onSelect = "(SELECT string_agg(tmp.display_value, ',') FROM "
     + " (SELECT get_translation(display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) as display_value "
     + "  FROM application.service aps INNER JOIN application.request_type rt ON aps.request_type_code = rt.code "
-    + "  WHERE aps.application_id = a.id ORDER BY aps.service_order) tmp) ")
+    + "  WHERE aps.application_id = a.id AND aps.status_code NOT IN ('cancelled') ORDER BY aps.service_order) tmp) ")
     @Column(name = "service_list")
     private String serviceList;
     @Column(name = "fee_paid")
