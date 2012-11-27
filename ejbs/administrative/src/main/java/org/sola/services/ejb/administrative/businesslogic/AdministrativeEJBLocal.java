@@ -106,6 +106,12 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
     List<BaUnit> getBaUnitsByTransactionId(String transactionId);
 
     /**
+     * See {@linkplain AdministrativeEJB#getBaUnitsCreatedByTransactionId(java.lang.String)
+     * AdministrativeEJB.getBaUnitsByTransactionId}
+     */
+    List<BaUnit> getBaUnitsCreatedByTransactionId(String transactionId);
+
+    /**
      * See {@linkplain AdministrativeEJB#getBaUnitRelTypes(java.lang.String)
      * AdministrativeEJB.getBaUnitRelTypes}
      */

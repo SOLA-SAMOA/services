@@ -385,6 +385,19 @@ public class AdministrativeEJB extends AbstractEJB
     }
 
     /**
+     * Returns all BA Units that have been created by the specified transaction
+     *
+     * @param transactionId The Transaction identifier
+     */
+    @Override
+    public List<BaUnit> getBaUnitsCreatedByTransactionId(String transactionId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(CommonSqlProvider.PARAM_WHERE_PART, BaUnit.QUERY_WHERE_BYTRANSACTIONID);
+        params.put(BaUnit.QUERY_PARAMETER_TRANSACTIONID, transactionId);
+        return getRepository().getEntityList(BaUnit.class, params);
+    }
+
+    /**
      * Retrieves all administrative.ba_unit_rel_type code values.
      *
      * @param languageCode The language code to use for localization of display values.
