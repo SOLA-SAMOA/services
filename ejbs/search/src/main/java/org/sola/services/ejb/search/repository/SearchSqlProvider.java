@@ -43,6 +43,8 @@ public class SearchSqlProvider {
     public static final String PARAM_ID_LIST = "idVal";
     public static final String PARAM_SERVICE_ID = "serviceId";
     public static final String PARAM_UNIT_PARCEL_GROUP_NAME = "unitParcelGroupName";
+    public static final String PARAM_USER_NAME = "userName";
+    public static final String PARAM_ROLE_CODE = "roleCode"; 
     private static final String APPLICATION_GROUP = "application";
     private static final String SERVICE_GROUP = "service";
     private static final String RRR_GROUP = "rrr";
@@ -59,7 +61,7 @@ public class SearchSqlProvider {
     private static final String DELETED_AGENT = "REMOVED AGENT: ";
     private static final String ADDED_CONTACT_PERSON = "ADDED CONTACT PERSON: ";
     private static final String DELETED_CONTACT_PERSON = "REMOVED CONTACT PERSON: ";
-
+    
     public static String buildApplicationLogSql() {
         String sql;
         int sortClassifier = 1;

@@ -61,9 +61,48 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
     public static final String QUERY_WHERE_GET_ASSIGNED = "u.username IN (#{" + QUERY_PARAM_USER_NAME + "}, "
             + "#{" + QUERY_PARAM_USER_NAME + "} || '2', #{" + QUERY_PARAM_USER_NAME + "} || '3')"
             + " AND a.status_code in ('lodged', 'approved')";
-    public static final String QUERY_WHERE_GET_ASSIGNED_ALL = "u.username IS NOT NULL AND a.status_code in ('lodged', 'approved')";
-    public static final String QUERY_WHERE_GET_UNASSIGNED = "u.username IS NULL "
-            + " AND a.status_code in ('lodged', 'approved')";
+    
+    // Returns all assigned applications if the user has the VIEW_ASSIGNED_ALL role
+    public static final String QUERY_WHERE_GET_ASSIGNED_ALL = "u.username IS NOT NULL "
+            + " AND a.status_code IN ('lodged', 'approved') ";
+    
+    // Returns only assigned applications that match the services the user can perform
+    public static final String QUERY_WHERE_GET_ASSIGNED_ALL_FILTERED = "u.username IS NOT NULL "
+            + " AND EXISTS (SELECT a.id "
+            + "   FROM system.appuser u2, "
+            + "        system.appuser_appgroup ug, "
+            + "        system.approle_appgroup rg, "
+            + "        application.service ser, "
+            + "        application.request_type req "
+            + "   WHERE  u2.username = #{" + QUERY_PARAM_USER_NAME + "}"
+            + "   AND   ug.appuser_id = u2.id "
+            + "   AND   rg.appgroup_id = ug.appgroup_id "
+            + "   AND   req.code = rg.approle_code "
+            + "   AND   ser.request_type_code = req.code"
+            + "   AND   ser.application_id = a.id"
+            + "   AND   a.status_code IN ('lodged', 'approved'))";
+    
+    // Returns all unassgined applications that match the services the user can perform
+    public static final String QUERY_WHERE_GET_UNASSIGNED_FILTERED = "u.username IS NULL "
+            + " AND (a.status_code = 'approved' OR EXISTS "
+            + "  (SELECT a.id "
+            + "   FROM system.appuser u2, "
+            + "        system.appuser_appgroup ug, "
+            + "        system.approle_appgroup rg, "
+            + "        application.service ser, "
+            + "        application.request_type req "
+            + "   WHERE  u2.username = #{" + QUERY_PARAM_USER_NAME + "}"
+            + "   AND   ug.appuser_id = u2.id "
+            + "   AND   rg.appgroup_id = ug.appgroup_id "
+            + "   AND   req.code = rg.approle_code "
+            + "   AND   ser.request_type_code = req.code"
+            + "   AND   ser.application_id = a.id"
+            + "   AND   a.status_code = 'lodged' ))";
+    
+       // Returns all unassigned applications if the user has the VIEW_UNASSIGNED_ALL role
+        public static final String QUERY_WHERE_GET_UNASSIGNED_ALL = "u.username IS NULL "
+            + " AND a.status_code IN ('approved', 'lodged' )";
+        
     /**
      * Uses CASE statements to skip execution of the compare_strings function if the parameter
      * string is empty. 
@@ -88,8 +127,9 @@ public class ApplicationSearchResult extends AbstractReadOnlyEntity {
             + "AND (CASE WHEN #{" + QUERY_PARAM_DOCUMENT_REFERENCE + "} = '' THEN true ELSE "
             + "compare_strings(#{" + QUERY_PARAM_DOCUMENT_REFERENCE + "}, COALESCE(src.reference_nr, '')) END))END)";
     public static final String QUERY_ORDER_BY = "a.lodging_datetime desc";
-    public static final String QUERY_ORDER_BY_ASSIGNED = "(CASE WHEN u.username IN(#{" + QUERY_PARAM_USER_NAME + "}, "
-            + " #{" + QUERY_PARAM_USER_NAME + "} || '2', #{" + QUERY_PARAM_USER_NAME + "} || '3') THEN 0 ELSE 1 END), a.lodging_datetime DESC";
+    public static final String QUERY_ORDER_BY_STATUS = "a.status_code, a.lodging_datetime desc";
+    public static final String QUERY_ORDER_BY_ASSIGNED = "(CASE WHEN u.username = #{" + QUERY_PARAM_USER_NAME + "} THEN 0 ELSE 1 END), "
+            + " a.lodging_datetime DESC";
     @Id
     @Column(name = "id")
     @AccessFunctions(onSelect = "a.id")

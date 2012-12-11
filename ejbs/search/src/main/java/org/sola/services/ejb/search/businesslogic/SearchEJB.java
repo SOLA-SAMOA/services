@@ -385,8 +385,13 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_FROM_PART, ApplicationSearchResult.QUERY_FROM);
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, locale);
-        params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_UNASSIGNED);
-        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ApplicationSearchResult.QUERY_ORDER_BY);
+        params.put(ApplicationSearchResult.QUERY_PARAM_USER_NAME, getUserName());
+        if (isInRole(RolesConstants.APPLICATION_VIEW_UNASSIGNED_ALL)) {
+            params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_UNASSIGNED_ALL);
+        } else {
+            params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_UNASSIGNED_FILTERED);
+        }
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, ApplicationSearchResult.QUERY_ORDER_BY_STATUS);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, "100");
 
         return getRepository().getEntityList(ApplicationSearchResult.class, params);
@@ -413,7 +418,11 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         params.put(CommonSqlProvider.PARAM_LANGUAGE_CODE, locale);
 
         if (isInRole(RolesConstants.APPLICATION_UNASSIGN_FROM_OTHERS)) {
-            params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED_ALL);
+            if (isInRole(RolesConstants.APPLICATION_VIEW_ASSIGNED_ALL)) {
+                params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED_ALL);
+            } else {
+                params.put(CommonSqlProvider.PARAM_WHERE_PART, ApplicationSearchResult.QUERY_WHERE_GET_ASSIGNED_ALL_FILTERED);
+            }
             params.put(ApplicationSearchResult.QUERY_PARAM_USER_NAME, getUserName());
         } else {
             params.put(ApplicationSearchResult.QUERY_PARAM_USER_NAME, getUserName());
@@ -742,9 +751,10 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
     }
 
     /**
-     * Returns the applications (a.k.a. dealings) that are linked to the property but have yet to
-     * be approved or canceled. Used by the Computer Folio Certificate to list the Unregistered 
+     * Returns the applications (a.k.a. dealings) that are linked to the property but have yet to be
+     * approved or canceled. Used by the Computer Folio Certificate to list the Unregistered
      * Dealings for the property.
+     *
      * @param baUnitId The ba unit to check
      */
     @Override
