@@ -43,6 +43,10 @@ public class WorkSummary extends AbstractReadOnlyEntity {
     private String serviceType;
     @Column(name = "req_cat")
     private String serviceCategory;
+    @Column(name = "in_progress_from")
+    private int inProgressFrom;
+    @Column(name = "on_requisition_from")
+    private int onRequisitionFrom;
     @Column
     private int lodged;
     @Column
@@ -53,10 +57,10 @@ public class WorkSummary extends AbstractReadOnlyEntity {
     private int cancelled;
     @Column
     private int withdrawn;
-    @Column(name = "in_progress")
-    private int inProgress;
-    @Column(name = "on_requisition")
-    private int onRequisition;
+    @Column(name = "in_progress_to")
+    private int inProgressTo;
+    @Column(name = "on_requisition_to")
+    private int onRequisitionTo;
     @Column
     private int overdue;
     @Column(name = "overdue_apps")
@@ -76,28 +80,12 @@ public class WorkSummary extends AbstractReadOnlyEntity {
         this.cancelled = cancelled;
     }
 
-    public int getInProgress() {
-        return inProgress;
-    }
-
-    public void setInProgress(int inProgress) {
-        this.inProgress = inProgress;
-    }
-
     public int getLodged() {
         return lodged;
     }
 
     public void setLodged(int lodged) {
         this.lodged = lodged;
-    }
-
-    public int getOnRequisition() {
-        return onRequisition;
-    }
-
-    public void setOnRequisition(int onRequisition) {
-        this.onRequisition = onRequisition;
     }
 
     public int getOverdue() {
@@ -163,4 +151,37 @@ public class WorkSummary extends AbstractReadOnlyEntity {
     public void setOnRequisitionApplications(String onRequisitionApplications) {
         this.onRequisitionApplications = onRequisitionApplications;
     }
+
+    public int getInProgressFrom() {
+        return inProgressFrom;
+    }
+
+    public void setInProgressFrom(int inProgressFrom) {
+        this.inProgressFrom = inProgressFrom;
+    }
+
+    public int getInProgressTo() {
+        return inProgressTo;
+    }
+
+    public void setInProgressTo(int inProgressTo) {
+        this.inProgressTo = inProgressTo;
+    }
+
+    public int getOnRequisitionFrom() {
+        return onRequisitionFrom;
+    }
+
+    public void setOnRequisitionFrom(int onRequisitionFrom) {
+        this.onRequisitionFrom = onRequisitionFrom;
+    }
+
+    public int getOnRequisitionTo() {
+        return onRequisitionTo;
+    }
+
+    public void setOnRequisitionTo(int onRequisitionTo) {
+        this.onRequisitionTo = onRequisitionTo;
+    }
+      
 }
