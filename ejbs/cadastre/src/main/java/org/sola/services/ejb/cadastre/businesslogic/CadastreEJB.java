@@ -74,7 +74,7 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
     }
 
     /**
-     * Returns a maximum of 10 cadastre objects that have a name first part and/or name last part
+     * Returns a maximum of 30 cadastre objects that have a name first part and/or name last part
      * that matches the specified search string. This method supports partial matches and is case
      * insensitive.
      *
@@ -83,18 +83,19 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      */
     @Override
     public List<CadastreObject> getCadastreObjectByParts(String searchString) {
-        Integer numberOfMaxRecordsReturned = 10;
+        Integer numberOfMaxRecordsReturned = 30;
         HashMap params = new HashMap();
         // Replace / and \ with space to improve the search
         searchString = searchString.replaceAll("\\\\|\\/", " ");
         params.put("search_string", searchString);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, CadastreObject.QUERY_ORDER_BY_SEARCHBYPARTS); 
         return getRepository().getEntityList(CadastreObject.class,
                 CadastreObject.QUERY_WHERE_SEARCHBYPARTS, params);
     }
 
-    /**
-     * Returns a maximum of 10 cadastre objects with current and pending status that have a name
+    /*
+     * Returns a maximum of 30 cadastre objects with current and pending status that have a name
      * first part and/or name last part that matches the specified search string. This method
      * supports partial matches and is case insensitive.
      *
@@ -103,10 +104,11 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      */
     @Override
     public List<CadastreObject> getCadastreObjectByAllParts(String searchString) {
-        Integer numberOfMaxRecordsReturned = 10;
+        Integer numberOfMaxRecordsReturned = 30;
         HashMap params = new HashMap();
         params.put("search_string", searchString);
         params.put(CommonSqlProvider.PARAM_LIMIT_PART, numberOfMaxRecordsReturned);
+        params.put(CommonSqlProvider.PARAM_ORDER_BY_PART, CadastreObject.QUERY_ORDER_BY_SEARCHBYPARTS); 
         return getRepository().getEntityList(CadastreObject.class,
                 CadastreObject.QUERY_WHERE_SEARCHBYALLPARTS, params);
     }

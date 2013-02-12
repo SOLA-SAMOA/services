@@ -43,15 +43,12 @@ import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 @Table(name = "cadastre_object", schema = "cadastre")
 public class CadastreObject extends AbstractVersionedEntity {
 
-    
-    
-     /**
-     * WHERE clause to return current&pending CO's based on search string compared to first part and last
-     * part
+    /**
+     * WHERE clause to return current&pending CO's based on search string compared to first part and
+     * last part
      */
     public static final String QUERY_WHERE_SEARCHBYALLPARTS = "(status_code= 'current' or status_code= 'pending') and "
             + "compare_strings(#{search_string}, name_firstpart || ' ' || name_lastpart)";
-   
     /**
      * WHERE clause to return current CO's based on search string compared to first part and last
      * part
@@ -89,6 +86,13 @@ public class CadastreObject extends AbstractVersionedEntity {
             + "and status_code= 'current' and "
             + "ST_DWithin(geom_polygon, get_geometry_with_srid(#{geom}), "
             + "system.get_setting('map-tolerance')::double precision)";
+    /**
+     * ORDER BY clause used to order search results for the Search by parts queries. 
+     * Uses regex to order cadastre objects by lot number
+     */
+    public static final String QUERY_ORDER_BY_SEARCHBYPARTS =
+            "(CASE WHEN regexp_replace(name_firstpart, '\\D*',  '', 'g') = '' THEN '0' "
+            + "ELSE regexp_replace(name_firstpart, '\\D*',  '', 'g') END)::INTEGER";
     @Id
     @Column(name = "id")
     private String id;
@@ -213,7 +217,7 @@ public class CadastreObject extends AbstractVersionedEntity {
     }
 
     /**
-     * Sets the transaction Id on the entity prior to save. 
+     * Sets the transaction Id on the entity prior to save.
      */
     @Override
     public void preSave() {
