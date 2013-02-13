@@ -88,11 +88,11 @@ public class CadastreObject extends AbstractVersionedEntity {
             + "system.get_setting('map-tolerance')::double precision)";
     /**
      * ORDER BY clause used to order search results for the Search by parts queries. 
-     * Uses regex to order cadastre objects by lot number
+     * Uses regex to order cadastre objects by lot number. 
      */
     public static final String QUERY_ORDER_BY_SEARCHBYPARTS =
-            "(CASE WHEN regexp_replace(name_firstpart, '\\D*',  '', 'g') = '' THEN '0' "
-            + "ELSE regexp_replace(name_firstpart, '\\D*',  '', 'g') END)::INTEGER";
+            "lpad(regexp_replace(name_firstpart, '\\D*', '', 'g'), 5, '0') "
+            + "|| name_firstpart || name_lastpart";
     @Id
     @Column(name = "id")
     private String id;
