@@ -13,7 +13,8 @@
     <packaging>ejb</packaging>
     <name>EJB Search</name>
     <properties>
-        <geotools.version>8.0-M0</geotools.version>    
+        <geotools.version>8.0-M0</geotools.version>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
     </properties>
     <repositories>
         <repository>
