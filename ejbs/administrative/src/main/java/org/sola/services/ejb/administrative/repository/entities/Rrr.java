@@ -64,6 +64,12 @@ public class Rrr extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
     public static final String QUERY_WHERE_BYTRANSACTIONID = "transaction_id = "
             + "#{" + QUERY_PARAMETER_TRANSACTIONID + "}";
+        public static final String QUERY_WHERE_CHANGE_ESTATE = 
+                "ba_unit_id IN (SELECT ba_unit_id FROM administrative.rrr tmp"
+                + "  WHERE tmp.transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "}"
+                + "  AND tmp.is_primary) "
+                + "AND is_primary "
+                + "AND transaction_id != #{" + QUERY_PARAMETER_TRANSACTIONID + "}";
     public static final String QUERY_ORDER_BY = " status_code, nr ";
     @Id
     @Column(name = "id")
