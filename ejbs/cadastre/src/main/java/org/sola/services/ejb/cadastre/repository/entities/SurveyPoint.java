@@ -80,6 +80,7 @@ public class SurveyPoint extends AbstractVersionedEntity {
     }
 
     public String getId() {
+        id = id == null ? generateId() : id;
         return id;
     }
 
