@@ -202,13 +202,14 @@ public class AdminEJB extends AbstractEJB implements AdminEJBLocal {
      * @param password The users new password
      * @return true if the change is successful.
      */
-    @RolesAllowed(RolesConstants.ADMIN_MANAGE_USER_PASSWORD)
+    @RolesAllowed(RolesConstants.ADMIN_CHANGE_PASSWORD)
     @Override
     public boolean changePassword(String userName, String password) {
         Map params = new HashMap<String, Object>();
         params.put(CommonSqlProvider.PARAM_QUERY, User.QUERY_SET_PASSWORD);
         params.put(User.PARAM_PASSWORD, getPasswordHash(password));
         params.put(User.PARAM_USERNAME, userName);
+        params.put(User.PARAM_CHANGE_USER, this.getUserName());
 
         ArrayList<HashMap> list = getRepository().executeFunction(params);
 
