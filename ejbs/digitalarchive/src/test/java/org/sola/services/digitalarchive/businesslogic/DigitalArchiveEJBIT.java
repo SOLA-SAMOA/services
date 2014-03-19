@@ -143,11 +143,11 @@ public class DigitalArchiveEJBIT extends AbstractEJBTest {
         System.out.println("Trying to get file's thumbnail");
 
         DigitalArchiveEJBLocal instance = (DigitalArchiveEJBLocal) getEJBInstance(DigitalArchiveEJB.class.getSimpleName());
-        FileBinary result = instance.getFileThumbnail(fileName1);
+        FileInfo result = instance.getFileThumbnail(fileName1);
         assertNotNull(result);
 
         if (result != null) {
-            System.out.println("Thumbnail size = " + result.getContent().length);
+            //System.out.println("Thumbnail size = " + result.getContent().length);
         } else {
             fail("Can't get thumbnail from shared folder");
         }

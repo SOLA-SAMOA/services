@@ -78,7 +78,7 @@ public interface DigitalArchiveEJBLocal extends AbstractEJBLocal {
      * See {@linkplain DigitalArchiveEJB#getFileThumbnail(java.lang.String)
      * AddressEJB.getFileThumbnail}.
      */
-    public FileBinary getFileThumbnail(String fileName);
+    public FileInfo getFileThumbnail(String fileName);
 
     /**
      * See {@linkplain DigitalArchiveEJB#getAllFiles()

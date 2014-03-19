@@ -36,9 +36,13 @@ import javax.ejb.Stateless;
 import javax.imageio.ImageIO;
 import org.sola.common.ConfigConstants;
 import org.sola.common.DateUtility;
+import org.sola.common.FileMetaData;
 import org.sola.common.FileUtility;
+import org.sola.common.NetworkFolder;
 import org.sola.common.RolesConstants;
 import org.sola.common.logging.LogUtility;
+import org.sola.common.mapping.MappingManager;
+import org.sola.common.mapping.MappingUtility;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.digitalarchive.repository.entities.Document;
@@ -47,10 +51,11 @@ import org.sola.services.digitalarchive.repository.entities.FileInfo;
 import org.sola.services.ejb.system.businesslogic.SystemEJBLocal;
 
 /**
- * EJB to manage data in the document schema. Supports retrieving and saving digital documents
- * including functions to create a document from a file or generate a thumbnail image for a image
- * file. <p>The default Network Scan folder location is <b>user.home/sola/scan</b> where user.home
- * is the home folder of the user account running the Glassfish instance.</p>
+ * EJB to manage data in the document schema. Supports retrieving and saving
+ * digital documents including functions to create a document from a file or
+ * generate a thumbnail image for a image file. <p>The default Network Scan
+ * folder location is <b>user.home/sola/scan</b> where user.home is the home
+ * folder of the user account running the Glassfish instance.</p>
  */
 @Stateless
 @EJB(name = "java:global/SOLA/DigitalArchiveEJBLocal", beanInterface = DigitalArchiveEJBLocal.class)
@@ -58,34 +63,53 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
 
     @EJB
     private SystemEJBLocal systemEJB;
-    private File scanFolder;
-    private File thumbFolder;
+    // The location of the network scan folder. This may be on another computer. 
+    private NetworkFolder scanFolder;
+    // The local cache folder is used to manipulate the files from the scan folder.
+    // This folder is always located in the SOLA documents cache on the local computer.
+    private NetworkFolder localCacheFolder;
+    private NetworkFolder thumbFolder;
     private int thumbWidth;
     private int thumbHeight;
+    private static String THUMB_SUBFOLDER = "thumb";
 
     /**
-     * Configures the default network location to read scanned images as well as the default folder
-     * to use for generating thumbnail images.
+     * Configures the default network location to read scanned images as well as
+     * the default folder to use for generating thumbnail images.
      */
     @Override
     protected void postConstruct() {
 
         String scanFolderLocation = systemEJB.getSetting(ConfigConstants.NETWORK_SCAN_FOLDER,
                 System.getProperty("user.home") + "/sola/scan");
+        String domain = systemEJB.getSetting(ConfigConstants.NETWORK_SCAN_FOLDER_DOMAIN, null);
+        String shareUser = systemEJB.getSetting(ConfigConstants.NETWORK_SCAN_FOLDER_USER, null);
+        String pword = systemEJB.getSetting(ConfigConstants.NETWORK_SCAN_FOLDER_PASSWORD, null);
 
-        scanFolder = new File(scanFolderLocation);
-        thumbFolder = new File(scanFolder.getAbsolutePath() + File.separatorChar + "thumb");
-        thumbWidth = 225;
-        thumbHeight = 322;
-
-        // Init folder
-        if (!scanFolder.exists()) {
-            new File(scanFolder.getAbsolutePath()).mkdirs();
+        if (domain != null || shareUser != null) {
+            scanFolder = new NetworkFolder(scanFolderLocation, domain, shareUser, pword);
+        } else {
+            scanFolder = new NetworkFolder(scanFolderLocation);
         }
 
-        if (!thumbFolder.exists()) {
-            new File(thumbFolder.getAbsolutePath()).mkdirs();
+        try {
+            scanFolder.createFolder();
+        } catch (Exception ex) {
+            // The most likely cause of an exception during createFolder is the unavailablity of
+            // the Network scan folder. Configure the scan folder to use a location on the 
+            // local hard disk and log the error
+            LogUtility.log("Error configuring Network Scan Folder", ex);
+            scanFolder = new NetworkFolder(System.getProperty("user.home") + "/sola/scan");
+            scanFolder.createFolder();
         }
+        localCacheFolder = new NetworkFolder(FileUtility.getCachePath());
+        localCacheFolder.createFolder();
+        thumbFolder = localCacheFolder.getSubFolder(THUMB_SUBFOLDER);
+
+        // Increse the size of the "thumbnail" so there is more information 
+        // in the picture when the user resizes the file dialog. 
+        thumbWidth = 500;
+        thumbHeight = 707;
 
         // Set some cache values for the server documents cache. 
         String maxCacheSizeMB = systemEJB.getSetting(ConfigConstants.SERVER_DOCUMENT_CACHE_MAX_SIZE, "500");
@@ -101,13 +125,14 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Retrieves the document for the specified identifier. This includes the document content (i.e
-     * the digital file). <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
+     * Retrieves the document for the specified identifier. This includes the
+     * document content (i.e the digital file). <p>Requires the
+     * {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      *
      * @param documentId Identifier of the document to retrieve
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_VIEW)
+    @RolesAllowed({RolesConstants.SOURCE_SEARCH, RolesConstants.APPLICATION_VIEW_APPS})
     public Document getDocument(String documentId) {
         Document result = null;
         if (documentId != null) {
@@ -118,14 +143,15 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Returns the meta information recorded for the document but does not retrieve the actual
-     * document content.<p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
+     * Returns the meta information recorded for the document but does not
+     * retrieve the actual document content.<p>Requires the
+     * {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      *
      * @param documentId The id of the document to retrieve
      * @see
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_VIEW)
+    @RolesAllowed({RolesConstants.SOURCE_SEARCH, RolesConstants.APPLICATION_VIEW_APPS})
     public Document getDocumentInfo(String documentId) {
         Document result = null;
         if (documentId != null) {
@@ -140,12 +166,14 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Can be used to create a new document or save any updates to the details of an existing
-     * document. <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE} role.</p>
+     * Can be used to create a new document or save any updates to the details
+     * of an existing document. <p>Requires the
+     * {@linkplain RolesConstants#SOURCE_SAVE} role.</p>
      *
      * @param document The document to create/save.
      * @return The document after the save is completed.
-     * @see #createDocument(org.sola.services.digitalarchive.repository.entities.Document)
+     * @see
+     * #createDocument(org.sola.services.digitalarchive.repository.entities.Document)
      */
     @Override
     @RolesAllowed(RolesConstants.SOURCE_SAVE)
@@ -154,14 +182,16 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Can be used to create a new document. Also assigns the document number. <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE}
-     * role.</p>
+     * Can be used to create a new document. Also assigns the document number.
+     * <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE} role.</p>
      *
      * @param document The document to create.
      * @return The document after the save is completed.
-     * @see #saveDocument(org.sola.services.digitalarchive.repository.entities.Document)
+     * @see
+     * #saveDocument(org.sola.services.digitalarchive.repository.entities.Document)
      * saveDocument
-     * @see #createDocument(org.sola.services.digitalarchive.repository.entities.Document,
+     * @see
+     * #createDocument(org.sola.services.digitalarchive.repository.entities.Document,
      * java.lang.String) createDocument
      * @see #allocateNr() allocateNr
      */
@@ -173,15 +203,28 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Can be used to create a new document with the digital content obtained from the specified
-     * file. Used to create documents from the network scan folder. After the digital file is
-     * loaded, it is deleted from the network scan folder. <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE}
+     * Determines the local file path name for the given file
+     *
+     * @param fileName
+     * @return
+     */
+    private String getLocalFilePathName(String fileName) {
+        return localCacheFolder.getPath() + fileName;
+    }
+
+    /**
+     * Can be used to create a new document with the digital content obtained
+     * from the specified file. Used to create documents from the network scan
+     * folder. After the digital file is loaded, it is deleted from the network
+     * scan folder. <p>Requires the {@linkplain RolesConstants#SOURCE_SAVE}
      * role.</p>
      *
      * @param document The document to create.
-     * @param fileName The filename of the digital file to save with the document.
+     * @param fileName The filename of the digital file to save with the
+     * document.
      * @return The document after the save is completed.
-     * @see #createDocument(org.sola.services.digitalarchive.repository.entities.Document)
+     * @see
+     * #createDocument(org.sola.services.digitalarchive.repository.entities.Document)
      * createDocument
      */
     @Override
@@ -191,14 +234,23 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
             return null;
         }
 
-        // Check if file exists in scan folder name to exclude jumping from the folder
-        String filePath = getFullFilePath(fileName, scanFolder);
-        if (filePath == null) {
+        FileMetaData fileMetaData = scanFolder.getMetaData(fileName);
+        if (fileMetaData == null) {
+            //File no longer exists in the scan folder. 
             return null;
         }
 
+        FileMetaData localFileMetaData = localCacheFolder.getMetaData(fileName);
+        if (localFileMetaData == null || !DateUtility.areEqual(fileMetaData.getModificationDate(),
+                localFileMetaData.getModificationDate())) {
+            // Copy the file from the remote folder location to the local folder.
+            localCacheFolder.deleteFile(fileName);
+            thumbFolder.deleteFile(fileName);
+            scanFolder.copyFileToLocal(fileName, new File(getLocalFilePathName(fileName)));
+        }
+
         // Get file from shared folder
-        byte[] fileBytes = FileUtility.getFileBinary(filePath);
+        byte[] fileBytes = FileUtility.getFileBinary(getLocalFilePathName(fileName));
         if (fileBytes == null) {
             return null;
         }
@@ -209,7 +261,9 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         document = createDocument(document);
 
         // Delete the file from the network scan folder. 
-        deleteFile(fileName);
+        // Let the user manually delete the document in case they pick the
+        // wrong one. 
+        //deleteFile(fileName);
 
         return document;
     }
@@ -245,49 +299,52 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Loads the specified file from the Network Scan folder. Updated to avoid loading the file. The
-     * file is uploaded using the FileStreaming service instead. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
+     * Loads the specified file from the Network Scan folder. Updated to avoid
+     * loading the file. The file is uploaded using the FileStreaming service
+     * instead. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
      * role.</p>
      *
      * @param fileName The name of the file to load
      * @return The binary file along with some attributes of the file
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_VIEW)
+    @RolesAllowed({RolesConstants.SOURCE_SEARCH, RolesConstants.APPLICATION_VIEW_APPS})
     public FileInfo getFileBinary(String fileName) {
         if (fileName == null || fileName.equals("")) {
             return null;
         }
 
-        // Check if file exists in scan folder name to exclude jumping from the folder
-        String filePath = getFullFilePath(fileName, scanFolder);
-
-        if (filePath == null) {
+        FileMetaData fileMetaData = scanFolder.getMetaData(fileName);
+        if (fileMetaData == null) {
+            //File no longer exists in the scan folder. 
             return null;
         }
 
-        // Get file from shared folder
-        // AM 18 Jul 2012 - Don't load the file from the file system. Use the FileStreaming 
-        // service to return the file to the client instead. 
-//        byte[] fileBytes = FileUtility.getFileBinary(filePath, MAX_FILE_SIZE_BYTES);
-//        if (fileBytes == null) {
-//            return null;
-//        }
+        FileMetaData localFileMetaData = localCacheFolder.getMetaData(fileName);
+        if (localFileMetaData == null || !DateUtility.areEqual(fileMetaData.getModificationDate(),
+                localFileMetaData.getModificationDate())) {
+            // Copy the file from the remote folder location to the local folder.
+            localCacheFolder.deleteFile(fileName);
+            thumbFolder.deleteFile(fileName);
+            scanFolder.copyFileToLocal(fileName, new File(getLocalFilePathName(fileName)));
+        }
 
-        File file = new File(filePath);
+        File file = new File(getLocalFilePathName(fileName));
         FileInfo fileBinary = new FileInfo();
+        // The file will be uploaded from the disk by the FileStreaming Service
+        // if needed. 
         //FileBinary fileBinary = new FileBinary();
         //fileBinary.setContent(fileBytes);
         fileBinary.setFileSize(file.length());
-        fileBinary.setName(filePath);
+        fileBinary.setName(fileName);
         fileBinary.setModificationDate(new Date(file.lastModified()));
         return fileBinary;
     }
 
     /**
-     * Loads the specified file from the Network Scan folder then generates a thumbnail image of the
-     * file if one does not already exist. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
-     * role.</p>
+     * Loads the specified file from the Network Scan folder then generates a
+     * thumbnail image of the file if one does not already exist. <p>Requires
+     * the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      *
      * @param fileName The name of the file to load
      * @return A thumbnail image of the file
@@ -295,37 +352,51 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      * FileUtility.createImageThumbnail
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_VIEW)
-    public FileBinary getFileThumbnail(String fileName) {
+    @RolesAllowed({RolesConstants.SOURCE_SEARCH, RolesConstants.APPLICATION_VIEW_APPS})
+    public FileInfo getFileThumbnail(String fileName) {
         if (fileName == null || fileName.equals("")) {
             return null;
         }
 
-        // Check if file exists in scan folder name to exclude jumping from the folder
+        FileMetaData fileMetaData = scanFolder.getMetaData(fileName);
+        if (fileMetaData == null) {
+            //File no longer exists in the scan folder. 
+            return null;
+        }
+
+        FileMetaData localFileMetaData = localCacheFolder.getMetaData(fileName);
+        if (localFileMetaData == null || !DateUtility.areEqual(fileMetaData.getModificationDate(),
+                localFileMetaData.getModificationDate())) {
+            // Copy the file from the remote folder location to the local folder.
+            localCacheFolder.deleteFile(fileName);
+            thumbFolder.deleteFile(fileName);
+            scanFolder.copyFileToLocal(fileName, new File(getLocalFilePathName(fileName)));
+        }
+
+        // Generate the name of the thumb and check if it exists
         String thumbName = getThumbName(fileName);
+        String thumbFilePathName = thumbFolder.getPath() + thumbName;
 
-        String filePath = getFullFilePath(thumbName, thumbFolder);
-
-        if (filePath == null) {
-            // Try to create
+        if (!thumbFolder.fileExists(thumbName)) {
             if (!createThumbnail(fileName)) {
                 return null;
             }
-            filePath = thumbFolder.getAbsolutePath() + File.separator + thumbName;
         }
 
         // Get thumbnail 
-        byte[] fileBytes = FileUtility.getFileBinary(filePath);
+        byte[] fileBytes = FileUtility.getFileBinary(thumbFilePathName);
         if (fileBytes == null) {
             return null;
         }
 
-        File file = new File(filePath);
-        FileBinary fileBinary = new FileBinary();
-        fileBinary.setContent(fileBytes);
+        File file = new File(thumbFilePathName);
+        // Download the file using the File Streaming Service
+        //FileBinary fileBinary = new FileBinary();
+        //fileBinary.setContent(fileBytes);
+        FileInfo fileBinary = new FileBinary();
         fileBinary.setFileSize(file.length());
-        fileBinary.setName(fileName);
-        fileBinary.setModificationDate(new Date(file.lastModified()));
+        fileBinary.setName(thumbName);
+        fileBinary.setModificationDate(fileMetaData.getModificationDate());
         return fileBinary;
     }
 
@@ -334,14 +405,10 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
      *
      * @param fileName The name of original file to create thumbnail from
      */
-    private String getThumbName(String fileName) {
-        File tmpFile = new File(fileName);
-        String thumbName = tmpFile.getName();
-
+    private String getThumbName(String thumbName) {
         if (thumbName.contains(".")) {
-            thumbName = thumbName.substring(0, thumbName.lastIndexOf(".") - 1);
+            thumbName = thumbName.substring(0, thumbName.lastIndexOf("."));
         }
-
         thumbName += ".jpg";
         return thumbName;
     }
@@ -355,23 +422,16 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         if (fileName == null || fileName.equals("")) {
             return false;
         }
-
-        // Check if file exists in scan folder name to exclude jumping from the folder
-        String filePath = getFullFilePath(fileName, scanFolder);
-        String thumbPath = thumbFolder.getAbsolutePath() + File.separator + getThumbName(fileName);
-
-        if (filePath == null) {
-            return false;
-        }
-
+        String thumbName = getThumbName(fileName);
+        String thumbFilePathName = thumbFolder.getPath() + thumbName;
         try {
-            BufferedImage image = FileUtility.createImageThumbnail(filePath, thumbWidth, -1);
+            BufferedImage image = FileUtility.createImageThumbnail(getLocalFilePathName(fileName), thumbWidth, -1);
 
             if (image == null) {
                 return false;
             }
 
-            File thumbFile = new File(thumbPath);
+            File thumbFile = new File(thumbFilePathName);
             if (thumbFile.exists()) {
                 thumbFile.delete();
             }
@@ -387,37 +447,29 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
     }
 
     /**
-     * Retrieves the list of all files in the Network Scan Folder. Only meta data about the file is
-     * returned. The content of the file is omitted to avoid transferring a large amount of file
-     * data across the network. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
+     * Retrieves the list of all files in the Network Scan Folder. Only meta
+     * data about the file is returned. The content of the file is omitted to
+     * avoid transferring a large amount of file data across the network.
+     * <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      */
     @Override
-    @RolesAllowed(RolesConstants.SOURCE_VIEW)
+    @RolesAllowed(RolesConstants.SOURCE_SEARCH)
     public List<FileInfo> getAllFiles() {
-        List<FileInfo> fileInfoList = new ArrayList<FileInfo>();
-        // Read folder
-        // TODO: Make folder filtering for appropriate files
-        if (scanFolder != null && scanFolder.isDirectory()) {
-            for (String fileName : scanFolder.list()) {
-                File file = new File(scanFolder.getAbsolutePath() + File.separator + fileName);
-                if (file.exists() && file.isFile()) {
-                    FileInfo fileInfo = new FileInfo();
-                    fileInfo.setModificationDate(new Date(file.lastModified()));
-                    fileInfo.setFileSize(file.length());
-                    fileInfo.setName(fileName);
-                    fileInfoList.add(fileInfo);
-                }
-            }
-        }
+        List<FileMetaData> fileInfoList = scanFolder.getAllFiles(
+                ".*pdf$|.*png$|.*jpg$|.*jpeg$|.*tif$|.*tiff$");
+
+        List<FileInfo> result = new ArrayList<FileInfo>();
+        MappingUtility.translateList(fileInfoList, result, FileInfo.class, MappingManager.getMapper());
+
         // Sort list by modification date
-        Collections.sort(fileInfoList, new FileInfoSorterByModificationDate());
-        return fileInfoList;
+        Collections.sort(result, new FileInfoSorterByModificationDate());
+        return result;
     }
 
     /**
-     * Deletes the specified file from the Network Scan folder. Also attempts to delete any
-     * thumbnail for the file if one exists. <p>Requires the {@linkplain RolesConstants#SOURCE_SEARCH}
-     * role.</p>
+     * Deletes the specified file from the Network Scan folder. Also attempts to
+     * delete any thumbnail for the file if one exists. <p>Requires the
+     * {@linkplain RolesConstants#SOURCE_SEARCH} role.</p>
      *
      * @param fileName The name of the file to delete.
      * @return true if the file is successfully deleted.
@@ -428,55 +480,12 @@ public class DigitalArchiveEJB extends AbstractEJB implements DigitalArchiveEJBL
         if (fileName == null || fileName.equals("")) {
             return false;
         }
-
-        // Check if file exists in scan folder name to exclude jumping from the folder
-        String filePath = getFullFilePath(fileName, scanFolder);
-        String thumbnailPath = getFullFilePath(fileName, thumbFolder);
-
-        if (filePath == null) {
-            return false;
+        scanFolder.deleteFile(fileName);
+        thumbFolder.deleteFile(getThumbName(fileName));
+        if (localCacheFolder != null) {
+            localCacheFolder.deleteFile(fileName);
         }
 
-        // Delete file
-        File file = new File(filePath);
-
-        boolean result = false;
-
-        try {
-            result = file.delete();
-            // try to delete thumbnail
-            if (result && thumbnailPath != null) {
-                File thumbnail = new File(thumbnailPath + File.separator + fileName);
-                if (thumbnail.exists()) {
-                    thumbnail.delete();
-                }
-            }
-        } catch (Exception e) {
-            // Log the exception to indicate the file could not be deleted
-            String msg = "Error deleting " + (result ? "thumbnail for file: " : "file: ");
-            LogUtility.log(msg + filePath, e);
-        }
-
-        return result;
-    }
-
-    /**
-     * Returns the full path for the requested file in the shared folder. Used to control the file
-     * name exists in a given folder and doesn't contain any dangerous characters to jump out the
-     * folder path.
-     *
-     * @param fileName File name in the shared folder
-     * @param folder The folder to check for the file name
-     * @return
-     */
-    private String getFullFilePath(String fileName, File folder) {
-        if (folder != null && folder.isDirectory()) {
-            for (String fName : folder.list()) {
-                if (fName.equals(fileName)) {
-                    return folder.getAbsolutePath() + File.separator + fileName;
-                }
-            }
-        }
-        return null;
+        return true;
     }
 }
