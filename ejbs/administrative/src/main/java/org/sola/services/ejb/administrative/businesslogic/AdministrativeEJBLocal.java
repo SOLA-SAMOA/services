@@ -153,4 +153,10 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
      * AdministrativeEJB.createStrataProperties}
      */
     void createStrataProperties(String serviceId, UnitParcelGroup group, List<String> baUnitIds);
+    
+    /**
+     * see {@linkplain AdministrativeEJB#saveCertificatePrint(org.sola.services.ejb.administrative.repository.entities.CertificatePrint) 
+     * AdministrativeEJB.saveCertificatePrint}
+     */
+    CertificatePrint saveCertificatePrint(CertificatePrint print);
 }

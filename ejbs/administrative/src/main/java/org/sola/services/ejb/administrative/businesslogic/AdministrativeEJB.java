@@ -1073,4 +1073,12 @@ public class AdministrativeEJB extends AbstractEJB
             }
         }
     }
+    
+    /**
+     * Saves an instance of a certificate print
+     * @return 
+     */
+    public CertificatePrint saveCertificatePrint(CertificatePrint print) {
+        return getRepository().saveEntity(print);
+    }
 }

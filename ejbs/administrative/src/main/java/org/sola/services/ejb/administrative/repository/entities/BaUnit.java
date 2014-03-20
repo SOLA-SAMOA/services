@@ -133,6 +133,8 @@ public class BaUnit extends AbstractVersionedEntity {
     @Column(insertable = false, updatable = false, name = "calculated_area_size")
     @AccessFunctions(onSelect = "administrative.get_calculated_area_size_action(#{" + QUERY_PARAMETER_COLIST + "})")
     private BigDecimal calculatedAreaSize;
+    @ChildEntityList(parentIdField = "baUnitId", readOnly = true)
+    private List<CertificatePrint> certificatePrintList;
 
     public BigDecimal getCalculatedAreaSize() {
         return calculatedAreaSize;
@@ -305,6 +307,14 @@ public class BaUnit extends AbstractVersionedEntity {
 
     public void setFolioRegDate(Date folioRegDate) {
         this.folioRegDate = folioRegDate;
+    }
+
+    public List<CertificatePrint> getCertificatePrintList() {
+        return certificatePrintList;
+    }
+
+    public void setCertificatePrintList(List<CertificatePrint> certificatePrintList) {
+        this.certificatePrintList = certificatePrintList;
     }
 
     public Boolean isLocked() {
