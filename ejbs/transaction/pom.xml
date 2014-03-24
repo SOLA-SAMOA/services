@@ -4,12 +4,12 @@
     <parent>
         <artifactId>sola-ejbs</artifactId>
         <groupId>org.sola.services</groupId>
-        <version>2.1-20130304</version>
+        <version>1403a</version>
     </parent>
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-transaction</artifactId>
     <packaging>ejb</packaging>
-    <version>2.1-20130304</version>
+    <version>1403a</version>
     <name>EJB Transaction</name>
     <dependencies>
         <dependency>
