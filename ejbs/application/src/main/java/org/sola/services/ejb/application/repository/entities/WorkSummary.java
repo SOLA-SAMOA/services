@@ -25,6 +25,7 @@
  */
 package org.sola.services.ejb.application.repository.entities;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
@@ -63,6 +64,8 @@ public class WorkSummary extends AbstractReadOnlyEntity {
     private int onRequisitionTo;
     @Column
     private int overdue;
+    @Column(name = "service_fee")
+    private BigDecimal serviceFee;
     @Column(name = "overdue_apps")
     private String overdueApplications;
     @Column(name = "requisition_apps")
@@ -182,6 +185,14 @@ public class WorkSummary extends AbstractReadOnlyEntity {
 
     public void setOnRequisitionTo(int onRequisitionTo) {
         this.onRequisitionTo = onRequisitionTo;
+    }
+
+    public BigDecimal getServiceFee() {
+        return serviceFee;
+    }
+
+    public void setServiceFee(BigDecimal serviceFee) {
+        this.serviceFee = serviceFee;
     }
       
 }

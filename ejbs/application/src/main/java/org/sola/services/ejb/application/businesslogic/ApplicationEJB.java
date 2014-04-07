@@ -255,7 +255,9 @@ public class ApplicationEJB extends AbstractEJB implements ApplicationEJBLocal {
                 Money baseFee = new Money(BigDecimal.ZERO);
                 Money areaFee = new Money(BigDecimal.ZERO);
                 Money valueFee = new Money(BigDecimal.ZERO);
-                if (requestTypes != null) {
+                if (requestTypes != null && 
+                        // Ticket #137 - Zero the fee if the service is cancelled
+                        !ServiceStatusType.STATUS_CANCELLED.equals(ser.getStatusCode())) {
                     for (RequestType type : requestTypes) {
                         if (ser.getRequestTypeCode().equals(type.getCode())) {
                             if (type.getBaseFee() != null) {
