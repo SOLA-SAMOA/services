@@ -47,6 +47,8 @@ public class UnregisteredDealing extends AbstractReadOnlyEntity {
             + " AND  app.status_code IN ('lodged', 'requisitioned') "
             + " AND  ser.application_id = app.id "
             + " AND  ser.request_type_code = req.code "
+            // Ticket #145 - Only show registration services as unregistered dealings
+            + " AND  req.request_category_code IN ('registrationServices') "
             + " ORDER BY app.lodging_datetime ";
     @Column(name = "ba_unit_id")
     private String baUnitId;
