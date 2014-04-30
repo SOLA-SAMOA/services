@@ -548,6 +548,7 @@ public class SearchSqlProvider {
         SELECT(" (CASE co.type_code WHEN 'commonProperty' THEN '2' "
                 + " WHEN 'principalUnit' THEN '3'  || lpad(regexp_replace(ba.name_firstpart, '\\D*',  ''), 5, '0') "
                 + " ELSE '1'  || ba.name END) AS sort_key "); 
+        SELECT (" administrative.get_ba_unit_pending_action(ba.id) AS pending_action_code "); 
         FROM("administrative.ba_unit ba");
         LEFT_OUTER_JOIN("administrative.rrr rrr_curr "
                 + " ON ba.id = rrr_curr.ba_unit_id AND rrr_curr.type_code = 'unitEntitlement' "

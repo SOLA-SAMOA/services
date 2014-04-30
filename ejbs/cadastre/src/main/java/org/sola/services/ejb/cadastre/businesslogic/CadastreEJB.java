@@ -202,8 +202,8 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
             String transactionId, String filter, String statusCode) {
         HashMap params = new HashMap();
         params.put("transaction_id", transactionId);
-        List<CadastreObjectStatusChanger> involvedCoList =
-                getRepository().getEntityList(CadastreObjectStatusChanger.class, filter, params);
+        List<CadastreObjectStatusChanger> involvedCoList
+                = getRepository().getEntityList(CadastreObjectStatusChanger.class, filter, params);
         for (CadastreObjectStatusChanger involvedCo : involvedCoList) {
             involvedCo.setStatusCode(statusCode);
             getRepository().saveEntity(involvedCo);
@@ -212,10 +212,12 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
 
     /**
      * Retrieves the list of Cadastre Object Targets associated with the
-     * transaction. <p>Cadastre Object Targets are used to link the cadastre
-     * object to new transactions that may occur on the cadastre object after it
-     * has been initially created - for example the transaction to extinguish
-     * the cadastre object.</p>
+     * transaction.
+     * <p>
+     * Cadastre Object Targets are used to link the cadastre object to new
+     * transactions that may occur on the cadastre object after it has been
+     * initially created - for example the transaction to extinguish the
+     * cadastre object.</p>
      *
      * @param transactionId The identifier of the transaction
      */
@@ -345,7 +347,8 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
 
     /**
      * Retrieves all Cadastre Object Node Targets associated to the transaction.
-     * <p>A Cadastre Object Node Target is used to identify the nodes that have
+     * <p>
+     * A Cadastre Object Node Target is used to identify the nodes that have
      * been added, moved or removed as part of a redefinition transaction. </p>
      *
      * @param transactionId The identifier of the transaction
@@ -386,12 +389,12 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      */
     @Override
     public void approveCadastreRedefinition(String transactionId) {
-        List<CadastreObjectTargetRedefinition> targetObjectList =
-                this.getCadastreObjectRedefinitionTargetsByTransaction(transactionId);
+        List<CadastreObjectTargetRedefinition> targetObjectList
+                = this.getCadastreObjectRedefinitionTargetsByTransaction(transactionId);
         for (CadastreObjectTargetRedefinition targetObject : targetObjectList) {
-            CadastreObjectStatusChanger cadastreObject =
-                    this.getRepository().getEntity(CadastreObjectStatusChanger.class,
-                    targetObject.getCadastreObjectId());
+            CadastreObjectStatusChanger cadastreObject
+                    = this.getRepository().getEntity(CadastreObjectStatusChanger.class,
+                            targetObject.getCadastreObjectId());
             cadastreObject.setGeomPolygon(targetObject.getGeomPolygon());
             cadastreObject.setTransactionId(transactionId);
             cadastreObject.setApprovalDatetime(null);
@@ -528,17 +531,20 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
      *
      * @param unitParcelGroupId The unit parcel group to process
      * @param transactionId The identifier for the current transaction.
+     * @param cancelUnitPlan Flag indicating the Unit Plan has been canceled.
+     * Causes all unit parcels to be made historic.
      */
     @Override
-    public void applyUnitParcelChanges(String unitParcelGroupId, String transactionId) {
+    public void applyUnitParcelChanges(String unitParcelGroupId, String transactionId,
+            boolean cancelUnitPlan) {
 
         // Update all of the pending unit parcels to have a current status. This includes
         // updating the status of the spatial_unit_in_group entity. 
         Map params = new HashMap<String, Object>();
         params.put(UnitParcel.QUERY_PARAMETER_UNITPARCELGROUPID, unitParcelGroupId);
-        List<CadastreObjectStatusChanger> unitParcels =
-                getRepository().getEntityList(CadastreObjectStatusChanger.class,
-                UnitParcel.QUERY_WHERE_BYPENDINGUNIT, params);
+        List<CadastreObjectStatusChanger> unitParcels
+                = getRepository().getEntityList(CadastreObjectStatusChanger.class,
+                        UnitParcel.QUERY_WHERE_BYPENDINGUNIT, params);
 
         for (CadastreObjectStatusChanger unitParcel : unitParcels) {
 
@@ -558,12 +564,20 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
         params.clear();
         unitParcels.clear();
 
-        // Update the unit parcels removed from the Unit Plan to have a status of historic. Also
-        // delete any spatial_unit_in_group associations (including those for underlying parcels) that
-        // are flagged Delete On Approval. 
         params.put(UnitParcel.QUERY_PARAMETER_UNITPARCELGROUPID, unitParcelGroupId);
-        getRepository().getEntityList(CadastreObjectStatusChanger.class,
-                UnitParcel.QUERY_WHERE_BYDELETEONAPPROVAL, params);
+        if (cancelUnitPlan) {
+            // Remove all unit parcels from the Unit Parcel Group and make the Unit Parcels
+            // historic. Does not update the status of the underlying parcels.  
+            unitParcels = getRepository().getEntityList(CadastreObjectStatusChanger.class,
+                    UnitParcel.QUERY_WHERE_ALLPARCELSBYGROUP, params);
+
+        } else {
+            // Update the unit parcels removed from the Unit Plan to have a status of historic. Also
+            // delete any spatial_unit_in_group associations (including those for underlying parcels) that
+            // are flagged Delete On Approval. 
+            unitParcels = getRepository().getEntityList(CadastreObjectStatusChanger.class,
+                    UnitParcel.QUERY_WHERE_BYDELETEONAPPROVAL, params);
+        }
 
         for (CadastreObjectStatusChanger parcel : unitParcels) {
 

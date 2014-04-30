@@ -58,6 +58,9 @@ public class StrataProperty extends AbstractReadOnlyEntity {
     private Integer unitEntitlement;
     @Column(name = "unit_parcel_type")
     private String unitParcelTypeCode;
+    // Ticket #68 - Cancel Unit Development
+    @Column(name = "pending_action_code")
+    private String pendingActionCode;
 
     public StrataProperty() {
         super(); 
@@ -149,5 +152,13 @@ public class StrataProperty extends AbstractReadOnlyEntity {
 
     public void setUnitParcelTypeCode(String unitParcelTypeCode) {
         this.unitParcelTypeCode = unitParcelTypeCode;
+    }
+
+    public String getPendingActionCode() {
+        return pendingActionCode;
+    }
+
+    public void setPendingActionCode(String pendingActionCode) {
+        this.pendingActionCode = pendingActionCode;
     }
 }

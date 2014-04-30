@@ -187,5 +187,5 @@ public interface CadastreEJBLocal extends AbstractEJBLocal {
      * See {@linkplain CadastreEJB#applyUnitParcelChanges(java.lang.String, java.lang.String)
      * CadastreEJB.applyUnitParcelChanges}.
      */
-    void applyUnitParcelChanges(String unitParcelGroupId, String transactionId);
+    void applyUnitParcelChanges(String unitParcelGroupId, String transactionId, boolean cancelUnitPlan);
 }

@@ -717,7 +717,7 @@ public class SearchEJB extends AbstractEJB implements SearchEJBLocal {
         }
         params.put(CommonSqlProvider.PARAM_QUERY, SearchSqlProvider.buildGetUnitDevNrSql(serviceId, baUnitIdsCount));
         List<String> groupNames = getRepository().getScalarList(String.class, params);
-        if (groupNames != null) {
+        if (groupNames != null && groupNames.size() > 0) {
             result = groupNames.get(0);
         }
         return result;
