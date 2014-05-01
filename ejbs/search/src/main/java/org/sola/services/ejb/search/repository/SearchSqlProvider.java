@@ -545,10 +545,19 @@ public class SearchSqlProvider {
                 + " AND    type_code = 'officialArea' ) AS official_area");
         SELECT("CAST(COALESCE(rrr_curr.share, rrr_pend.share) AS integer) AS unit_entitlement");
         SELECT("co.type_code AS unit_parcel_type");
+        SELECT (" administrative.get_ba_unit_pending_action(ba.id) AS pending_action_code "); 
+        // Ticket #67 - Get the list of unit parcels for each unit title. 
+        SELECT("  (SELECT string_agg(co.name_firstpart || ' PLAN ' || co.name_lastpart, ', ' "
+                + "                  ORDER BY co.type_code DESC, co.name_firstpart ASC) "
+                + "FROM administrative.ba_unit_contains_spatial_unit bas, "
+                + "     cadastre.cadastre_object co "
+                + "WHERE bas.ba_unit_id = ba.id "
+                + "AND   co.id = bas.spatial_unit_id "
+                + "AND   co.status_code != 'historic' "
+                + "GROUP BY bas.ba_unit_id ) AS unit_parcels ");
         SELECT(" (CASE co.type_code WHEN 'commonProperty' THEN '2' "
                 + " WHEN 'principalUnit' THEN '3'  || lpad(regexp_replace(ba.name_firstpart, '\\D*',  ''), 5, '0') "
                 + " ELSE '1'  || ba.name END) AS sort_key "); 
-        SELECT (" administrative.get_ba_unit_pending_action(ba.id) AS pending_action_code "); 
         FROM("administrative.ba_unit ba");
         LEFT_OUTER_JOIN("administrative.rrr rrr_curr "
                 + " ON ba.id = rrr_curr.ba_unit_id AND rrr_curr.type_code = 'unitEntitlement' "
