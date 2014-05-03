@@ -81,6 +81,7 @@ import org.sola.services.common.repository.entities.AbstractEntity;
     RolesConstants.SOURCE_PRINT,
     RolesConstants.GIS_VIEW_MAP,
     RolesConstants.GIS_PRINT,
+    RolesConstants.GIS_CHANGE_PARCEL_ATTR_TOOL,
     RolesConstants.CADASTRE_PARCEL_SAVE,
     RolesConstants.PARTY_SAVE,
     RolesConstants.PARTY_RIGHTHOLDERS_SAVE,

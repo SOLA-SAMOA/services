@@ -29,11 +29,16 @@
  */
 package org.sola.services.ejb.cadastre.businesslogic;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.sola.common.RolesConstants;
+import org.sola.common.SOLAException;
+import org.sola.common.messaging.ServiceMessage;
 import org.sola.services.common.EntityAction;
 import org.sola.services.common.ejbs.AbstractEJB;
 import org.sola.services.common.repository.CommonSqlProvider;
@@ -596,5 +601,77 @@ public class CadastreEJB extends AbstractEJB implements CadastreEJBLocal {
             sug.setEntityAction(EntityAction.DELETE);
             getRepository().saveEntity(sug);
         }
+    }
+
+    /**
+     * Ticket #69 & #113. Allows the name and status of a parcel to be changed.
+     * Executes basic validations to ensure the name and status change are valid
+     * before proceeding.
+     *
+     * @param parcelId Identifier for the parcel to change name or status
+     * @param namePart1 The first part of the new parcel name
+     * @param namePart2 The last part of the new parcel name
+     * @param officialArea New official area for the parcel
+     * @param makeHistoric Flag to indicate if the parcel should be made
+     * historic.
+     */
+    @Override
+    @RolesAllowed(RolesConstants.GIS_CHANGE_PARCEL_ATTR_TOOL)
+    public void changeParcelAttribute(String parcelId, String namePart1,
+            String namePart2, BigDecimal officialArea, boolean makeHistoric) {
+
+        if (makeHistoric) {
+            CadastreObjectStatusChanger parcel
+                    = getRepository().getEntity(CadastreObjectStatusChanger.class, parcelId);
+            if (CadastreObjectStatusChanger.STATUS_CURRENT.equals(parcel.getStatusCode())) {
+                parcel.setStatusCode(CadastreObjectStatusChanger.STATUS_HISTORIC);
+                getRepository().saveEntity(parcel);
+            } else {
+                throw new SOLAException(ServiceMessage.EJB_CADASTRE_PARCEL_NOT_CURRENT);
+            }
+
+        } else if (namePart1 != null && namePart2 != null) {
+
+            // Check the new name to ensure it does not clash with an existing parcel. 
+            // Note that any LRS parcel matching the new name will be deleted. 
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put(CommonSqlProvider.PARAM_WHERE_PART, CadastreObject.QUERY_WHERE_VALIDATENAME);
+            params.put(CadastreObject.PARAM_NAME_FIRSTPART, namePart1);
+            params.put(CadastreObject.PARAM_NAME_LASTPART, namePart2);
+            List<CadastreObject> parcels = getRepository().getEntityList(CadastreObject.class, params);
+            if (parcels != null && parcels.size() > 0) {
+                throw new SOLAException(ServiceMessage.EJB_CADASTRE_INVALID_NAME);
+            }
+
+            // Update the parcel name
+            params.clear();
+            params.put(CommonSqlProvider.PARAM_QUERY, CadastreObject.QUERY_CHANGE_PARCEL_NAME);
+            params.put(CadastreObject.PARAM_CADASTRE_OBJECT_ID, parcelId);
+            params.put(CadastreObject.PARAM_NAME_FIRSTPART, namePart1);
+            params.put(CadastreObject.PARAM_NAME_LASTPART, namePart2);
+            params.put(CadastreObject.PARAM_USER_NAME, getUserName());
+            getRepository().bulkUpdate(params);
+            
+        } else if (officialArea != null && officialArea.compareTo(BigDecimal.ZERO) > 0) {
+            // Set the Area for the Cadastre Object. 
+            CadastreObject parcel = getRepository().getEntity(CadastreObject.class, parcelId);
+            SpatialValueArea area = null;
+            if (parcel.getSpatialValueAreaList() != null && parcel.getSpatialValueAreaList().size() > 0) {
+                for (SpatialValueArea a : parcel.getSpatialValueAreaList()) {
+                    if (SpatialValueArea.OFFICIAL_AREA_TYPE.equals(a.getTypeCode())) {
+                        area = a;
+                        break;
+                    }
+                }
+            }
+            if (area == null) {
+                area = new SpatialValueArea();
+                area.setSpatialUnitId(parcelId);
+                area.setTypeCode(SpatialValueArea.OFFICIAL_AREA_TYPE);
+            }
+            area.setSize(officialArea);
+            getRepository().saveEntity(area);
+        }
+
     }
 }
