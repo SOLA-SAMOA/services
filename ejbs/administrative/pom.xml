@@ -6,12 +6,12 @@
     <parent>
         <artifactId>sola-ejbs</artifactId>
         <groupId>org.sola.services</groupId>
-        <version>1403a</version>
+        <version>1405a</version>
     </parent>
 
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-administrative</artifactId>
-    <version>1403a</version>
+    <version>1405a</version>
     <packaging>ejb</packaging>
     
     <name>EJB Administrative</name>
