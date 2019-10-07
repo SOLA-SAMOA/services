@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.CommonSqlProvider;
 import org.sola.services.common.repository.entities.AbstractReadOnlyEntity;
 
@@ -53,7 +54,8 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
     public static final String SELECT_PART = "SELECT s.id, s.la_nr, s.reference_nr, s.archive_id, s.ext_archive_id, s.type_code, "
             + " get_translation(st.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS typeDisplayValue, "
             + " s.acceptance, s.recordation, s.submission, s.transaction_id, s.status_code, s.owner_name, s.version, s.description, "
-            + " get_translation(t.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS statusDisplayValue ";
+            + " get_translation(t.display_value, #{" + CommonSqlProvider.PARAM_LANGUAGE_CODE + "}) AS statusDisplayValue, "
+            + " source.getpublicaccess(s.id) AS public_access " ;
     
     public static final String FROM_PART = " FROM (source.source AS s LEFT JOIN transaction.reg_status_type AS t on s.status_code = t.code) "
             + " LEFT JOIN source.administrative_source_type AS st ON s.type_code = st.code ";
@@ -109,6 +111,9 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
     private String description;
     @Column(name="transaction_id")
     private String transactionId;
+    @AccessFunctions(onSelect = "source.getpublicaccess(id)")
+    @Column(name = "public_access", insertable = false, updatable = false)
+    private String publicAccess;
     
     public SourceSearchResult() {
         super();
@@ -240,5 +245,13 @@ public class SourceSearchResult extends AbstractReadOnlyEntity {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+    
+     public String getPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(String pubAccess) {
+        this.publicAccess = pubAccess;
     }
 }

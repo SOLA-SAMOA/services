@@ -30,13 +30,15 @@ package org.sola.services.ejb.source.repository.entities;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.ChildEntity;
 import org.sola.services.common.repository.entities.AbstractVersionedEntity;
 
 @Table(name="power_of_attorney", schema="source")
 public class PowerOfAttorney extends AbstractVersionedEntity {
     public static final String QUERY_PARAMETER_TRANSACTIONID = "transactionId";
-    public static final String QUERY_GET_BY_TRANSACTION_ID = "select p.id, p.person_name, p.attorney_name "
+    public static final String QUERY_GET_BY_TRANSACTION_ID = "select p.id, p.person_name, p.attorney_name, "
+            + "source.getpublicaccess(s.id) as public_access "
             + "from source.source s inner join source.power_of_attorney p on s.id=p.id "
             + "where s.transaction_id = #{" + QUERY_PARAMETER_TRANSACTIONID + "}";
     
@@ -52,6 +54,10 @@ public class PowerOfAttorney extends AbstractVersionedEntity {
     
     @Column(name="attorney_name")
     private String attorneyName;
+    
+    @AccessFunctions(onSelect = "source.getpublicaccess(id)")
+    @Column(name = "public_access", insertable = false, updatable = false)
+    private String publicAccess;
     
     public PowerOfAttorney(){
         super();
@@ -87,5 +93,13 @@ public class PowerOfAttorney extends AbstractVersionedEntity {
 
     public void setSource(Source source) {
         this.source = source;
+    }
+    
+    public String getPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(String pubAccess) {
+        this.publicAccess = pubAccess;
     }
 }

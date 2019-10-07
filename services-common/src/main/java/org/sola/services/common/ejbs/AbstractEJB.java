@@ -94,7 +94,8 @@ import org.sola.services.common.repository.entities.AbstractEntity;
     RolesConstants.ADMIN_MANAGE_SETTINGS,
     RolesConstants.APPLICATION_VIEW_UNASSIGNED_ALL,
     RolesConstants.APPLICATION_VIEW_ASSIGNED_ALL,
-    RolesConstants.ADMIN_CHANGE_PASSWORD
+    RolesConstants.ADMIN_CHANGE_PASSWORD,
+    RolesConstants.ADMIN_PUBLIC_ONLY
 })
 public abstract class AbstractEJB implements AbstractEJBLocal {
 
@@ -138,18 +139,7 @@ public abstract class AbstractEJB implements AbstractEJBLocal {
      * @param roles List of roles to check.
      */
     public boolean isInRole(String... roles) {
-        boolean result = false;
-        if (roles != null) {
-            for (String role : roles) {
-                if (sessionContext.isCallerInRole(role)) {
-                    result = true;
-                    break;
-                }
-            }
-        } else {
-            result = true;
-        }
-        return result;
+        return LocalInfo.isInRole(roles);
     }
 
     /**
@@ -196,6 +186,7 @@ public abstract class AbstractEJB implements AbstractEJBLocal {
             userName = "SOLA_ANONYMOUS";
         }
         LocalInfo.setUserName(userName);
+        LocalInfo.setSessionContext(sessionContext); 
 
         beforeInvoke(ctx);
         Object result = ctx.proceed();

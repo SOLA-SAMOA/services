@@ -38,6 +38,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.sola.services.common.LocalInfo;
+import org.sola.services.common.repository.AccessFunctions;
 import org.sola.services.common.repository.ChildEntity;
 import org.sola.services.common.repository.ExternalEJB;
 import org.sola.services.common.repository.RepositoryUtility;
@@ -100,6 +101,9 @@ public class Source extends AbstractVersionedEntity {
     private String version;
     @Column
     private String description;
+    @AccessFunctions(onSelect = "source.getpublicaccess(id)")
+    @Column(name = "public_access", insertable = false, updatable = false)
+    private String publicAccess;
     private Boolean locked = null;
     private String laNrReferenceId = null;
 
@@ -283,6 +287,14 @@ public class Source extends AbstractVersionedEntity {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+    
+    public String getPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(String pubAccess) {
+        this.publicAccess = pubAccess;
     }
 
     public String getLaNrReferenceId() {

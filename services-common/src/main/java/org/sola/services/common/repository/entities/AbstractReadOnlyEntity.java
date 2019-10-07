@@ -49,6 +49,15 @@ public abstract class AbstractReadOnlyEntity implements Serializable {
 
     private boolean loaded = false;
     private boolean getValueException = false;
+    
+    /**
+     * The name of the column used to flag if the entity can be accessed 
+     * by the public. To give a user access to a classified record, they
+     * must be assigned the appropriate SOLA Security Role.
+     */
+    public static final String PUBLIC_ACCESS_COLUMN_NAME = "public_access";
+    public static final String PUBLIC_ACCESS_ALLOW = "ALLOW";
+    public static final String PUBLIC_ACCESS_DENY = "DENY";
 
     /**
      * @return Generates and returns a new UUID value. 
