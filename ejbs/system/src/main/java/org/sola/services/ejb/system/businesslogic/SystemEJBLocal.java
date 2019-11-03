@@ -38,6 +38,8 @@ import org.sola.services.ejb.system.br.Result;
 import org.sola.services.ejb.system.repository.entities.Br;
 import org.sola.services.ejb.system.repository.entities.BrReport;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
+import org.sola.services.ejb.system.repository.entities.PublicUserActivity;
+import org.sola.services.ejb.system.repository.entities.PublicUserActivityType;
 import org.sola.services.ejb.system.repository.entities.Setting;
 
 /**
@@ -138,4 +140,18 @@ public interface SystemEJBLocal extends AbstractEJBLocal {
      * SystemEJB.validationSucceeded
      */
     boolean validationSucceeded(List<ValidationResult> validationResultList);
+    
+     /**
+     * See {@linkplain SystemEJB#getPublicUserActivityTypes(java.lang.String)
+     * SystemEJB.getPublicUserActivityTypes}.
+     */
+    List<PublicUserActivityType> getPublicUserActivityTypes(String languageCode);
+    
+    PublicUserActivity getPublicUserActivity(String id); 
+    
+    /**
+     * See {@linkplain SystemEJB#savePublicUserActivity(org.sola.services.ejb.system.repository.entities.PublicUserActivity)
+     * SystemEJB.savePublicUserActivity}.
+     */
+     PublicUserActivity savePublicUserActivity(PublicUserActivity publicUserActivity);
 }

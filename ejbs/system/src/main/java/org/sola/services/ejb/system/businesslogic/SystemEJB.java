@@ -441,4 +441,43 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
         }
         return true;
     }
+    
+     /**
+     * Retrieves all system.public_user_activity_type code values.
+     *
+     * @param languageCode The language code to use for localization of display
+     * values.
+     */
+    @Override
+    public List<PublicUserActivityType> getPublicUserActivityTypes(String languageCode) {
+        return getRepository().getCodeList(PublicUserActivityType.class, languageCode);
+    }
+    
+    /**
+     * Returns the details for the specified publicUserActivity.
+     *
+     * <p>Requires the {@linkplain RolesConstants#ADMIN_PUBLIC_ONLY}
+     * role.</p>
+     *
+     * @param id The identifier of the source to retrieve.
+     */
+    @Override
+    @RolesAllowed(RolesConstants.ADMIN_PUBLIC_ONLY)
+    public PublicUserActivity getPublicUserActivity(String id) {
+        return getRepository().getEntity(PublicUserActivity.class, id);
+    }
+    
+    /**
+     * Can be used to create a new Public User Activity. 
+     * <p>Requires the {@linkplain RolesConstants#ADMIN_PUBLIC_ONLY}
+     * role.</p>
+     *
+     * @param publicUserActivity The activity to create/save
+     * @return The publicUserActivity after the save is completed.
+     */
+    @Override
+    @RolesAllowed(RolesConstants.ADMIN_PUBLIC_ONLY)
+    public PublicUserActivity savePublicUserActivity(PublicUserActivity publicUserActivity) {
+        return getRepository().saveEntity(publicUserActivity);
+    }
 }
