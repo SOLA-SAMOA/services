@@ -95,7 +95,8 @@ import org.sola.services.common.repository.entities.AbstractEntity;
     RolesConstants.APPLICATION_VIEW_UNASSIGNED_ALL,
     RolesConstants.APPLICATION_VIEW_ASSIGNED_ALL,
     RolesConstants.ADMIN_CHANGE_PASSWORD,
-    RolesConstants.ADMIN_PUBLIC_ONLY
+    RolesConstants.ADMIN_PUBLIC_ONLY,
+    RolesConstants.REPORTS_PUBLIC_ACTIVITY
 })
 public abstract class AbstractEJB implements AbstractEJBLocal {
 

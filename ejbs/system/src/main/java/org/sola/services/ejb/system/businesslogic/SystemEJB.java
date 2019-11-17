@@ -30,6 +30,7 @@ package org.sola.services.ejb.system.businesslogic;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -479,5 +480,31 @@ public class SystemEJB extends AbstractEJB implements SystemEJBLocal {
     @RolesAllowed(RolesConstants.ADMIN_PUBLIC_ONLY)
     public PublicUserActivity savePublicUserActivity(PublicUserActivity publicUserActivity) {
         return getRepository().saveEntity(publicUserActivity);
+    }
+    
+    
+    /**
+     * Retrieves a summary of public user activity during the periods specified. If no
+     * period specified, the report will return all public user activity for the last
+     * 5 days. 
+     * 
+     * @param fromDate The start of the reporting period
+     * @param toDate The end of the reporting period
+     * @param publicUser The public user to retrieve the summary data for
+     * @return 
+     */
+    @Override
+    @RolesAllowed(RolesConstants.REPORTS_PUBLIC_ACTIVITY)
+    public List<PublicUserActivitySummary> getPublicUserActivitySummary(Date fromDate, Date toDate, String publicUser) {
+
+        List<PublicUserActivitySummary> result;
+        Map queryParams = new HashMap<String, Object>();
+        queryParams.put(CommonSqlProvider.PARAM_FROM_PART, PublicUserActivitySummary.QUERY_FROM_ACTIVITY_SUMMARY);
+        queryParams.put(PublicUserActivitySummary.PARAMETER_FROM, fromDate);
+        queryParams.put(PublicUserActivitySummary.PARAMETER_TO, toDate);
+        queryParams.put(PublicUserActivitySummary.PARAMETER_PUBLIC_USER, publicUser);
+
+        result = getRepository().getEntityList(PublicUserActivitySummary.class, queryParams);
+        return result;
     }
 }

@@ -29,6 +29,7 @@ package org.sola.services.ejb.system.businesslogic;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Local;
@@ -39,6 +40,7 @@ import org.sola.services.ejb.system.repository.entities.Br;
 import org.sola.services.ejb.system.repository.entities.BrReport;
 import org.sola.services.ejb.system.repository.entities.BrValidation;
 import org.sola.services.ejb.system.repository.entities.PublicUserActivity;
+import org.sola.services.ejb.system.repository.entities.PublicUserActivitySummary;
 import org.sola.services.ejb.system.repository.entities.PublicUserActivityType;
 import org.sola.services.ejb.system.repository.entities.Setting;
 
@@ -154,4 +156,10 @@ public interface SystemEJBLocal extends AbstractEJBLocal {
      * SystemEJB.savePublicUserActivity}.
      */
      PublicUserActivity savePublicUserActivity(PublicUserActivity publicUserActivity);
+     
+     /**
+     * See {@linkplain SystemEJB#getPublicUserActivitySummary(java.util.Date, java.util.Date, java.lang.String)
+     * SystemEJB.getPublicUserActivitySummary}.
+     */
+     List<PublicUserActivitySummary> getPublicUserActivitySummary(Date fromDate, Date toDate, String publicUser);
 }

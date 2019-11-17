@@ -188,4 +188,11 @@ public interface SearchEJBLocal extends AbstractEJBLocal {
      * SearchEJB.getUnregisteredDealings}.
      */
     List<UnregisteredDealing> getUnregisteredDealings(String baUnitId);
+    
+    
+    /**
+     * See {@linkplain SearchEJB#showCoTReport(java.lang.String, java.lang.Boolean)
+     * SearchEJB.getUnregisteredDealings}.
+     */
+    boolean showCoTReport(String baUnitId, boolean isProduction);
 }
