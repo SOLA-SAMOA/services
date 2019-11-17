@@ -931,8 +931,7 @@ public class AdministrativeEJB extends AbstractEJB
      */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_STRATA_UNIT_CREATE)
-    public
-            void terminateStrataProperties(String serviceId, UnitParcelGroup group, List<String> baUnitIds) {
+    public void terminateStrataProperties(String serviceId, UnitParcelGroup group, List<String> baUnitIds) {
         if (baUnitIds != null && baUnitIds.size() > 0) {
             // Link the transction to the unit parcel group
             TransactionUnitParcels trans = transactionEJB.getTransactionByServiceId(serviceId,
@@ -971,8 +970,7 @@ public class AdministrativeEJB extends AbstractEJB
      */
     @Override
     @RolesAllowed(RolesConstants.ADMINISTRATIVE_STRATA_UNIT_CREATE)
-    public
-            void undoTerminateStrataProperties(String serviceId, List<String> baUnitIds) {
+    public void undoTerminateStrataProperties(String serviceId, List<String> baUnitIds) {
         if (baUnitIds != null && baUnitIds.size() > 0) {
 
             TransactionUnitParcels trans = transactionEJB.getTransactionByServiceId(serviceId,
@@ -1002,4 +1000,26 @@ public class AdministrativeEJB extends AbstractEJB
             transactionEJB.saveEntity(trans);
         }
     }
+
+    /**
+     * Version 1911a. Update the status of this deed property from historic to
+     * current.
+     *
+     * <p>
+     * Requires the {@linkplain RolesConstants#ADMINISTRATIVE_MAKE_PROP_CURRENT}
+     * role.</p>
+     *
+     * @param baUnitId - ID of the property to update the status of
+     */
+    @Override
+    @RolesAllowed(RolesConstants.ADMINISTRATIVE_MAKE_PROP_CURRENT)
+    public void makePropertyCurrent(String baUnitId) {
+        BaUnitStatusChanger baUnit = getRepository().getEntity(BaUnitStatusChanger.class, baUnitId); 
+        if (RegistrationStatusType.STATUS_HISTORIC.equals(baUnit.getStatusCode())) {
+            baUnit.setStatusCode(RegistrationStatusType.STATUS_CURRENT);
+            baUnit.markForSave();
+            getRepository().saveEntity(baUnit);
+        }
+    }
+
 }

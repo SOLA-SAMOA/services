@@ -174,4 +174,10 @@ public interface AdministrativeEJBLocal extends AbstractSolaTransactionEJBLocal 
      * AdministrativeEJB.undoTerminateStrataProperties}
      */
     void undoTerminateStrataProperties(String serviceId, List<String> baUnitIds);
+    
+    /**
+     * see {@linkplain AdministrativeEJB#makePropertyCurrent(java.lang.String)
+     * AdministrativeEJB.makePropertyCurrent}
+     */
+    void makePropertyCurrent(String baUnitId); 
 }
