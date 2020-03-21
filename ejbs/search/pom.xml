@@ -5,11 +5,11 @@
     <parent>
         <artifactId>sola-ejbs</artifactId>
         <groupId>org.sola.services</groupId>
-        <version>2001c</version>
+        <version>2003a</version>
     </parent>
     <groupId>org.sola.services.ejbs</groupId>
     <artifactId>sola-search</artifactId>
-    <version>2001c</version>
+    <version>2003a</version>
     <packaging>ejb</packaging>
     <name>EJB Search</name>
     <properties>

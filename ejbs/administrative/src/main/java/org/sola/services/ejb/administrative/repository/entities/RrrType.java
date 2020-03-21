@@ -49,6 +49,7 @@ public class RrrType extends AbstractCodeEntity {
     public static final String BODY_CORPORATE_RULES_TYPE = "bodyCorpRules";
     public static final String ADDRESS_FOR_SERVICE_TYPE = "addressForService";
     public static final String FREEHOLD_TYPE = "ownership";
+    public static final String CUSTOMARY_TYPE = "customaryType";
     @Column(name = "rrr_group_type_code")
     private String rrrGroupTypeCode;
     @Column(name = "is_primary")
